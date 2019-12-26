@@ -7,6 +7,7 @@ import Equipos from './pages/Equipos';
 import OpInvEqInfo from './pages/OpInvEqInfo'
 import Inventarios from './pages/Inventarios';
 import TabPageForm from './pages/TabPageForm';
+import FormImpresora from './pages/FormImpresora';
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import List from './pages/List';
@@ -50,6 +51,7 @@ const App: React.FC = () => (
       <IonSplitPane contentId="main">
         <Menu appPages={appPages} />
         <IonRouterOutlet id="main">
+          <Route path="/formimpresora" component={FormImpresora} exact={true} />
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/tabs" component={TabPageForm} exact={true} />

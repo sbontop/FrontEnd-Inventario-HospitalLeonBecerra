@@ -1,4 +1,4 @@
-import { IonList, IonItem, IonLabel, IonInput, IonTab, IonHeader, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonBadge, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+import { /*IonList, IonItem, IonInput, IonTab, IonHeader,*/IonLabel, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon/*, IonBadge, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons*/ } from '@ionic/react';
 import FormPCDesk from './FormPCDesk';
 import AppPage from './AppPage';
 import React, { Component } from 'react';

@@ -4,7 +4,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { IonList, IonItem, IonLabel, IonInput, IonTab, IonHeader, IonTabs, IonTabBar, IonTabButton, IonIcon, IonBadge, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+import { IonList, IonItem, IonLabel, IonInput, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
 
 interface IState {
     expanded: any;

@@ -37,14 +37,16 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
             <IonGrid>
               <IonRow>
                 <IonCol size="6">
-                  <IonButton routerLink="/Inventarios" expand="full" size="large" color="danger">Full Button</IonButton>
+                  <IonButton routerLink="/inventarios" expand="full" size="large" color="danger">Full Button</IonButton>
                 </IonCol>
                 <IonCol  size="6">
                 <IonButton routerLink="/tabs" expand="full" size="large" color="danger">crear PC</IonButton>
                   </IonCol>
               </IonRow>
               <IonRow>
-                <IonCol size="6">TRES</IonCol>
+                <IonCol size="6">
+                  <IonButton routerLink="/formImpresora" expand="full" size="large" color="danger">crear impresora</IonButton>
+                </IonCol>
                 <IonCol size="6">CUATRO</IonCol>
               </IonRow>
             </IonGrid>
