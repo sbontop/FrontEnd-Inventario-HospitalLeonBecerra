@@ -1,0 +1,8 @@
+.ion-activatable {
+    position: relative;
+    overflow: hidden;
+  }
+
+.root {
+    width: '100%',
+}
