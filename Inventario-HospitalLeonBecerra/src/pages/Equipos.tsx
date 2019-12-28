@@ -30,7 +30,7 @@ const Equipos: React.FC = () => {
    <IonPage>
      <br/>    
       <IonHeader translucent>
-        <IonToolbar color="danger">
+        <IonToolbar color="primary">
         <IonButtons slot="start">
             <IonBackButton defaultHref="/tab2" />
           </IonButtons>

@@ -9,7 +9,7 @@ const Inventarios: React.FC<RouteComponentProps> = (props) => {
     <IonPage>
       <IonHeader>
 
-        <IonToolbar color="danger">
+        <IonToolbar color="primary">
           <IonButtons slot="start">
             <IonBackButton defaultHref="/"></IonBackButton>
           </IonButtons>

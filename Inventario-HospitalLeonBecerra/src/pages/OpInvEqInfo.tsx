@@ -9,7 +9,7 @@ export default class OpInvEqInfo extends Component <{history:any}, any>{
             <IonPage>
                 <IonHeader>
                    
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <IonBackButton defaultHref="/home"></IonBackButton>
@@ -19,7 +19,7 @@ export default class OpInvEqInfo extends Component <{history:any}, any>{
                 </IonHeader>
                 <IonContent fullscreen>
                     <IonList>
-                        <IonItem className = "ion-activatable">
+                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/tiposequiposinventario')}}>
                             <IonRippleEffect></IonRippleEffect>
                             <IonThumbnail slot="start">
                                 <img src={process.env.PUBLIC_URL + "/assets/img/clipboard.png"} alt="" />

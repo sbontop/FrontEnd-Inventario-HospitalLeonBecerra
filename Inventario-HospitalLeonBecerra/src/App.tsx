@@ -6,9 +6,10 @@ import { AppPage } from './declarations';
 import Equipos from './pages/Equipos';
 import OpInvEqInfo from './pages/OpInvEqInfo'
 import Inventarios from './pages/Inventarios';
-import TabPageForm from './pages/TabPageForm';
 import FormPCDesk from './pages/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
+import TiposEquiposInventario from './pages/TiposEquiposInventario';
+import Router from './pages/Router';
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import List from './pages/List';
@@ -56,6 +57,8 @@ const App: React.FC = () => (
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/tabs" component={FormPCDesk} exact={true} />
+          <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
+          <Route path="/router" component={Router} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
           <Route path="/home/list" component={List} exact={true} />

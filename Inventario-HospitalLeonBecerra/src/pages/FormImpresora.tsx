@@ -33,7 +33,7 @@ const compareWith = (o1: any, o2: any) => {
 const Equipos2: React.FC = () => {
   return (
     <IonPage>
-    <IonToolbar color="danger">
+    <IonToolbar color="primary">
       <IonButtons slot="start">
           <IonBackButton defaultHref="/home"></IonBackButton>
       </IonButtons>

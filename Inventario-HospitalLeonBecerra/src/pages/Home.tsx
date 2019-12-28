@@ -1,13 +1,11 @@
 import {
   IonButtons,
-  IonCard,
-  IonCardContent,
-
   IonContent,
   IonHeader,
   IonMenuButton,
   IonPage,
   IonTitle,
+  IonLabel,
   IonToolbar,
   IonGrid,
   IonRow,
@@ -24,7 +22,7 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
@@ -32,42 +30,40 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonCard>
-          <IonCardContent>
-            <IonGrid>
-              <IonRow>
-                <IonCol size="6">
-                  <IonButton routerLink="/inventarios" expand="full" size="large" color="danger">Full Button</IonButton>
-                </IonCol>
-                <IonCol  size="6">
-                <IonButton routerLink="/tabs" expand="full" size="large" color="danger">crear PC</IonButton>
-                  </IonCol>
-              </IonRow>
-              <IonRow>
-                <IonCol size="6">
-                  <IonButton routerLink="/formImpresora" expand="full" size="large" color="danger">crear impresora</IonButton>
-                </IonCol>
-                <IonCol size="6">CUATRO</IonCol>
-              </IonRow>
-            </IonGrid>
-            {/* <IonMenu side="start" menuId="first">
-              <IonHeader>
-                <IonToolbar color="primary">
-                  <IonTitle>Start Menu</IonTitle>
-                </IonToolbar>
-              </IonHeader>
-              <IonContent>
-                <IonList>
-                  <IonItem>Menu Item</IonItem>
-                  <IonItem>Menu Item</IonItem>
-                  <IonItem>Menu Item</IonItem>
-                  <IonItem>Menu Item</IonItem>
-                  <IonItem>Menu Item</IonItem>
-                </IonList>
-              </IonContent>
-            </IonMenu> */}
-          </IonCardContent>
-        </IonCard>
+        <IonGrid class="grid">
+          <IonRow  class="row">
+            <IonCol  size="6">     
+              <IonButton color="primary" class="boton" routerLink="/inventarios" expand="block" size="large">
+              <div>
+                <img src={process.env.PUBLIC_URL + "/assets/img/inventory.png"} alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
+              </div>
+              </IonButton>
+            </IonCol>
+            <IonCol size="6">
+              <IonButton class="boton" routerLink="/tabs" expand="block" size="large">
+              <div>
+                <img src={process.env.PUBLIC_URL + "/assets/img/asignacion.png"} alt="" /><br/><br/><IonLabel>Asignación</IonLabel>   
+              </div>
+              </IonButton>
+            </IonCol>
+          </IonRow>
+          <IonRow class="row">
+            <IonCol size="6">
+              <IonButton class="boton" routerLink="/formImpresora" expand="block" size="large">
+              <div>
+                <img src={process.env.PUBLIC_URL + "/assets/img/solicitud.png"} alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
+              </div>
+              </IonButton>
+            </IonCol>
+            <IonCol size="6">
+              <IonButton class="boton" expand="block" size="large">
+              <div>
+                <img src={process.env.PUBLIC_URL + "/assets/img/historial.png"} alt="" /><br/><br/><IonLabel>Mantenimiento</IonLabel>   
+              </div>
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

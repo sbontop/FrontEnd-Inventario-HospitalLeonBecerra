@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
@@ -85,7 +84,7 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                 <IonHeader>
 
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <IonBackButton defaultHref="/home"></IonBackButton>

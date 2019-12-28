@@ -10,7 +10,7 @@ export default class AppPage extends Component {
 
                 <IonHeader>
 
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <IonBackButton defaultHref="/home"></IonBackButton>
