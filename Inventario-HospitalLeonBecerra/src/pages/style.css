@@ -6,3 +6,7 @@
 .root {
     width: '100%',
 }
+
+.details {
+  alignItems: 'center',
+}
