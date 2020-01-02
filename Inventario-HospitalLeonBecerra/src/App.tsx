@@ -33,6 +33,8 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import HomeCorreo from './pages/InventarioCorreo/HomeCorreo';
+import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
 
 const appPages: AppPage[] = [
   {
@@ -63,6 +65,8 @@ const App: React.FC = () => (
           <Route path="/Home" component={Home} exact={true} />
           <Route path="/home/list" component={List} exact={true} />
           <Route path="/" render={() => <Redirect to="/home"/> } exact={true} />
+          <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
+        <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>

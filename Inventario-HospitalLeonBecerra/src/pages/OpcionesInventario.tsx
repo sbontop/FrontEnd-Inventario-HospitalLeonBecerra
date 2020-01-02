@@ -18,7 +18,7 @@ export default class OpcionesInventario extends Component <{history:any}, any>{
                         <h2>Inventario por IP asignada</h2>
                     </IonLabel>
                 </IonItem>
-                <IonItem className = "ion-activatable">
+                <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/homeCorreo')}}>
                     <IonRippleEffect></IonRippleEffect>
                     <IonThumbnail slot="start">
                         <img src={process.env.PUBLIC_URL+"/assets/img/email.png"} alt="" />
