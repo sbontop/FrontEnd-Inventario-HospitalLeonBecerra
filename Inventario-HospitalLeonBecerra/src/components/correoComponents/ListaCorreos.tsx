@@ -1,6 +1,7 @@
 import {
-    IonItem,  IonLabel, IonAvatar, IonChip, IonList
+    IonItem,  IonLabel, IonAvatar,IonIcon, IonList
    } from '@ionic/react';
+   import { trash } from 'ionicons/icons';
    import React from 'react';
    
    interface ICorreo {
@@ -13,7 +14,7 @@ import {
    class ListaCorreos extends React.Component<ICorreo>  {
    render(){
      return ( 
-             <IonList  key={this.props.correo}>
+             <IonList >
              <IonItem>
                <IonLabel>
                  <h2>Usuario: {this.props.nombres} {this.props.apellidos}</h2>
@@ -21,9 +22,7 @@ import {
                  <p><small>Correo: {this.props.correo}</small></p>
                </IonLabel>
                <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
-               <IonChip color="light">
-                 <IonAvatar><img src="./assets/img/delete.svg" alt="imagen" /></IonAvatar>
-               </IonChip>
+               <IonIcon slot="end" icon={trash} ></IonIcon>
              </IonItem>
              </IonList>
      );

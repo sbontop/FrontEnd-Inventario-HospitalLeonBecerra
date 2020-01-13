@@ -38,3 +38,20 @@ const Home: React.FC = (props: any) => {
 
 export default Home;
 
+ <IonChip color="light">
+                 <IonAvatar><img src="./assets/img/delete.svg" alt="imagen" /></IonAvatar>
+               </IonChip>
+                 datos.push(res.data);
+      datos.forEach(function (d) {
+        if (d.departamento === "" || d.bspi_punto === "") {
+          setBuscar(true);
+        } else {
+          setCedula(d.cedula);
+          setDepartamento(d.departamento);
+          setPunto(d.bspi_punto);
+          console.log(departamento);
+        }
+      });
+
+
+  
