@@ -2,7 +2,7 @@
 import React, {Component } from 'react';
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading} from '@ionic/react';
 import { Redirect } from 'react-router';
-import AxiosImpresora from '../requirements/AxiosImpresora';
+import AxiosImpresora from '../services/AxiosImpresora';
 
 
 interface IState {
@@ -55,6 +55,9 @@ const estadosImpresoras = [{id: 'Operativa'},
     id: 'Disponible',
   }
 ];
+
+
+
 
 const departamentosCustodia = [{id: 'Coordinación'},
   {
