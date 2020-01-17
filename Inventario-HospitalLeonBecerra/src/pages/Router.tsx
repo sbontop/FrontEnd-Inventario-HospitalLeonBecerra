@@ -1,5 +1,5 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonRow, IonCol, IonTitle, IonPage, 
-  IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonAvatar} from '@ionic/react';
+  IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton} from '@ionic/react';
 import React, { Component } from 'react';
 import './style.css';
 

@@ -5,7 +5,7 @@ import {
 } from '@ionic/react';
 import { search } from 'ionicons/icons';
 import React, { useState } from 'react';
-import AxiosCorreo from '../../requirements/AxiosCorreo';
+import AxiosCorreo from '../../services/Axios.services';
 
 const FormularioCorreo: React.FC = () => {
   const [alerta, setAlerta] = useState(false);

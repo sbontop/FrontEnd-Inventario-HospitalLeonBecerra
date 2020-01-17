@@ -5,7 +5,7 @@ import {
 import React from 'react';
 import { options,add } from 'ionicons/icons';
 import ListaCorreos from '../../components/correoComponents/ListaCorreos';
-import AxiosCorreo from '../../requirements/AxiosCorreo';
+import AxiosCorreo from '../../services/Axios.services';
 import SelectOptionDepartamento from '../../components/correoComponents/SelectOptionDepartamento';
 
 

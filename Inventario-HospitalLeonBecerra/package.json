@@ -45,6 +45,6 @@
   },
   "description": "An Ionic project",
   "devDependencies": {
-    "react-scripts": "^3.3.0"
+    "react-scripts": "3.3.0"
   }
 }

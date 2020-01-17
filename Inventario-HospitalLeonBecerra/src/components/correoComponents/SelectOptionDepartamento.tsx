@@ -1,7 +1,7 @@
 import {
     IonSelectOption
 } from '@ionic/react';
-import AxiosCorreo from '../../requirements/AxiosCorreo';
+import AxiosCorreo from '../../services/Axios.services';
 import React, { useState, useEffect } from 'react';
 
 

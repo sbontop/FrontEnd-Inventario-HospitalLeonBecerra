@@ -9,6 +9,7 @@ import Inventarios from './pages/Inventarios';
 import FormPCDesk from './pages/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
 import TiposEquiposInventario from './pages/TiposEquiposInventario';
+import FormPCLaptop from "./pages/FormLaptop";
 import Router from './pages/Router';
 import Menu from './components/Menu';
 import Home from './pages/Home';
@@ -56,6 +57,7 @@ const App: React.FC = () => (
         <Menu appPages={appPages} />
         <IonRouterOutlet id="main">
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
+          <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/tabs" component={FormPCDesk} exact={true} />
