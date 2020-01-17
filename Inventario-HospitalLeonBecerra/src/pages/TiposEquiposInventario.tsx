@@ -44,7 +44,7 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                                 <h2>Impresora</h2>
                             </IonLabel> 
                         </IonItem>
-                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/router')}}>
+                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('../homerouter')}}>
                             <IonRippleEffect></IonRippleEffect>
                             <IonThumbnail slot="start">
                                 <img src={process.env.PUBLIC_URL + "/assets/img/router1.png"} alt="" />

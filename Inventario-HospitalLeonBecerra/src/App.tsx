@@ -9,8 +9,9 @@ import Inventarios from './pages/Inventarios';
 import FormPCDesk from './pages/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
 import TiposEquiposInventario from './pages/TiposEquiposInventario';
+import HomeRouter from './pages/InventarioRouter/HomeRouter';
+import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import FormPCLaptop from "./pages/FormLaptop";
-import Router from './pages/Router';
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import List from './pages/List';
@@ -62,7 +63,8 @@ const App: React.FC = () => (
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/tabs" component={FormPCDesk} exact={true} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
-          <Route path="/router" component={Router} exact={true} />
+          <Route path="/homerouter" component={HomeRouter} exact={true} />
+          <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
           <Route path="/home/list" component={List} exact={true} />
