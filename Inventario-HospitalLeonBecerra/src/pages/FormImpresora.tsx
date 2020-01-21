@@ -18,6 +18,7 @@ interface IState {
   cargando:any;
   campos_incompletos:any;
   error_servidor:any;
+  //marcas_impresoras:any;
 }
 
 
@@ -56,8 +57,20 @@ const estadosImpresoras = [{id: 'Operativa'},
   }
 ];
 
-
-
+const marcas_impresoras = [{id: 'HP'},
+  {
+    id: 'LG'
+  },
+  {
+    id: 'Samsung'
+  },
+  {
+    id: 'Lexmar',
+  },
+  {
+    id: 'Canon',
+  }
+];
 
 const departamentosCustodia = [{id: 'Coordinación'},
   {
@@ -83,7 +96,7 @@ const puntos = [{id: 'Hogar Ines Chambers'},
   },
 ];
 
-const axios = require('axios').default;
+//const axios = require('axios').default;
 
 export default class FormImpresora extends Component<{}, IState> {
   constructor(props: any) {
@@ -100,9 +113,37 @@ export default class FormImpresora extends Component<{}, IState> {
         redireccionar: false,
         cargando:false,
         campos_incompletos:"",
-        error_servidor:false
+        error_servidor:false,
+        //marcas_impresoras:[]
+
     }
   }
+
+  /*
+  componentDidMount = () => {
+    AxiosImpresora.mostrar_marcas_impresoras().then(res => {
+      //let marcas = [];
+      //marcas.push(res.data);
+      console.log("RESPUESTA:",res.data);
+      console.log("RESPUESTA 4:",departamentosCustodia);
+
+      this.setState({
+        marcas_impresoras:res.data
+      }); 
+
+      console.log("DATA:",this.state.marcas_impresoras);
+
+    }).catch(err => {
+      //console.log(err);
+      this.setState({
+        cargando:false,
+        error_servidor:true,
+      });
+    });
+  }*/
+
+  
+
 
   onChangeInput = (e:any) =>{
     const { name, value } = e.target;
@@ -121,8 +162,12 @@ export default class FormImpresora extends Component<{}, IState> {
 
   verificar=()=>{
     let json=this.state.data.printer;
-    let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
-    let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","encargado_registro","descripcion"];
+    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
+    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","encargado_registro","descripcion"];
+
+    let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Observación"];
+    let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","descripcion"];
+
 
     if(json!==undefined){
       if(Object.keys(json).length!==lista_campos_completos.length){
@@ -175,7 +220,7 @@ export default class FormImpresora extends Component<{}, IState> {
 
 
     let json=this.state.data.printer;
-    console.log("JSON:",json);
+    console.log("JSON ACTUALIZADO:",json);
     console.log("Longitud:",Object.keys(json).length);
 
     AxiosImpresora.crear_impresora(json).then(res => {
@@ -211,6 +256,7 @@ export default class FormImpresora extends Component<{}, IState> {
 
   }  
 
+  /*
   sendData = () => {
 
     let json=this.state.data.printer;
@@ -231,18 +277,25 @@ export default class FormImpresora extends Component<{}, IState> {
     console.log(json);
     axios.post('http://localhost:8000/api/impresora', json)
     .then(function (response:any) {
-      console.log("JSON:",response);
+      console.log("JSON DE INFORMACION:",response);
     })
     .catch(function (error:any) {
       console.log("ERROR2:",error);
     });
-  }
+  }*/
   
 
   render(){
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
       return (<Redirect to="/Equipos" />);
-  }
+  
+      
+
+
+    }
+    
+    
+
     return (      
       <IonPage>     
       <IonToolbar color="danger">
@@ -374,7 +427,17 @@ export default class FormImpresora extends Component<{}, IState> {
               <IonList lines="full" class="ion-no-margin ion-no-padding">
                 <IonItem>
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.marca" type="text" ></IonInput>
+                  
+                  <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
+                    {marcas_impresoras.map((object:any, i:any) => {
+                      return (
+                        <IonSelectOption key={object.id} value={object.id}>
+                          {object.id}
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+
                 </IonItem>
                 <IonItem>
                   <IonLabel position="stacked">Código <IonText color="danger">*</IonText></IonLabel>
@@ -432,11 +495,15 @@ export default class FormImpresora extends Component<{}, IState> {
                     })}
                   </IonSelect>
                 </IonItem>
+                
+                {/*
                 <IonItem>
                   <IonLabel position="stacked">Encargado del registro <IonText color="danger">*</IonText></IonLabel>
                   <IonInput onIonChange={this.onChangeInput} name="printer.encargado_registro" required type="text" ></IonInput>
                 </IonItem>
-                <IonItem>
+               
+                */}
+                 <IonItem>
                   <IonLabel position="stacked">Observación</IonLabel>
                   <IonTextarea onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
                 </IonItem>
