@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -10,22 +10,9 @@ import AxiosCorreo from '../services/Axios.services';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { IonList, IonItem, IonLoading, IonIcon, IonAlert, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+import  IState  from "./GlobalPC";
+import GlobalPC  from "./GlobalPC";
 
-interface IState {
-    showLoading: any;
-    expanded: any;
-    setExpanded: any;
-    data: any;
-    errorMsj: any;
-    confirmMsj: any;
-    errorHeader: any;
-    confirmHeader: any;
-    showAlertError: any;
-    showAlertConfirm: any;
-    showAlertSuccess: any;
-    ramTabs: any;
-    backAction:any;
-}
 
 
 export default class FormPCDesk extends Component<{}, IState> {
@@ -45,67 +32,32 @@ export default class FormPCDesk extends Component<{}, IState> {
             confirmHeader: '',
             showAlertError: Boolean,
             showAlertConfirm: Boolean,
-            ramTabs: ['cpu-memoria_ram_1']
+            ramTabs: ['cpu-memoria_ram_1'],
+            storageTabs: ['cpu-disco_duro_1']
         }
     }
 
 
 
 
-    handleChange = (panel: number) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
-
-        this.setState({
-            expanded: !isExpanded ? -1 : panel,
-
-        });
-    };
-
-    nextTab = () => {
-        this.setState({
-            expanded: this.state.expanded + 1
-
-        });
-    }
-
-
-    onChangeCodInput = (e: any) => {
-        const { name, value } = e.target;
-        this.setState({
-            data: {
-                ...this.state.data,
-                [name]: value
-            }
-        });
-    }
-    onChangeInput = (e: any) => {
-        const { name, value } = e.target;
-        let val = name.split(".");
-        this.setState({
-            data: {
-                ...this.state.data,
-                [val[0]]: {
-                    ...this.state.data[val[0]],
-                    [val[1]]: value
-                }
-            }
-        });
-
-
-    }
+    
 
     validarData = () => {
-        console.log('analisis',this.state.ramTabs);
-        console.log('analisis',this.state.data);
+        console.log('analisis', this.state.ramTabs);
+        console.log('analisis', this.state.data);
         let dataCopy = this.state.data;
         let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'cpu-disco_duro', 'pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse', 'cpu-tarjeta_madre', 'cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder'];
-        let indValues = ['marca', 'modelo', 'num_serie'];
-        let valuesTM = ['ram_soportada', 'num_slots'];
+        let formValues = ['pc-codigo', 'pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse', 'cpu-tarjeta_madre', 'cpu-tarjeta_red','cpu-procesador', 'cpu-case', 'cpu-fuente_poder'];
+        let indValues = ['marca', 'modelo', 'num_serie', "codigo"];
+        let valuesTM = ['ram_soportada', 'num_slots','disc_conect'];
         let valuesRD = ['tipo', 'capacidad'];
+        let valuesP = ['frecuencia','nucleos'];
         let ramSoportada = 0;
         let slotsTotal = 0;
         let ramTotal = 0;
+        let discConect=0;
         formValues = formValues.concat(this.state.ramTabs);
+        formValues = formValues.concat(this.state.storageTabs);
 
         for (var _i = 0; _i < formValues.length; _i++) {
             if (arrPrincipal.indexOf(formValues[_i]) < 0) {
@@ -114,7 +66,7 @@ export default class FormPCDesk extends Component<{}, IState> {
         }
 
         for (var _k = 0; _k < arrPrincipal.length; _k++) {
-            
+
             if (arrPrincipal[_k] === 'pc-codigo') {
                 if (dataCopy[arrPrincipal[_k]].length <= 0) return 'Debe ingresar el Codigo del Equipo';
             }
@@ -132,26 +84,33 @@ export default class FormPCDesk extends Component<{}, IState> {
                 if ((Number(dataCopy[arrPrincipal[_k]]['ram_soportada']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['ram_soportada'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['ram_soportada']) <= 0)) return 'La Ram Soportada por la tarjeta Madre no es correcta. Deben ser numeros positivos pares multipos de 2. '
                 ramSoportada = Number(dataCopy[arrPrincipal[_k]]['ram_soportada']);
                 slotsTotal = Number(dataCopy[arrPrincipal[_k]]['num_slots']);
-                
+                discConect = Number(dataCopy[arrPrincipal[_k]]['disc_conect']);
             }
 
 
 
-            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !==-1) {
+            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1||arrPrincipal[_k].indexOf('cpu-disco_duro') !== -1) {  
                 for (var _r = 0; _r < valuesRD.length; _r++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesRD[_r]) < 0) return 'Debe ingresar datos en el campo ' + valuesRD[_r].replace('_', ". ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
-                if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
-               
-                if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !==-1 ) {
+
+                if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
+                    if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
                     ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
-                    
+
                 }
-                    
+
+            }
+            if (arrPrincipal[_k].indexOf('cpu-procesador') !== -1) {  
+                for (var _m = 0; _m < valuesP.length; _m++) {
+                    if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesP[_m]) < 0) return 'Debe ingresar datos en el campo ' + valuesP[_m].replace('_', ". ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
+                }
+                
+
             }
         }
 
-        
+
 
         if (slotsTotal < this.state.ramTabs.length) {
             return 'La cantidad de Tarjetas de Memoria Ram no coinciden con La cantidad de Slots Disponibles en la Tarjeta Madre.'
@@ -160,44 +119,30 @@ export default class FormPCDesk extends Component<{}, IState> {
             return 'La Memoria(s) Ram ingresadas sobre pasan la capacidad de la Tarjeta Madre.'
 
         }
+        if(discConect<this.state.storageTabs.length){
+            return 'La cantidad de Discos Duro no coinciden con La cantidad de Conexiones Disponibles en la Tarjeta Madre.'
+        }
 
         return '';
     }
 
-    saveHandler = () => {
-        let msj = this.validarData();
-        console.log(msj)
-        if (msj === '') {
-            this.setState({
-                showAlertConfirm: true,
-                confirmHeader: 'Confirmacion'
-            });
-            console.log(this.state.data)
-        }
-        else {
-            this.setState({
-                errorMsj: msj,
-                showAlertError: true,
-                errorHeader: 'Error'
-            });
-        }
+    
 
 
+    
+
+    
+
+    addTabStorage = () => {
+        let newTab = 'cpu-disco_duro_' + (this.state.storageTabs.length + 1);
+        this.setState((prevState) => ({ storageTabs: [...prevState.storageTabs, newTab] }));
     }
 
-    addRamTab = () => {
-        let newTab = 'cpu-memoria_ram_' + (this.state.ramTabs.length + 1);
-        this.setState((prevState) => ({ ramTabs: [...prevState.ramTabs, newTab] }));
-    }
-
-    removeRamTab = (index: any) => {
-        console.log(index)
-        let tab = 'cpu-memoria_ram_'+(index+1);
-        console.log(tab)
+    removeTabStorage = (index: any) => {
+        let tab = 'cpu-disco_duro_' + (index + 1);
         let dataCopy = Object.assign({}, this.state.data);
         delete dataCopy[tab];
-        console.log(dataCopy)
-        this.setState((prevState) => ({ ramTabs: prevState.ramTabs.filter((value:any)=>{return value !== tab }), data: dataCopy}));
+        this.setState((prevState) => ({ storageTabs: prevState.storageTabs.filter((value: any) => { return value !== tab }), data: dataCopy }));
     }
 
     sendData = () => {
@@ -208,7 +153,7 @@ export default class FormPCDesk extends Component<{}, IState> {
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosCorreo.crear_desktop( this.state.data).then(response => {
+        AxiosCorreo.crear_desktop(this.state.data).then(response => {
             this.setState({
                 showLoading: false,
                 showAlertSuccess: true
@@ -223,7 +168,7 @@ export default class FormPCDesk extends Component<{}, IState> {
             if (err.response.status !== 400) {
                 msj = 'Error ' + err.response.status;
                 header = 'Error en el servidor. Intente mas tarde.';
-                
+
             } else {
                 let errorResp = err.response.data.log;
                 if (errorResp.length < 2) {
@@ -233,7 +178,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                 else {
                     msj = errorResp[1];
                     header = errorResp[0] + ' (Error ' + err.response.status + ')';
-                    
+
                 }
             }
             this.setState({
@@ -252,6 +197,58 @@ export default class FormPCDesk extends Component<{}, IState> {
         if (!this.state.showAlertSuccess || this.state.backAction) {
             return (<Redirect to="/tiposequiposinventario" />);
         }
+
+        const storagetabs = this.state.storageTabs.map((value: any, index: any) => {
+            return (
+                <IonRow key={index} class="ion-text-center">
+
+                    <IonCol>
+                        <IonList lines="full" className="ion-no-margin ion-no-padding">
+                            <IonItem className="root" >
+                                <IonGrid>
+                                    <IonRow className="root" >
+                                        <IonCol size="10">
+                                            <b><IonText color="danger">{'Disco Duro ' + (index + 1)}</IonText></b>
+                                        </IonCol>
+                                        <IonCol size="2" >
+                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { this.removeTabStorage(index) }} />
+                                        </IonCol>
+                                    </IonRow>
+                                </IonGrid>
+                            </IonItem>
+                            <IonItem >
+                                <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.codigo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem >
+                                <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.marca'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.modelo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.num_serie'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.capacidad'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Descripcion</IonLabel>
+                                <IonInput type="text" className="root" name={value + '.descripcion'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                        </IonList>
+                    </IonCol>
+                </IonRow>
+            );
+        });
         const ramtabs = this.state.ramTabs.map((value: any, index: any) => {
             return (
 
@@ -261,38 +258,42 @@ export default class FormPCDesk extends Component<{}, IState> {
                             <IonItem className="root" >
                                 <IonGrid>
                                     <IonRow className="root" >
-                                        <IonCol size = "10">
+                                        <IonCol size="10">
                                             <b><IonText color="danger">{'Memoria ' + (index + 1)}</IonText></b>
                                         </IonCol>
-                                        <IonCol size = "2" >
-                                            <IonIcon name='close' hidden = {index===0} size="small" onClick = {(e:any)=>{this.removeRamTab(index)}} />
+                                        <IonCol size="2" >
+                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { GlobalPC.removeTabRam(index,this) }} />
                                         </IonCol>
                                     </IonRow>
                                 </IonGrid>
                             </IonItem>
                             <IonItem >
+                                <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput required type="text" className="root" name={value + '.codigo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                            </IonItem>
+                            <IonItem >
                                 <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.marca'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="text" className="root" name={value + '.marca'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.modelo'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="text" className="root" name={value + '.modelo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.num_serie'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="text" className="root" name={value + '.num_serie'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Capacidad<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="number" className="root" name={value + '.capacidad'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="number" className="root" name={value + '.capacidad'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Descripcion</IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.descripcion'} onIonChange={this.onChangeInput}></IonInput>
+                                <IonInput required type="text" className="root" name={value + '.descripcion'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                             </IonItem>
                         </IonList>
                     </IonCol>
@@ -311,7 +312,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                     <IonToolbar color="danger">
 
                         <IonButtons slot="start">
-                           <div onClick = {(e:any)=>{this.setState({backAction: true})}}> <IonBackButton defaultHref="/home" ></IonBackButton></div>
+                            <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>
                         </IonButtons>
                         <IonTitle>Equipos Informáticos</IonTitle>
                     </IonToolbar>
@@ -334,7 +335,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating" >Código<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required type="text" name='pc-codigo' onIonChange={this.onChangeCodInput} ></IonInput>
+                                            <IonInput required type="text" name='pc-codigo' onIonChange={(e:any)=>{GlobalPC.onChangeCodInput(e,this)}} ></IonInput>
                                         </IonItem>
 
 
@@ -342,7 +343,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                 </IonCol>
                             </IonRow>
                             <div>
-                                <ExpansionPanel expanded={this.state.expanded === 1} onChange={this.handleChange(1)}>
+                                <ExpansionPanel expanded={this.state.expanded === 1} onChange={(e:any)=>{GlobalPC.handleChange(1,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel1bh-header"
@@ -358,21 +359,25 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem>
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='pc-monitor.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-monitor.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-monitor.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-monitor.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-monitor.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-monitor.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-monitor.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-monitor.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='pc-monitor.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                     </IonList>
@@ -384,12 +389,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={this.handleChange(2)}>
+                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={(e:any)=>{GlobalPC.handleChange(2,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel2bh-header"
@@ -406,20 +411,24 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
                                                         <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='pc-teclado.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
+                                                        <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-teclado.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-teclado.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-teclado.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='pc-teclado.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-teclado.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-teclado.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-teclado.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='pc-teclado.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                     </IonList>
@@ -429,12 +438,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 3} onChange={this.handleChange(3)}>
+                                <ExpansionPanel expanded={this.state.expanded === 3} onChange={(e:any)=>{GlobalPC.handleChange(3,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel3bh-header"
@@ -450,21 +459,25 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='pc-parlantes.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-parlantes.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-parlantes.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-parlantes.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-parlantes.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-parlantes.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-parlantes.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-parlantes.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='pc-parlantes.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                     </IonList>
@@ -474,12 +487,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 4} onChange={this.handleChange(4)}>
+                                <ExpansionPanel expanded={this.state.expanded === 4} onChange={(e:any)=>{GlobalPC.handleChange(4,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -496,21 +509,25 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='pc-mouse.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-mouse.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-mouse.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-mouse.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-mouse.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-mouse.num_serie' onIonChange={this.onChangeInput} ></IonInput>
+                                                            <IonInput required type="text" className="root" name='pc-mouse.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}} ></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-mouse.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='pc-mouse.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -522,7 +539,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
@@ -532,7 +549,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                         <h2><b>CPU</b></h2>
                                     </IonLabel>
                                 </IonItem>
-                                <ExpansionPanel expanded={this.state.expanded === 5} onChange={this.handleChange(5)}>
+                                <ExpansionPanel expanded={this.state.expanded === 5} onChange={(e:any)=>{GlobalPC.handleChange(5,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -544,34 +561,39 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                         <IonGrid>
                                             <IonRow class="ion-text-center">
-                                                {/* <IonCol size="3">
-                                                    <img src={process.env.PUBLIC_URL + "/assets/img/desktop.png"} alt="" />
-                                                </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_madre.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Ram Soportada (GBs)<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.ram_soportada' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.ram_soportada' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Numero de slots para Ram<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.num_slots' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.num_slots' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
+                                                        <IonItem>
+                                                            <IonLabel position="floating">Numero de Conexiones para Disco Duro<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.disc_conect' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-tarjeta_madre.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-tarjeta_madre.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -583,12 +605,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 6} onChange={this.handleChange(6)}>
+                                <ExpansionPanel expanded={this.state.expanded === 6} onChange={(e:any)=>{GlobalPC.handleChange(6,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -602,13 +624,13 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-                                        <Button size="small" onClick={this.addRamTab}>Agregar Memoria Ram</Button>
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" onClick={(e:any)=>{GlobalPC.addTabRam(this)}}>Agregar Memoria Ram</Button>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 7} onChange={this.handleChange(7)}>
+                                <ExpansionPanel expanded={this.state.expanded === 7} onChange={(e:any)=>{GlobalPC.handleChange(7,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -619,35 +641,63 @@ export default class FormPCDesk extends Component<{}, IState> {
 
 
                                         <IonGrid>
+                                            {storagetabs}
+                                        </IonGrid>
+
+
+
+                                    </ExpansionPanelDetails>
+                                    <ExpansionPanelActions>
+                                        {/* <Button size="small">Cancel</Button> */}
+                                        <Button size="small" onClick={this.addTabStorage}>Agregar Disco Duro</Button>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
+                                            Siguiente
+                                        </Button>
+                                    </ExpansionPanelActions>
+                                </ExpansionPanel>
+                                <ExpansionPanel expanded={this.state.expanded === 8} onChange={(e:any)=>{GlobalPC.handleChange(8,this)}}>
+                                    <ExpansionPanelSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        id="panel4bh-header"
+                                    >
+                                        <Typography >Procesador</Typography>
+                                    </ExpansionPanelSummary>
+                                    <ExpansionPanelDetails>
+
+
+                                        <IonGrid>
                                             <IonRow class="ion-text-center">
-                                                {/* <IonCol size="3">
-                                                    <img src={process.env.PUBLIC_URL + "/assets/img/desktop.png"} alt="" />
-                                                </IonCol> */}
+                                               
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput type="text" className="root" name='cpu-procesador.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-disco_duro.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-procesador.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-disco_duro.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-procesador.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-disco_duro.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-procesador.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
-                                                            <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-disco_duro.capacidad' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonLabel position="floating">Frecuencia<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
-                                                            <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-disco_duro.tipo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonLabel position="floating">Número de nucleos<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
+
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-disco_duro.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-procesador.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -658,13 +708,13 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-                                        {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                       
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 8} onChange={this.handleChange(8)}>
+                                <ExpansionPanel expanded={this.state.expanded === 9} onChange={(e:any)=>{GlobalPC.handleChange(9,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -676,27 +726,29 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                         <IonGrid>
                                             <IonRow class="ion-text-center">
-                                                {/* <IonCol size="3">
-                                                    <img src={process.env.PUBLIC_URL + "/assets/img/desktop.png"} alt="" />
-                                                </IonCol> */}
+                                              
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.descripcion' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-fuente_poder.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -708,12 +760,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 9} onChange={this.handleChange(9)}>
+                                <ExpansionPanel expanded={this.state.expanded === 10} onChange={(e:any)=>{GlobalPC.handleChange(10,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -730,22 +782,26 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-tarjeta_red.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-tarjeta_red.descripcion' onIonChange={this.onChangeInput} ></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-tarjeta_red.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}} ></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -757,12 +813,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 10} onChange={this.handleChange(10)}>
+                                <ExpansionPanel expanded={this.state.expanded === 11} onChange={(e:any)=>{GlobalPC.handleChange(11,this)}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -779,22 +835,26 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                                    <IonItem >
+                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput required type="text" className="root" name='cpu-case.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
+                                                        </IonItem>
                                                         <IonItem >
                                                             <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-case.marca' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-case.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-case.modelo' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-case.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='cpu-case.num_serie' onIonChange={this.onChangeInput}></IonInput>
+                                                            <IonInput required type="text" className="root" name='cpu-case.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
 
                                                         <IonItem>
                                                             <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='cpu-case.descripcion' onIonChange={this.onChangeInput} ></IonInput>
+                                                            <IonInput type="text" className="root" name='cpu-case.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}} ></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -806,7 +866,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
                                         {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" color="primary" onClick={this.nextTab}>
+                                        <Button size="small" color="primary" onClick={(e:any)=>{GlobalPC.nextTab(this)}}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
@@ -816,12 +876,12 @@ export default class FormPCDesk extends Component<{}, IState> {
                             </div>
                             <IonItem>
                                 <IonLabel position="floating" >Descripcion General<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" name='pc-descripcion' onIonChange={this.onChangeCodInput} ></IonInput>
+                                <IonInput required type="text" name='pc-descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeCodInput(e,this)}} ></IonInput>
                             </IonItem>
                             <br />
                             <IonRow class="ion-text-center">
                                 <IonCol>
-                                    <IonButton color="success" class="ion-no-margin" onClick={e => { this.saveHandler() }}>Guardar</IonButton>
+                                    <IonButton color="success" class="ion-no-margin" onClick={(e:any) => { GlobalPC.saveHandler(this.validarData(),this)}}>Guardar</IonButton>
                                     <IonLoading
                                         isOpen={this.state.showLoading}
 
@@ -887,7 +947,7 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                 </IonCol>
                                 <IonCol>
-                                    <IonButton color="danger" onClick = {(e:any)=>{this.setState({backAction: true})}} class="ion-no-margin">Cancelar</IonButton>
+                                    <IonButton color="danger" onClick={(e: any) => { this.setState({ backAction: true }) }} class="ion-no-margin">Cancelar</IonButton>
                                 </IonCol>
                             </IonRow>
                         </IonGrid>

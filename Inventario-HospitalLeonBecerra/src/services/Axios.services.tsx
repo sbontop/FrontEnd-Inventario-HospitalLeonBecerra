@@ -40,4 +40,6 @@ export default class AxiosCorreo {
     return AxiosCorreo.instanceAxios.post('/laptop',equipo);
   }
 
+
+  
 }
