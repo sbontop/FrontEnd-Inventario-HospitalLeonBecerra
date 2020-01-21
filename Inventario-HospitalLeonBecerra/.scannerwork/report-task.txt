@@ -1,6 +1,6 @@
-projectKey=my:AplicacionLeonBecerraFront
+projectKey=my:AplicacionLeonBecerra
 serverUrl=http://localhost:9000
 serverVersion=8.1.0.31237
-dashboardUrl=http://localhost:9000/dashboard?id=my%3AAplicacionLeonBecerraFront
-ceTaskId=AW818NMtBtz-mez2oe-J
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AW818NMtBtz-mez2oe-J
+dashboardUrl=http://localhost:9000/dashboard?id=my%3AAplicacionLeonBecerra
+ceTaskId=AW_G0z9UXUSSsKe5rXdh
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AW_G0z9UXUSSsKe5rXdh
