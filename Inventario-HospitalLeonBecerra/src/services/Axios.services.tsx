@@ -32,13 +32,7 @@ export default class AxiosCorreo {
     return AxiosCorreo.instanceAxios.get(`/buscar_empleado/${empleado}`);
   }
 
-  static crear_desktop = (equipo:any)=>{
-    return AxiosCorreo.instanceAxios.post('/desktop',equipo);
-  }
-
-  static crear_laptop = (equipo:any)=>{
-    return AxiosCorreo.instanceAxios.post('/laptop',equipo);
-  }
+  
 
 
   

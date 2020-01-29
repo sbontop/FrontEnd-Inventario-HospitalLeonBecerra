@@ -6,7 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import './style.css';
-import AxiosCorreo from '../services/Axios.services';
+
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { IonList, IonItem, IonLoading, IonIcon, IonAlert, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
@@ -114,52 +114,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
 
    
 
-    sendData = () => {
-
-
-
-        this.setState({
-            showLoading: true,
-            showAlertConfirm: false
-        })
-        AxiosCorreo.crear_laptop(this.state.data).then(response => {
-            this.setState({
-                showLoading: false,
-                showAlertSuccess: true
-
-            })
-
-            console.log(response);
-
-        }, err => {
-            let msj = '', header = '';
-            console.log(err.response.data);
-            if (err.response.status !== 400) {
-                msj = 'Error ' + err.response.status;
-                header = 'Error en el servidor. Intente mas tarde.';
-
-            } else {
-                let errorResp = err.response.data.log;
-                if (errorResp.length < 2) {
-                    msj = errorResp[0];
-                    header = 'Error ' + err.response.status;
-                }
-                else {
-                    msj = errorResp[1];
-                    header = errorResp[0] + ' (Error ' + err.response.status + ')';
-
-                }
-            }
-            this.setState({
-                showLoading: false,
-                errorMsj: msj,
-                errorHeader: header,
-                showAlertError: true
-            });
-
-        });
-
-    }
+   
 
     render() {
 
@@ -168,60 +123,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
         }
 
         
-        const ramtabs = this.state.ramTabs.map((value: any, index: any) => {
-            return (
-
-                <IonRow key={index} class="ion-text-center">
-                    <IonCol >
-                        <IonList lines="full" className="ion-no-margin ion-no-padding">
-                            <IonItem className="root" >
-                                <IonGrid>
-                                    <IonRow className="root" >
-                                        <IonCol size="10">
-                                            <b><IonText color="danger">{'Memoria ' + (index + 1)}</IonText></b>
-                                        </IonCol>
-                                        <IonCol size="2" >
-                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { GlobalPC.removeTabRam(index,this) }} />
-                                        </IonCol>
-                                    </IonRow>
-                                </IonGrid>
-                            </IonItem>
-                            <IonItem >
-                                <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.codigo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem >
-                                <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.marca'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.modelo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.num_serie'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Capacidad<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="number" className="root" name={value + '.capacidad'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Descripcion</IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.descripcion'} onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                            </IonItem>
-                        </IonList>
-                    </IonCol>
-                </IonRow>
-
-
-            );
-        });
-
+        
 
         return (
             <IonPage>
@@ -318,7 +220,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                     <ExpansionPanelDetails>
 
 
-                                        <IonGrid > {ramtabs}</IonGrid >
+                                        <IonGrid > {GlobalPC.generateRamForm(this)}</IonGrid >
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
@@ -328,7 +230,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={GlobalPC.handleChange(1,this)}>
+                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={GlobalPC.handleChange(2,this)}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -344,22 +246,9 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                                 </IonCol> */}
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
-                                                    <IonItem >
-                                                            <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-disco_duro.codigo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                                                        </IonItem>
-                                                        <IonItem >
-                                                            <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-disco_duro.marca' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                                                        </IonItem>
-                                                        <IonItem>
-                                                            <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-disco_duro.modelo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                                                        </IonItem>
-                                                        <IonItem>
-                                                            <IonLabel position="floating">Número de Serie<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="text" className="root" name='pc-disco_duro.num_serie' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                                                        </IonItem>
+
+                                                    {GlobalPC.generateGeneralForm("pc-disco_duro", this)}
+
                                                         <IonItem>
                                                             <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
                                                             <IonInput required type="text" className="root" name='pc-disco_duro.capacidad' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
@@ -367,10 +256,6 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                                         <IonItem>
                                                             <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
                                                             <IonInput required type="text" className="root" name='pc-disco_duro.tipo' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
-                                                        </IonItem>
-                                                        <IonItem>
-                                                            <IonLabel position="floating">Descripcion</IonLabel>
-                                                            <IonInput type="text" className="root" name='pc-disco_duro.descripcion' onIonChange={(e:any)=>{GlobalPC.onChangeInput(e,this)}}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -419,7 +304,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                             {
                                                 text: 'Si',
                                                 handler: () => {
-                                                    this.sendData();
+                                                    GlobalPC.sendData(1,this);
                                                 }
                                             }
                                         ]}
