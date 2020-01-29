@@ -8,5 +8,8 @@ export default class AxiosImpresora {
     return AxiosImpresora.instanceAxios.post(`/impresora`, impresora);
   }
 
+  static mostrar_marcas_impresoras = () => {
+    return AxiosImpresora.instanceAxios.get(`/marcas_impresoras`);
+  }
 
 }

@@ -18,7 +18,7 @@ interface IState {
   cargando:any;
   campos_incompletos:any;
   error_servidor:any;
-  //marcas_impresoras:any;
+  marcas_impresoras:any;
 }
 
 
@@ -54,21 +54,6 @@ const estadosImpresoras = [{id: 'Operativa'},
   },
   {
     id: 'Disponible',
-  }
-];
-
-const marcas_impresoras = [{id: 'HP'},
-  {
-    id: 'LG'
-  },
-  {
-    id: 'Samsung'
-  },
-  {
-    id: 'Lexmar',
-  },
-  {
-    id: 'Canon',
   }
 ];
 
@@ -114,14 +99,14 @@ export default class FormImpresora extends Component<{}, IState> {
         cargando:false,
         campos_incompletos:"",
         error_servidor:false,
-        //marcas_impresoras:[]
+        marcas_impresoras:[]
 
     }
   }
 
-  /*
+  
   componentDidMount = () => {
-    AxiosImpresora.mostrar_marcas_impresoras().then(res => {
+    AxiosImpresora.mostrar_marcas_impresoras().then((res:any) => {
       //let marcas = [];
       //marcas.push(res.data);
       console.log("RESPUESTA:",res.data);
@@ -133,14 +118,14 @@ export default class FormImpresora extends Component<{}, IState> {
 
       console.log("DATA:",this.state.marcas_impresoras);
 
-    }).catch(err => {
+    }).catch((err:any) => {
       //console.log(err);
       this.setState({
         cargando:false,
         error_servidor:true,
       });
     });
-  }*/
+  }
 
   
 
@@ -429,10 +414,10 @@ export default class FormImpresora extends Component<{}, IState> {
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
-                    {marcas_impresoras.map((object:any, i:any) => {
+                    {this.state.marcas_impresoras.map((object:any, i:any) => {
                       return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id}
+                        <IonSelectOption key={object.marca} value={object.marca}>
+                          {object.marca}
                         </IonSelectOption>
                       );
                     })}
