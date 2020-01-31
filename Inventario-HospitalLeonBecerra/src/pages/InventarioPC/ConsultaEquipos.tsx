@@ -11,39 +11,37 @@ interface IStateEq {
     filtro:any
     filtro_fecha:any
     busqueda:any
-    popOver: boolean
+    popOver: any
+    backAction: any;
+  
 }
 
-export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
+export default class ConsultarDesktop extends React.Component<{tipo:any}, IStateEq> {
     constructor(props: any) {
         super(props);
         this.state = {
             equipos: [],
-            data: {},
+            data: {
+                tipo:this.props.tipo
+            },
+            backAction: false,
             popOver:false,
             filtro: "codigo",
             busqueda:"",
-            filtro_fecha:"",
+            filtro_fecha:""
         }
+
+       
         
     }
 
     componentDidMount = ()=>{
+        console.log(this.props.tipo)
+        
         this.getEquipos();
     }
 
-    onChangeCodInput = (e: any) => {
-        let value = e.target.value;
-        console.log(value);
-
-        this.setState({
-            data: {
-                ...this.state.data,
-                [this.state.filtro]: value
-            }
-        });
-        console.log(this.state.data)
-    }
+    
 
     getEquipos = () => {
       
@@ -70,7 +68,7 @@ export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
                         <p>{"Fecha. Reg: " + value.fecha_registro}</p>
                     </IonLabel>
                     <IonThumbnail>
-                        <img src={process.env.PUBLIC_URL + "/assets/img/desktop.png"} alt="" />
+                        <img src={process.env.PUBLIC_URL + "/assets/img/"+this.props.tipo+".png"} alt="" />
                     </IonThumbnail>
 
 
@@ -79,6 +77,8 @@ export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
             );
         });
         return (
+
+
             <IonPage>
                 <br />
                 <IonHeader translucent>
@@ -88,7 +88,7 @@ export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
                         </IonButtons>
                         <IonTitle>Equipos informáticos</IonTitle>
                         <IonButtons slot="end">
-                            <IonButton routerLink="/formdesktop"><IonIcon icon={add}></IonIcon></IonButton>
+                            <IonButton routerLink={this.props.tipo==="desktop"?"/formdesktop":"/formlaptop"}><IonIcon icon={add}></IonIcon></IonButton>
                             <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
                         </IonButtons>
                         <IonPopover
@@ -104,7 +104,7 @@ export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
                                             filtro: e.detail.value, 
                                             busqueda:"",
                                             data:{
-                                            
+                                                "tipo":this.props.tipo,
                                                 [e.detail.value]: "",
                                                 "fecha":this.state.filtro_fecha
                                             }
@@ -121,7 +121,7 @@ export default class ConsultarDesktop extends React.Component<{}, IStateEq> {
                                         onIonChange={(e) => {this.setState({ 
                                             filtro_fecha: e.detail.value!==null&&e.detail.value!==undefined?e.detail.value.split("T")[0]:"",
                                             data:{
-                                            
+                                                "tipo":this.props.tipo,
                                                 [this.state.filtro]: this.state.busqueda,
                                                 "fecha":e.detail.value!==null&&e.detail.value!==undefined?e.detail.value.split("T")[0]:""
                                             }

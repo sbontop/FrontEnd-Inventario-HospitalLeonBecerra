@@ -61,16 +61,17 @@ const App: React.FC = () => (
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
-          <Route path="/consultdesk" component={ConsultarDesktop} exact={true} />
+          <Route path="/consultdesk" render={() => <ConsultarDesktop tipo="desktop" />} exact={true} />
+          <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo="laptop" />} exact={true} />
           <Route path="/formdesktop" component={FormPCDesk} exact={true} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
           <Route path="/homerouter" component={HomeRouter} exact={true} />
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
-          <Route path="/" render={() => <Redirect to="/home"/> } exact={true} />
+          <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
           <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
-        <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
+          <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>

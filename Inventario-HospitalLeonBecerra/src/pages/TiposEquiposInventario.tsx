@@ -26,7 +26,7 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                                 <h2>Computador desktop</h2>
                             </IonLabel> 
                         </IonItem>
-                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/formlaptop')}}>   
+                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/consultlaptop')}}>   
                             <IonThumbnail slot="start">
                                 <img src={process.env.PUBLIC_URL + "/assets/img/laptop.png"} alt="" />
                             </IonThumbnail>
