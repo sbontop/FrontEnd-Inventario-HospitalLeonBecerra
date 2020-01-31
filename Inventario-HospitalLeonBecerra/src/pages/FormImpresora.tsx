@@ -150,8 +150,11 @@ export default class FormImpresora extends Component<{}, IState> {
     //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
     //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","encargado_registro","descripcion"];
 
-    let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Observación"];
-    let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","descripcion"];
+    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Observación"];
+    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","descripcion"];
+
+    let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Tinta","Cartucho","BSPI-Punto","Observación"];
+    let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","tinta","cartucho","bspi","descripcion"];
 
 
     if(json!==undefined){
@@ -272,8 +275,8 @@ export default class FormImpresora extends Component<{}, IState> {
 
   render(){
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
-      return (<Redirect to="/Equipos" />);
-  
+      //return (<Redirect to="/Consulta" />);
+      return (<Redirect to="/opinveqinfo" />);
       
 
 
@@ -283,7 +286,7 @@ export default class FormImpresora extends Component<{}, IState> {
 
     return (      
       <IonPage>     
-      <IonToolbar color="primary">
+      <IonToolbar color="danger">
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
@@ -456,10 +459,12 @@ export default class FormImpresora extends Component<{}, IState> {
                     })}
                   </IonSelect>
                 </IonItem>
+                {/*
                 <IonItem>
                   <IonLabel position="stacked">Usuario <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.usuario" type="text" ></IonInput>
                 </IonItem>
+                */}
                 <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.tinta" type="text" ></IonInput>
