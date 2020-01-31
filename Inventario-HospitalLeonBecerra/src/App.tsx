@@ -15,6 +15,8 @@ import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import { desktop, list } from 'ionicons/icons';
+import Consulta from './pages/Consulta';
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -58,6 +60,7 @@ const App: React.FC = () => (
         <Menu appPages={appPages} />
         <IonRouterOutlet id="main">
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
+          <Route path="/consulta" component={Consulta} exact={true} />
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
