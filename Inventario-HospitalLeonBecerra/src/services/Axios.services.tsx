@@ -12,12 +12,8 @@ export default class AxiosCorreo {
     return AxiosCorreo.instanceAxios.get(`/empleados_dpto/{departamento}`);
   }  
 
-  static correo_por_fecha = (fecha: any) => {
-    return AxiosCorreo.instanceAxios.get(`/correos/${fecha}`);
-  }
-
-  static correo_por_fecha_dpto = (fecha: any, dpto: any) => {
-    return AxiosCorreo.instanceAxios.get(`/correos/${fecha}/${dpto}`);
+  static correo_por_filtro = (departamento:any, fecha_asignacion: any) => {
+    return AxiosCorreo.instanceAxios.get(`filtrar_correos/${departamento}/${fecha_asignacion}`);
   }
 
   static crear_correo = (correo: any) => {
