@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default class AxiosRouter {
   static instanceAxios = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
   });
 
   static obtener_organizaciones = () => {

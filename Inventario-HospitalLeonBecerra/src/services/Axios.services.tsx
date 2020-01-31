@@ -1,7 +1,7 @@
 import axios from 'axios';
 export default class AxiosCorreo {
   static instanceAxios = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
   });
 
   static mostrar_correos = () => {
