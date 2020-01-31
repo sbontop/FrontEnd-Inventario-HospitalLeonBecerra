@@ -9,7 +9,7 @@ import './style.css';
 
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { IonList, IonItem, IonLoading, IonIcon, IonAlert, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+import { IonList, IonItem, IonLoading, IonAlert, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
 import  IState  from "./GlobalPC";
 import GlobalPC  from "./GlobalPC";
 
@@ -130,7 +130,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
 
                 <IonHeader>
 
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>

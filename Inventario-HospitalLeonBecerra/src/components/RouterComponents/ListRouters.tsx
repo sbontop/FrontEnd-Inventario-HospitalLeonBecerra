@@ -1,5 +1,6 @@
 import React from 'react';
-import {IonItem,  IonLabel, IonRippleEffect, IonPopover, IonTitle, IonAvatar, IonList, IonButton} from '@ionic/react';
+import { trash } from 'ionicons/icons';
+import {IonItem,  IonLabel, IonRippleEffect, IonPopover, IonTitle, IonAvatar, IonList, IonIcon, IonButton} from '@ionic/react';
 
 interface RouterInterface {
   id_router: number,
@@ -13,7 +14,7 @@ interface RouterInterface {
 
 interface estados {
   ventanaDetalle: boolean
-};
+}
 
 class ListRouters extends React.Component<RouterInterface, estados, {history:any}>  {
   constructor(props: any) {
@@ -34,12 +35,12 @@ class ListRouters extends React.Component<RouterInterface, estados, {history:any
             <IonRippleEffect></IonRippleEffect> 
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
-          <IonButton onClick={() => console.log("Acción editar")} color="secondary" >
+          {/* <IonButton onClick={() => console.log("Acción editar")} color="secondary" >
             <div><img src="./assets/icon/edit.png"  alt="" /></div>
-          </IonButton>
-          <IonButton onClick={() => console.log("Acción eliminar")} color="primary">
-            <div><img src="./assets/icon/trash (2).png"  alt="" /></div>
-          </IonButton>
+          </IonButton> */}
+          {/* <IonButton onClick={() => console.log("Acción eliminar")} color="primary"> */}
+          <IonIcon icon={trash}></IonIcon>
+          {/* </IonButton> */}
         </IonItem>
         
         <IonPopover
@@ -73,6 +74,6 @@ class ListRouters extends React.Component<RouterInterface, estados, {history:any
       </IonList> 
     );
   }
-};
+}
 
 export default ListRouters;

@@ -14,8 +14,7 @@ import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import FormPCLaptop from "./pages/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import List from './pages/List';
-import { home, list } from 'ionicons/icons';
+import { desktop, list } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -40,14 +39,14 @@ import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
 
 const appPages: AppPage[] = [
   {
-    title: 'Home',
-    url: '/home',
-    icon: home
+    title: 'Inventario',
+    url: '/inventarios',
+    icon: list
   },
   {
-    title: 'List',
-    url: '/home/list',
-    icon: list
+    title: 'Registro de equipos',
+    url: '/tiposequiposinventario',
+    icon: desktop
   }
 ];
 
@@ -67,7 +66,6 @@ const App: React.FC = () => (
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
-          <Route path="/home/list" component={List} exact={true} />
           <Route path="/" render={() => <Redirect to="/home"/> } exact={true} />
           <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
         <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />

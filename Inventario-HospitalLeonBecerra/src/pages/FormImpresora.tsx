@@ -283,7 +283,7 @@ export default class FormImpresora extends Component<{}, IState> {
 
     return (      
       <IonPage>     
-      <IonToolbar color="danger">
+      <IonToolbar color="primary">
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>

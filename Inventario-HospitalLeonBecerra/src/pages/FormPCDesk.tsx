@@ -167,7 +167,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                 <IonGrid>
                                     <IonRow className="root" >
                                         <IonCol size="10">
-                                            <b><IonText color="danger">{'Disco Duro ' + (index + 1)}</IonText></b>
+                                            <b><IonText color="primary">{'Disco Duro ' + (index + 1)}</IonText></b>
                                         </IonCol>
                                         <IonCol size="2" >
                                             <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { this.removeTabStorage(index) }} />
@@ -198,7 +198,7 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                 <IonHeader>
 
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>

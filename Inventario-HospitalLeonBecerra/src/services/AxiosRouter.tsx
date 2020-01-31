@@ -20,4 +20,8 @@ export default class AxiosRouter {
   static crear_equipo_router = (equipo_router: any) => {
     return AxiosRouter.instanceAxios.post(`/crear_equipo_router`, equipo_router);
   }
+
+  static marcas_routers = () => {
+    return AxiosRouter.instanceAxios.get(`/marcas_routers`);
+  }
 }
