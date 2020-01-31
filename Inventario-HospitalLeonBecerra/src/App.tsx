@@ -6,12 +6,12 @@ import { AppPage } from './declarations';
 import Equipos from './pages/Equipos';
 import OpInvEqInfo from './pages/OpInvEqInfo'
 import Inventarios from './pages/Inventarios';
-import FormPCDesk from './pages/FormPCDesk';
+import FormPCDesk from './pages/InventarioPC/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
 import TiposEquiposInventario from './pages/TiposEquiposInventario';
 import HomeRouter from './pages/InventarioRouter/HomeRouter';
 import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
-import FormPCLaptop from "./pages/FormLaptop";
+import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import List from './pages/List';
@@ -37,6 +37,7 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import HomeCorreo from './pages/InventarioCorreo/HomeCorreo';
 import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
+import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
 
 const appPages: AppPage[] = [
   {
@@ -61,7 +62,8 @@ const App: React.FC = () => (
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
           <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
-          <Route path="/tabs" component={FormPCDesk} exact={true} />
+          <Route path="/consultdesk" component={ConsultarDesktop} exact={true} />
+          <Route path="/formdesktop" component={FormPCDesk} exact={true} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
           <Route path="/homerouter" component={HomeRouter} exact={true} />
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />

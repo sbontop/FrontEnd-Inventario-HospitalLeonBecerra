@@ -30,3 +30,14 @@
 .menuBtn{
   margin: 47px;
 }
+
+.search{
+    padding: '2px 4px';
+    display: 'flex';
+    width: 400;
+}
+
+.inputSearch{
+  margin-left: 1;
+  flex: 1,
+}

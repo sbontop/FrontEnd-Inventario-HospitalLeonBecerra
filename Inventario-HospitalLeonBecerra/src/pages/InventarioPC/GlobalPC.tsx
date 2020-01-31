@@ -1,6 +1,6 @@
 
 import React from 'react';
-import AxiosPC from '../services/AxiosPC';
+import AxiosPC from '../../services/AxiosPC';
 import { IonList, IonItem, IonIcon, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid} from '@ionic/react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';

@@ -19,4 +19,8 @@ export default class AxiosPC {
         }
         return AxiosPC.instanceAxios.post('/desktop',equipo);
       }
+
+      static getEquipos=(body:any)=>{
+        return AxiosPC.instanceAxios.post('/getdesktop',body);
+      }
 }

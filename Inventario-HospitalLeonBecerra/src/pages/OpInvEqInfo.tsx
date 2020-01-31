@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { IonList, IonItem, IonLabel, IonContent,IonThumbnail,IonRippleEffect ,IonHeader, IonPage, IonTitle, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
-import './style.css';
+import './InventarioPC/style.css';
 
 export default class OpInvEqInfo extends Component <{history:any}, any>{
 

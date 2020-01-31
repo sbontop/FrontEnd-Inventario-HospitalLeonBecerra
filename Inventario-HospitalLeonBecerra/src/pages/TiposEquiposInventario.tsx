@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { IonList, IonItem, IonLabel, IonContent, IonThumbnail, IonRippleEffect, IonHeader, IonPage, 
          IonTitle, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
-import './style.css';
+import './InventarioPC/style.css';
 
 export default class TiposEquiposInventario extends Component <{history:any}, any>{
     render() {
@@ -17,7 +17,7 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                 </IonHeader>
                 <IonContent fullscreen>
                     <IonList>
-                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/tabs')}}>
+                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/consultdesk')}}>
                             <IonRippleEffect></IonRippleEffect> 
                             <IonThumbnail slot="start">
                                 <img src={process.env.PUBLIC_URL + "/assets/img/pc.png"} alt="" />

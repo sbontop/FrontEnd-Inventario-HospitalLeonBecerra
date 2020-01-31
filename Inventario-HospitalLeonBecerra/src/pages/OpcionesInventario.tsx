@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { IonList, IonItem, IonLabel,IonThumbnail,IonRippleEffect } from '@ionic/react';
-import './style.css';
+import './InventarioPC/style.css';
 export default class OpcionesInventario extends Component <{history:any}, any>{
 
 
