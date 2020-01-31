@@ -11,7 +11,7 @@ const Inventarios: React.FC<RouteComponentProps> = (props) => {
 
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/"></IonBackButton>
+            <IonBackButton defaultHref="/home"></IonBackButton>
           </IonButtons>
           <IonTitle>Gestión de inventario</IonTitle>
         </IonToolbar>

@@ -130,7 +130,7 @@ export default class FormPCLaptop extends Component<{}, IState> {
 
                 <IonHeader>
 
-                    <IonToolbar color="danger">
+                    <IonToolbar color="primary">
 
                         <IonButtons slot="start">
                             <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>

@@ -1,7 +1,8 @@
-import {IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert,
-  IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonTextarea} from '@ionic/react';
+import {IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, 
+  IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonRow, IonCol, IonTextarea} from '@ionic/react';
 import React, { useState, useEffect } from 'react';
 import AxiosRouter from '../../services/AxiosRouter';
+import { Redirect } from 'react-router';
   
 const FormularioRouter: React.FC = () => {
   const [org, setOrg] = useState();
@@ -12,34 +13,33 @@ const FormularioRouter: React.FC = () => {
   const [clave, setClave] = useState();
   const [codigo, setCodigo] = useState();
   const [marca, setMarca] = useState();
+  const [marcas, setMarcas] = useState([] as any);
   const [modelo, setModelo] = useState();
   const [numero_serie, setNumero_serie] = useState();
   const [descripcion, setDescripcion] = useState();
   const [organizaciones, setOrganizaciones] = useState([] as any);
   const [departamentos, setDepartamentos] = useState([] as any);
-  const [alerta, setAlerta] = useState(false);
+  const [guardar, setGuardar] = useState(false);
   const [error, setError] = useState(false);
-  const [incompleto, setIncompleto] = useState(false);
+  const [redireccionar, setRedireccionar] = useState(false);
   
+
   useEffect(() => {
     AxiosRouter.obtener_organizaciones().then(res => {
-      console.log(res.data);
       setOrganizaciones(res.data); });    
   }, []);
 
   useEffect(() => {
     AxiosRouter.departamentos_por_organizacion(org).then(res => {
-      console.log(res.data);
       setDepartamentos(res.data); });    
   }, [org]);
   
-  const registrar = () => {
-    if (org === undefined || dpto === undefined || nombre === undefined || pass === undefined 
-      || usuario === undefined || clave === undefined || marca === undefined || modelo === undefined 
-      || numero_serie === undefined) {
-        setIncompleto(true);
-    } else {
-      
+  useEffect(() => {
+    AxiosRouter.marcas_routers().then(res => {
+      setMarcas(res.data); });    
+  }, []);
+
+  const registrar = () => {      
       let registro_equipo_router = {
         fecha_registro: new Date().toISOString().substr(0,10),
         estado_operativo: "disponible",
@@ -60,13 +60,19 @@ const FormularioRouter: React.FC = () => {
       }
 
       AxiosRouter.crear_equipo_router(registro_equipo_router).then(res => {
-        console.log(res);
-        setAlerta(true);
+        setGuardar(true);
       }).catch(err => {
-       // console.log(err);
         setError(true);
       });   
-    }
+  }
+
+  const volver_principal = () => {
+    setGuardar(false);
+    setRedireccionar(true);
+  }
+
+  if (redireccionar) {
+    return (<Redirect to="/homeRouter" />);
   }
 
     return (
@@ -89,10 +95,10 @@ const FormularioRouter: React.FC = () => {
           <IonItem>
               <IonLabel position="floating">Organización<IonText color="danger">*</IonText></IonLabel>
               <IonSelect value={org} onIonChange={(e) => setOrg(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                {organizaciones.map((org: any) => {
+                {organizaciones.map((organization: any) => {
                   return (
-                    <IonSelectOption key={org.id_organizacion} value={org.bspi_punto}>
-                      {org.bspi_punto} 
+                    <IonSelectOption key={organization.id_organizacion} value={organization.bspi_punto}>
+                      {organization.bspi_punto} 
                     </IonSelectOption>
                   );
                 })}
@@ -101,10 +107,10 @@ const FormularioRouter: React.FC = () => {
             <IonItem>
               <IonLabel position="floating">Departamento<IonText color="danger">*</IonText></IonLabel>
               <IonSelect value={dpto} onIonChange={(e) => setDpto(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                {departamentos.map((dpto: any) => {
+                {departamentos.map((depto: any) => {
                   return (
-                    <IonSelectOption key={dpto.id_departamento} value={dpto.nombre}>
-                      {dpto.nombre} 
+                    <IonSelectOption key={depto.id_departamento} value={depto.nombre}>
+                      {depto.nombre} 
                     </IonSelectOption>
                   );
                 })}
@@ -132,7 +138,15 @@ const FormularioRouter: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-              <IonInput required type="text" name="marca" value={marca} onIonChange={(e) => setMarca((e.target as HTMLInputElement).value)}  ></IonInput>
+              <IonSelect value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+                {marcas.map((m: any) => {
+                  return (
+                    <IonSelectOption key={m.marca} value={m.marca}>
+                      {m.marca} 
+                    </IonSelectOption>
+                  );
+                })}
+              </IonSelect>   
             </IonItem> 
             <IonItem>
               <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
@@ -146,24 +160,21 @@ const FormularioRouter: React.FC = () => {
               <IonLabel position="floating">Descripción</IonLabel>
               <IonTextarea name="descripcion" value={descripcion} onIonChange={(e) => setDescripcion((e.target as HTMLInputElement).value)}></IonTextarea>
             </IonItem>
-            <p className="ion-text-center">
-              <IonButton color="primary">Cancelar</IonButton>
-              <IonButton color="secondary" type="submit">Guardar</IonButton>
-            </p>
+            <IonRow class="ion-text-center">
+            <IonCol>
+              <IonButton type="submit" color="success" class="ion-no-margin">Guardar</IonButton>
+            </IonCol>
+            <IonCol>
+              <IonButton color="danger" routerLink="/homerouter" class="ion-no-margin">Cancelar</IonButton>          
+            </IonCol>
+          </IonRow> 
           </IonList>
         </form>
         <IonAlert
-          isOpen={alerta}
-          onDidDismiss={() => setAlerta(false)}
+          isOpen={guardar}
+          onDidDismiss={() => volver_principal()}
           header={'Guardado con éxito'}
           message={'Se ha guardado exitosamente el Router'}
-          buttons={['Aceptar']}
-        />
-        <IonAlert
-          isOpen={incompleto}
-          onDidDismiss={() => setIncompleto(false)}
-          header={'Debe asegurse de completar todos los campos'}
-          message={'colocar imagen'}
           buttons={['Aceptar']}
         />
         <IonAlert

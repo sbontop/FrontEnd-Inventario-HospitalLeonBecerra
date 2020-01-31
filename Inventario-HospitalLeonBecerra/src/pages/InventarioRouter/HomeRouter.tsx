@@ -1,36 +1,37 @@
 import React from 'react';
-import { IonContent, IonToolbar, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonSearchbar} from '@ionic/react';
-//import { connect } from 'react-redux';
-import ListItemsRouters from '../../components/RouterComponents/ListItemsRouters';
-//import { createAction } from 'typesafe-actions';
+import { IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, 
+  IonRefresher, IonRefresherContent, IonSearchbar} from '@ionic/react';
+import ListRouters from '../../components/RouterComponents/ListRouters';
+import { add } from 'ionicons/icons';
+import AxiosRouter from '../../services/AxiosRouter';
+import { RefresherEventDetail } from '@ionic/core';
 
-//class HomeRouter extends React.Component<any> {
-
-// export const setSearchText = createAction('fishes/SET_SEARCH_TEXT', resolve =>
-//   (searchText: string) => resolve(searchText)
-// /z/ );
-// const mapStateToProps = (state: any) => {
-//   //console.log(state);
-//      return { searchText: state.searchText  };
-//   };
-//   // const mapStateToProps = state => {
-//   //   return {
-//   //     text: state.app.searchText
-//   //   }
-//   // }
-//   const mapDispatchToProps = (dispatch: any) => {
-//      return {
-//     //  console.log(dispatch);
-//       //  setSearchText: (txt: string) => dispatch(PropTypes.setSearchText(txt)),
-//       //  startSearch: () => dispatch(PropTypes.search())
-      
-//   setSearchText: (searchText: string) => actions.fishes.setSearchText(searchText)
-//      };
-//   };  
+import { useState, useEffect } from 'react';
 
 const HomeRouter: React.FC = () => {
+  const [routers, setRouters] = useState([] as any);
   
-    return (
+  useEffect(() => {
+  AxiosRouter.listado_routers().then(res => {
+    setRouters(res.data); });    
+}, []);
+
+  const cargar_routers = () => {
+    AxiosRouter.listado_routers().then(res => {
+      setRouters(res.data); });    
+  }
+
+  function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+    console.log('Begin async operation');
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      cargar_routers();
+      event.detail.complete();
+
+    }, 2000);
+  }
+  return (
       <IonPage>
         <IonToolbar color="primary">
           <IonButtons slot="start">
@@ -38,11 +39,7 @@ const HomeRouter: React.FC = () => {
           </IonButtons>
           <IonTitle>Inventario de routers</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/formulariorouter"> 
-              <div>
-                <img src={process.env.PUBLIC_URL + "/assets/img/add.png"} alt="add" />
-              </div>
-            </IonButton>
+            <IonButton routerLink="/formulariorouter"><IonIcon icon={add}></IonIcon></IonButton>
           </IonButtons>
         </IonToolbar>
       
@@ -51,8 +48,28 @@ const HomeRouter: React.FC = () => {
           >
         </IonSearchbar>  
 
-        <IonContent className="ion-padding">
-          <ListItemsRouters/>
+        <IonContent>
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+        <IonRefresherContent
+          pullingIcon="arrow-dropdown"
+          pullingText="Pull to refresh"
+          refreshingSpinner="circles"
+          refreshingText="Actualizando...">
+        </IonRefresherContent>
+      </IonRefresher>
+
+          {routers.map((r: any)=>{
+            return (             
+              <ListRouters key={`${r.id_router}`} 
+              id_router={r.id_router} 
+              nombre={r.nombre} 
+              pass={r.pass} 
+              puerta_enlace={r.puerta_enlace}
+              usuario={r.usuario} 
+              clave={r.clave} 
+              id_equipo={r.id_equipo} />
+            )
+          })}
         </IonContent>
       </IonPage>
     );
