@@ -4,7 +4,7 @@ import {
 import React from 'react';
 import { options, add, build } from 'ionicons/icons';
 import AxiosPC from '../../services/AxiosPC'
-
+import { Redirect } from 'react-router-dom';
 interface IStateEq {
     equipos: any
     data: any
@@ -76,15 +76,18 @@ export default class ConsultarDesktop extends React.Component<{tipo:any}, IState
                 </IonItem>
             );
         });
+        if (this.state.backAction) {
+            return (<Redirect to="/tiposequiposinventario" />);
+        }
         return (
-
+            
 
             <IonPage>
                 <br />
                 <IonHeader translucent>
                     <IonToolbar color="primary">
                         <IonButtons slot="start">
-                            <IonBackButton defaultHref="/tab2" />
+                        <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>
                         </IonButtons>
                         <IonTitle>Equipos informáticos</IonTitle>
                         <IonButtons slot="end">
