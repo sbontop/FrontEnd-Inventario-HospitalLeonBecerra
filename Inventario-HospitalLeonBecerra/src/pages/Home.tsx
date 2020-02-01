@@ -34,15 +34,15 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
           <IonRow  class="row">
             <IonCol  size="6">     
               <IonButton color="primary" class="boton" routerLink="/inventarios" expand="block" size="large">
-              <div>
-                <img src={process.env.PUBLIC_URL + "/assets/img/inventory.png"} alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
-              </div>
+              <div className="margen">
+                <img src={process.env.PUBLIC_URL + "/assets/img/inventory.png"} className="responsive" alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
+              </div> 
               </IonButton>
             </IonCol>
             <IonCol size="6">
               <IonButton class="boton" routerLink="/tabs" expand="block" size="large">
-              <div>
-                <img src={process.env.PUBLIC_URL + "/assets/img/asignacion.png"} alt="" /><br/><br/><IonLabel>Asignación</IonLabel>   
+              <div className="margen">
+                <img src={process.env.PUBLIC_URL + "/assets/img/asignacion.png"} className="responsive"  alt="" /><br/><br/><IonLabel>Asignación</IonLabel>   
               </div>
               </IonButton>
             </IonCol>
@@ -50,15 +50,16 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
           <IonRow class="row">
             <IonCol size="6">
               <IonButton class="boton" routerLink="/formImpresora" expand="block" size="large">
-              <div>
-                <img src={process.env.PUBLIC_URL + "/assets/img/solicitud.png"} alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
+              <div className="margen">
+                <img src={process.env.PUBLIC_URL + "/assets/img/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
               </div>
               </IonButton>
             </IonCol>
             <IonCol size="6">
               <IonButton class="boton" expand="block" size="large">
-              <div>
-                <img src={process.env.PUBLIC_URL + "/assets/img/historial.png"} alt="" /><br/><br/><IonLabel>Mantenimiento</IonLabel>   
+              <div className="margen">
+                <img src={process.env.PUBLIC_URL + "/assets/img/historial.png"} className="responsive"  alt="" /><br/><br/>
+                <IonLabel>Mantenimiento</IonLabel>   
               </div>
               </IonButton>
             </IonCol>

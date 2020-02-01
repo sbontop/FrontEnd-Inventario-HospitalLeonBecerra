@@ -491,11 +491,11 @@ export default class Consulta extends Component<{}, IState> {
           
       return (      
         <IonPage>     
-          <IonToolbar color="danger">
+          <IonToolbar color="primary">
             <IonButtons slot="start">
-                <IonBackButton defaultHref="/home"></IonBackButton>
+                <IonBackButton defaultHref="/tiposequiposinventario"></IonBackButton>
             </IonButtons>
-            <IonTitle>Registro Impresoras</IonTitle>
+            <IonTitle>Inventario de Impresoras</IonTitle>
           </IonToolbar>
           <IonContent fullscreen>
           <IonLoading
@@ -514,7 +514,7 @@ export default class Consulta extends Component<{}, IState> {
           <IonHeader>
             <IonToolbar color="primary">
               <IonButtons slot="start">
-                <IonBackButton defaultHref="h" />
+                <IonBackButton defaultHref="tiposequipos inventario" />
               </IonButtons>
               <IonTitle >Inventario de Impresoras</IonTitle>
               <IonButtons slot="end">
@@ -589,7 +589,7 @@ export default class Consulta extends Component<{}, IState> {
   <IonHeader>
             <IonToolbar color="primary">
               <IonButtons slot="start">
-                <IonBackButton defaultHref="h" />
+                <IonBackButton defaultHref="tiposequiposinventario" />
               </IonButtons>
               <IonTitle >Inventario de Impresoras</IonTitle>
               <IonButtons slot="end">

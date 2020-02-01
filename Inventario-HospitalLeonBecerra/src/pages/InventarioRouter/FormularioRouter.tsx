@@ -79,7 +79,7 @@ const FormularioRouter: React.FC = () => {
     <IonPage>
       <IonToolbar color="primary">
         <IonButtons slot="start">
-            <IonBackButton defaultHref="/home"></IonBackButton>
+            <IonBackButton defaultHref="/homerouter"></IonBackButton>
         </IonButtons>
         <IonTitle>Agregar router</IonTitle>
         <IonButtons slot="end">
@@ -87,8 +87,19 @@ const FormularioRouter: React.FC = () => {
       </IonToolbar>
       <IonContent className="ion-padding">
         <IonToolbar class="ion-text-center">
-          <IonTitle>Nuevo router</IonTitle>
-          <p className="ion-text-center"><img src={process.env.PUBLIC_URL+"/assets/img/router.png"} alt=""/></p>
+        <IonRow class="ion-text-center">
+            <IonCol>
+              <img src={process.env.PUBLIC_URL+"/assets/img/router.png"} alt=""/>
+            </IonCol>
+            <IonCol>            
+              <IonList>
+                <IonItem>
+                  <IonLabel position="floating">Código<IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
+                </IonItem>             
+              </IonList>
+            </IonCol>
+          </IonRow>
         </IonToolbar>  
         <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">      
           <IonList>
@@ -131,10 +142,6 @@ const FormularioRouter: React.FC = () => {
             <IonItem>
               <IonLabel position="floating">Clave <IonText color="danger">*</IonText></IonLabel>
               <IonInput required type="text" name="clave" value={clave} onIonChange={(e) => setClave((e.target as HTMLInputElement).value)} ></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Código</IonLabel>
-              <IonInput type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>

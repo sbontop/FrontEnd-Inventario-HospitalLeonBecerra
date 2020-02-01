@@ -29,9 +29,9 @@ class ListRouters extends React.Component<RouterInterface, estados, {history:any
       <IonList>
         <IonItem className = "ion-activatable">
           <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
-            <p>{this.props.nombre}</p>
-            <p><small>Puerta enlace: {this.props.puerta_enlace}</small></p>
-            <p><small>Usuario: {this.props.usuario}</small></p>
+            <h2><b>{this.props.nombre}</b></h2>
+            <h3>Puerta enlace: {this.props.puerta_enlace}</h3>
+            <p>Usuario: {this.props.usuario}</p>
             <IonRippleEffect></IonRippleEffect> 
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
