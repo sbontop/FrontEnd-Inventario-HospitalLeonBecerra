@@ -1,5 +1,8 @@
 import {
+
     IonContent, IonToolbar, IonAvatar, IonTitle, IonInput,IonText, IonSelectOption,IonSelect,IonDatetime, IonRefresherContent, IonRefresher, IonLoading, IonHeader, IonPage, IonPopover, IonItem, IonIcon, IonLabel, IonButton, IonButtons, IonBackButton, IonList
+
+
 } from '@ionic/react';
 import React from 'react';
 import { options, add, trash } from 'ionicons/icons';
@@ -213,23 +216,6 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                             <IonList>
                                 <IonItem>
-                                    {/* <IonLabel>Buscar por</IonLabel>
-                                    <IonSelect okText="Ok" cancelText="Cancelar" name="filtro"
-                                        onIonChange={(e) => this.setState({
-
-                                            filtro: e.detail.value,
-                                            busqueda: "",
-                                            data: {
-                                                "tipo": this.props.tipo,
-                                                [e.detail.value]: "",
-                                                "fecha": this.state.filtro_fecha
-                                            }
-
-                                        })}>
-                                        <IonSelectOption value="codigo" selected>Codigo Equipo</IonSelectOption>
-                                        <IonSelectOption value="user" >Usuario Registro</IonSelectOption>
-                                        <IonSelectOption value="num_serie" >Numero de serie</IonSelectOption>
-                                    </IonSelect> */}
                                     <IonList>
                                     
                                         <IonItem>
@@ -249,7 +235,6 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                                 </IonItem>
                                 <IonItem hidden = {this.props.tipo!=="laptop"}>
                                 <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                                            {/* <IonInput required type="text" className="root" name='pc-marca' onIonChange={(e:any)=>{GlobalPC.onChangeCodInput(e,this)}}></IonInput> */}
                                             <IonSelect name='marca' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}>
                                                 {this.state.marcas.map((object: any, i: any) => {
                                                     return (
@@ -286,25 +271,6 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                     </IonToolbar>
 
                 </IonHeader>
-
-                {/* <IonSearchbar placeholder={"Buscar por " + (this.state.filtro === "codigo" ? "Codigo" : this.state.filtro === "user" ? "Usuario Registra" : "Numero de Serie") + " ..."} onIonChange={(e: any) => {
-                    this.setState({
-                        busqueda: e.target.value,
-                        data: {
-                            "tipo": this.props.tipo,
-                            [this.state.filtro]: e.target.value,
-                            "fecha": this.state.filtro_fecha
-                        }
-                    })
-                }} value={this.state.busqueda}
-                    onIonCancel={(e: any) => { this.getEquipos() }} cancelButtonIcon="md-search" showCancelButton="focus"
-                >
-                </IonSearchbar> */}
-
-
-
-
-
 
                 <IonContent >
 

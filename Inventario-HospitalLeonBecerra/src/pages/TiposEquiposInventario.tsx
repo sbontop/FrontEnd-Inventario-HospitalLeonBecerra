@@ -12,7 +12,11 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                         <IonButtons slot="start">
                             <IonBackButton defaultHref="/home"></IonBackButton>
                         </IonButtons>
+<<<<<<< HEAD
                         <IonTitle>Equipos Informaticos</IonTitle>
+=======
+                        <IonTitle>Equipos</IonTitle>
+>>>>>>> 739b6450760925bbe491b81adb53b2b4e9ef7b5c
                     </IonToolbar>
                 </IonHeader>
                 <IonContent fullscreen>

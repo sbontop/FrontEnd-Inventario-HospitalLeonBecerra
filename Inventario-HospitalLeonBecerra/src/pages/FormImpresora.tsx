@@ -286,11 +286,11 @@ export default class FormImpresora extends Component<{}, IState> {
 
     return (      
       <IonPage>     
-      <IonToolbar color="danger">
+      <IonToolbar color="primary">
         <IonButtons slot="start">
-            <IonBackButton defaultHref="/home"></IonBackButton>
+            <IonBackButton defaultHref="/tiposequiposinventario"></IonBackButton>
         </IonButtons>
-        <IonTitle>Registro Impresoras</IonTitle>
+        <IonTitle >Inventario de Impresoras</IonTitle>
       </IonToolbar>
       <IonContent fullscreen>
 
@@ -391,7 +391,7 @@ export default class FormImpresora extends Component<{}, IState> {
             <IonCol>            
               <IonList>
                 <IonItem>
-                  <IonLabel position="stacked">Número de serie <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Número de serie <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required type="text" name="printer.numero_serie" onIonChange={this.onChangeInput} ></IonInput>
                 </IonItem>               
               </IonList>
@@ -401,7 +401,7 @@ export default class FormImpresora extends Component<{}, IState> {
           <IonRow>
             <IonCol>
               <IonItem>
-                  <IonLabel position="stacked">Tipo <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Tipo <IonText color="danger">*</IonText></IonLabel>
                 <IonSelect name="printer.tipo" onIonChange={this.onChangeInput} >
                   {tiposImpresoras.map((object, i) => {
                     return (
@@ -414,7 +414,7 @@ export default class FormImpresora extends Component<{}, IState> {
               </IonItem>
               <IonList lines="full" class="ion-no-margin ion-no-padding">
                 <IonItem>
-                  <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Marca <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
                     {this.state.marcas_impresoras.map((object:any, i:any) => {
@@ -428,11 +428,11 @@ export default class FormImpresora extends Component<{}, IState> {
 
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">Código <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Código <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.codigo" type="text" ></IonInput>
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Estado <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect name="printer.estado_operativo" onIonChange={this.onChangeInput} >
                     {estadosImpresoras.map((object, i) => {
                       return (
@@ -444,11 +444,11 @@ export default class FormImpresora extends Component<{}, IState> {
                   </IonSelect>
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">Modelo <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Modelo <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.modelo" type="text" ></IonInput>
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">Departamento en custodia <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Departamento en custodia <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect name="printer.departamento" onIonChange={this.onChangeInput}>
                     {departamentosCustodia.map((object, i) => {
                       return (
@@ -466,15 +466,15 @@ export default class FormImpresora extends Component<{}, IState> {
                 </IonItem>
                 */}
                 <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Tinta <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.tinta" type="text" ></IonInput>
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">Cartucho <IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
                 </IonItem>
                 <IonItem>
-                  <IonLabel position="stacked">BSPI-Punto <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="floating">BSPI-Punto <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect name="printer.bspi" onIonChange={this.onChangeInput}>
                     {puntos.map((object, i) => {
                       return (
@@ -494,7 +494,7 @@ export default class FormImpresora extends Component<{}, IState> {
                
                 */}
                  <IonItem>
-                  <IonLabel position="stacked">Observación</IonLabel>
+                  <IonLabel position="floating">Observación</IonLabel>
                   <IonTextarea onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
                 </IonItem>
             </IonList>

@@ -4,7 +4,6 @@ import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AppPage } from './declarations';
 import Equipos from './pages/Equipos';
-import OpInvEqInfo from './pages/OpInvEqInfo'
 import Inventarios from './pages/Inventarios';
 import FormPCDesk from './pages/InventarioPC/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
@@ -14,7 +13,7 @@ import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import { desktop, list } from 'ionicons/icons';
+import { home, desktop, list } from 'ionicons/icons';
 import Consulta from './pages/Consulta';
 
 
@@ -42,6 +41,11 @@ import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
 import GlobalPC from './pages/InventarioPC/GlobalPC';
 
 const appPages: AppPage[] = [
+  {
+    title: 'Menú principal',
+    url: '/home',
+    icon: home
+  },
   {
     title: 'Inventario',
     url: '/inventarios',

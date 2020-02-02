@@ -27,9 +27,9 @@ class ListaCorreos extends React.Component<ICorreo, any>  {
       <IonList >
         <IonItem onClick={() => this.setState({ ventanaDetalle: true })}>
           <IonLabel>
-            <h2>Usuario: {this.props.nombres} {this.props.apellidos}</h2>
-            <p><small>Departamento: {this.props.departamento}</small></p>
-            <p><small>Correo: {this.props.correo}</small></p>
+            <h2><b>Usuario: {this.props.nombres} {this.props.apellidos}</b></h2>
+            <h3>Departamento: {this.props.departamento}</h3>
+            <small>{this.props.correo}</small>
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
           <IonIcon slot="end" icon={trash} ></IonIcon>
@@ -40,6 +40,9 @@ class ListaCorreos extends React.Component<ICorreo, any>  {
           onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
           <IonTitle className="ion-margin-top">Detalle</IonTitle>
           <IonList>
+          <IonItem>
+              <small>{this.props.correo}</small>
+            </IonItem>
             <IonItem>
               <IonLabel>Nombres: {this.props.nombres}</IonLabel>
             </IonItem>
