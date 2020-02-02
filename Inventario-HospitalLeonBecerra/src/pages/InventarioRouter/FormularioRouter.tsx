@@ -5,35 +5,21 @@ import AxiosRouter from '../../services/AxiosRouter';
 import { Redirect } from 'react-router';
   
 const FormularioRouter: React.FC = () => {
-  const [org, setOrg] = useState();
-  const [dpto, setDpto] = useState();
   const [nombre, setNombre] = useState();
   const [pass, setPass] = useState();
   const [usuario, setUsuario] = useState();
   const [clave, setClave] = useState();
   const [codigo, setCodigo] = useState();
-  const [marca, setMarca] = useState();
+  const [id_marca, setId_marca] = useState();
   const [marcas, setMarcas] = useState([] as any);
   const [modelo, setModelo] = useState();
   const [numero_serie, setNumero_serie] = useState();
   const [descripcion, setDescripcion] = useState();
-  const [organizaciones, setOrganizaciones] = useState([] as any);
-  const [departamentos, setDepartamentos] = useState([] as any);
   const [guardar, setGuardar] = useState(false);
   const [error, setError] = useState(false);
   const [redireccionar, setRedireccionar] = useState(false);
   
 
-  useEffect(() => {
-    AxiosRouter.obtener_organizaciones().then(res => {
-      setOrganizaciones(res.data); });    
-  }, []);
-
-  useEffect(() => {
-    AxiosRouter.departamentos_por_organizacion(org).then(res => {
-      setDepartamentos(res.data); });    
-  }, [org]);
-  
   useEffect(() => {
     AxiosRouter.marcas_routers().then(res => {
       setMarcas(res.data); });    
@@ -42,10 +28,10 @@ const FormularioRouter: React.FC = () => {
   const registrar = () => {      
       let registro_equipo_router = {
         fecha_registro: new Date().toISOString().substr(0,10),
-        estado_operativo: "disponible",
+        estado_operativo: "Disponible",
         codigo: codigo,
         tipo_equipo: "Router",
-        marca: marca,
+        id_marca: id_marca,
         modelo: modelo,
         numero_serie: numero_serie,
         descripcion: descripcion,
@@ -60,6 +46,7 @@ const FormularioRouter: React.FC = () => {
       }
 
       AxiosRouter.crear_equipo_router(registro_equipo_router).then(res => {
+        console.log("marca>",id_marca);
         setGuardar(true);
       }).catch(err => {
         setError(true);
@@ -103,30 +90,6 @@ const FormularioRouter: React.FC = () => {
         </IonToolbar>  
         <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">      
           <IonList>
-          <IonItem>
-              <IonLabel position="floating">Organización<IonText color="danger">*</IonText></IonLabel>
-              <IonSelect value={org} onIonChange={(e) => setOrg(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                {organizaciones.map((organization: any) => {
-                  return (
-                    <IonSelectOption key={organization.id_organizacion} value={organization.bspi_punto}>
-                      {organization.bspi_punto} 
-                    </IonSelectOption>
-                  );
-                })}
-              </IonSelect>    
-            </IonItem>      
-            <IonItem>
-              <IonLabel position="floating">Departamento<IonText color="danger">*</IonText></IonLabel>
-              <IonSelect value={dpto} onIonChange={(e) => setDpto(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                {departamentos.map((depto: any) => {
-                  return (
-                    <IonSelectOption key={depto.id_departamento} value={depto.nombre}>
-                      {depto.nombre} 
-                    </IonSelectOption>
-                  );
-                })}
-              </IonSelect> 
-            </IonItem>
             <IonItem>
               <IonLabel position="floating">Nombre<IonText color="danger">*</IonText></IonLabel>
               <IonInput required type="text" name="nombre" value={nombre} onIonChange={(e) => setNombre((e.target as HTMLInputElement).value)} ></IonInput>
@@ -145,11 +108,11 @@ const FormularioRouter: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-              <IonSelect value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+              <IonSelect value={id_marca} onIonChange={(e) => setId_marca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                 {marcas.map((m: any) => {
                   return (
-                    <IonSelectOption key={m.marca} value={m.marca}>
-                      {m.marca} 
+                    <IonSelectOption key={m.nombre} value={m.id_marca}>
+                      {m.nombre} 
                     </IonSelectOption>
                   );
                 })}

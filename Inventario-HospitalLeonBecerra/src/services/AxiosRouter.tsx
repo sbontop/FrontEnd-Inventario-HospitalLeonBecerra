@@ -5,14 +5,6 @@ export default class AxiosRouter {
     baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
   });
 
-  static obtener_organizaciones = () => {
-    return AxiosRouter.instanceAxios.get(`/organizaciones`);
-  }
-
-  static departamentos_por_organizacion = (bspi_punto: any) => {
-    return AxiosRouter.instanceAxios.get(`/org_dpto/${bspi_punto}`);
-  }
-
   static listado_routers = () => {
     return AxiosRouter.instanceAxios.get(`/listar_routers`);
   }
@@ -23,5 +15,9 @@ export default class AxiosRouter {
 
   static marcas_routers = () => {
     return AxiosRouter.instanceAxios.get(`/marcas_routers`);
+  }
+  
+  static filtro_router = (marca:any, fecha_registro: any) => {
+    return AxiosRouter.instanceAxios.get(`filtrar_routers/${marca}/${fecha_registro}`);
   }
 }

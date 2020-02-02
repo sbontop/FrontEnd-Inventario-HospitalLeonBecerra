@@ -13,6 +13,22 @@ const HomeRouter: React.FC = () => {
   const [marca, setMarca] = useState([] as any);
   const [showPopover, setShowPopover] = useState<{open: boolean}>({open: false});
   const [showLoading, setShowLoading] = useState(false);
+  const [fecha_registro, setFecha_registro] = useState([] as any);
+
+  const aplicar_filtros = () => {
+    AxiosRouter.filtro_router(marca, fecha_registro.substring(0, 10)).then(res => {
+      setRouters(res.data);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  const handle_aplicar = () => {
+    aplicar_filtros();
+    setFecha_registro("");
+    setMarca("");
+    setShowPopover({open: false})
+}
 
   setTimeout(() => {
     setShowLoading(false);
@@ -30,11 +46,10 @@ const HomeRouter: React.FC = () => {
   }, []);
 
   const cargar_routers = () => {
-    
     AxiosRouter.listado_routers().then(res => {
       setRouters(res.data); });    
   }
-
+  
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     setTimeout(() => {
       cargar_routers();
@@ -92,11 +107,12 @@ const HomeRouter: React.FC = () => {
         <IonList>
           <IonItem>
             <IonLabel>Marca</IonLabel>
-            <IonSelect value={marca} onIonChange={(e) => setMarca(e.detail.value)} name="marca" okText="Aceptar" cancelText="Cancelar" >
+            <IonSelect placeholder="Todas" name="Todas" value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+            <IonSelectOption selected>Todas</IonSelectOption>
             {marcas.map((m: any) => {
               return (
-                <IonSelectOption key={m.marca} value={m.marca}>
-                  {m.marca} 
+                <IonSelectOption key={m.id_marca} value={m.nombre}>
+                  {m.nombre} 
                 </IonSelectOption>
               );
             })}
@@ -104,14 +120,14 @@ const HomeRouter: React.FC = () => {
           </IonItem>
           <IonItem>
             <IonLabel>Fecha registro</IonLabel>
-            <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha" 
+            <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e) => setFecha_registro(e.detail.value)}
               placeholder="Fecha" displayFormat="DD/MM/YYYY"
             ></IonDatetime>
           </IonItem>
         </IonList>
         <div className="ion-text-center ion-margin">
           <IonButton onClick={() => setShowPopover({open: false})}>Cancelar</IonButton>
-          <IonButton >Aplicar</IonButton>
+          <IonButton onClick={() => handle_aplicar()}>Aplicar</IonButton>
         </div > 
       </IonPopover>
     </IonPage>  

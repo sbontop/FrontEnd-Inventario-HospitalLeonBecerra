@@ -4,7 +4,6 @@ import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AppPage } from './declarations';
 import Equipos from './pages/Equipos';
-import OpInvEqInfo from './pages/OpInvEqInfo'
 import Inventarios from './pages/Inventarios';
 import FormPCDesk from './pages/InventarioPC/FormPCDesk';
 import FormImpresora from './pages/FormImpresora';
@@ -14,7 +13,7 @@ import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import { desktop, list } from 'ionicons/icons';
+import { home, desktop, list } from 'ionicons/icons';
 import Consulta from './pages/Consulta';
 
 
@@ -42,6 +41,11 @@ import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
 
 const appPages: AppPage[] = [
   {
+    title: 'Menú principal',
+    url: '/home',
+    icon: home
+  },
+  {
     title: 'Inventario',
     url: '/inventarios',
     icon: list
@@ -62,7 +66,6 @@ const App: React.FC = () => (
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
           <Route path="/consulta" component={Consulta} exact={true} />
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
-          <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} />
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/consultdesk" render={() => <ConsultarDesktop tipo="desktop" />} exact={true} />
           <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo="laptop" />} exact={true} />
