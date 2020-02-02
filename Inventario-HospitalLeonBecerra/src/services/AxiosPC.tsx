@@ -23,4 +23,8 @@ export default class AxiosPC {
       static getEquipos=(body:any)=>{
         return AxiosPC.instanceAxios.post('/getdesktop',body);
       }
+
+      static mostrar_marcas= () => {
+        return AxiosPC.instanceAxios.get(`/marcas_impresoras`);
+      }
 }

@@ -27,7 +27,7 @@ export default class OpcionesInventario extends Component <{history:any}, any>{
                         <h2>Inventario por Correo de Usuario</h2>
                     </IonLabel>
                 </IonItem>
-                <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/opinveqinfo')}}>
+                <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/tiposequiposinventario')}}>
                     <IonRippleEffect></IonRippleEffect>
                     <IonThumbnail slot="start">
                         <img src={process.env.PUBLIC_URL+"/assets/img/website.png"} alt="" />

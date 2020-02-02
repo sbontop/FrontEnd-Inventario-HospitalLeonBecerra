@@ -24,6 +24,7 @@ export default class FormPCDesk extends Component<{}, IState> {
             expanded: Number,
             setExpanded: false,
             data: {},
+            marcas:[],
             showLoading: Boolean,
             errorMsj: '',
             confirmMsj: '',
@@ -39,7 +40,9 @@ export default class FormPCDesk extends Component<{}, IState> {
     static pcList = ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse'];
     static cpuList = ['cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder']
 
-
+    componentDidMount = () =>{
+        GlobalPC.getMarcas(this);
+    }
 
 
 
@@ -154,7 +157,7 @@ export default class FormPCDesk extends Component<{}, IState> {
     render() {
 
         if (!this.state.showAlertSuccess || this.state.backAction) {
-            return (<Redirect to="/tiposequiposinventario" />);
+            return (<Redirect to="/consultdesk" />);
         }
 
         const storagetabs = this.state.storageTabs.map((value: any, index: any) => {

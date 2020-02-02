@@ -1,5 +1,7 @@
 {
   "name": "Inventario-HospitalLeonBecerra",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react"
 }
