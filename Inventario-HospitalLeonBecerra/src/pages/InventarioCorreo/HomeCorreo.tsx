@@ -1,6 +1,6 @@
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons, IonButton, IonContent, IonPopover, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime,
-  IonIcon, IonLoading, IonRefresher, IonRefresherContent
+  IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar
 } from '@ionic/react';
 import React from 'react';
 import { options, add } from 'ionicons/icons';
@@ -20,6 +20,7 @@ class HomeCorreo extends React.Component<any, any> {
       filtro_fecha: "",
       datos: [] as any,
       showLoading: false,
+      filtro_empleado: ""
     }
   }
 
@@ -50,6 +51,16 @@ class HomeCorreo extends React.Component<any, any> {
   aplicar_filtros = () => {
     this.setState({ showLoading: true });
     AxiosCorreo.correo_por_filtro(this.state.filtro_dpto, this.state.filtro_fecha.substring(0, 10)).then(res => {
+      this.setState({ datos: res.data, showLoading: false });
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+
+  buscar_por_empleado = () => {
+    this.setState({ showLoading: true });
+    AxiosCorreo.empleado_por_filtro(this.state.filtro_empleado).then(res => {
       this.setState({ datos: res.data, showLoading: false });
     }).catch(err => {
       console.log(err);
@@ -108,6 +119,10 @@ class HomeCorreo extends React.Component<any, any> {
             <IonRefresherContent refreshingSpinner="bubbles">
             </IonRefresherContent>
           </IonRefresher>
+          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_por_empleado} onIonChange={(e) => this.setState({ filtro_empleado: (e.target as HTMLInputElement).value })}
+            cancelButtonIcon="md-search" showCancelButton="focus">
+          </IonSearchbar>
+
           <IonLoading
             isOpen={this.state.showLoading}
             message={'Cargando datos. Espere por favor...'}
@@ -116,7 +131,7 @@ class HomeCorreo extends React.Component<any, any> {
           {this.state.datos.map((dato: any) => {
             return (
               <ListaCorreos key={dato.correo} nombres={dato.nombre} apellidos={dato.apellido} departamento={dato.departamento}
-                correo={dato.correo} estado={dato.estado} fecha_asignacion={dato.created_at} bspi_punto={dato.bspi_punto} />
+                correo={dato.correo} estado={dato.estado} fecha_asignacion={dato.asignacion} bspi_punto={dato.bspi_punto} />
             )
           })
           }
