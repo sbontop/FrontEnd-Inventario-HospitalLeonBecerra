@@ -530,8 +530,8 @@ export default class Consulta extends Component<{}, IState> {
                   <IonItem>
                     <IonLabel>Marca</IonLabel>
                     <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
-                    {this.state.marcas_impresoras.map((object:any, i:any) => {
                     <IonSelectOption key={"Todos"} value={"Todos"} selected>Todos</IonSelectOption>
+                    {this.state.marcas_impresoras.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.marca}>
                           {object.marca}
@@ -605,8 +605,9 @@ export default class Consulta extends Component<{}, IState> {
                   <IonItem>
                   <IonLabel>Marca</IonLabel>
                     <IonSelect name="printer.marca" onIonChange={(e) => this.setState({filtro_marca:(e.target as HTMLInputElement).value})} >
+                    <IonSelectOption key={"Todos"} value={"Todos"} selected>Todos</IonSelectOption>
                     {this.state.marcas_impresoras.map((object:any, i:any) => {
-                      <IonSelectOption key={"Todos"} value={"Todos"} selected>Todos</IonSelectOption>
+                      
                       return (
 
                         <IonSelectOption key={object.marca} value={object.marca}>
