@@ -244,8 +244,8 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                                             <IonSelect name='marca' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}>
                                                 {this.state.marcas.map((object: any, i: any) => {
                                                     return (
-                                                        <IonSelectOption key={object.marca} value={object.marca}>
-                                                            {object.marca}
+                                                        <IonSelectOption key={object.id_marca} value={object.id_marca}>
+                                                            {object.nombre}
                                                         </IonSelectOption>
                                                     );
                                                 })}

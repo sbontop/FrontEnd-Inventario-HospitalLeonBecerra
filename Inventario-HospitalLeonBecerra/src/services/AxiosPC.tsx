@@ -25,6 +25,6 @@ export default class AxiosPC {
       }
 
       static mostrar_marcas= () => {
-        return AxiosPC.instanceAxios.get(`/marcas_impresoras`);
+        return AxiosPC.instanceAxios.get(`/listado_marcas`);
       }
 }

@@ -180,8 +180,8 @@ export default class FormPCLaptop extends Component<{}, IState> {
                                             <IonSelect name='pc-marca' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}>
                                                 {this.state.marcas.map((object: any, i: any) => {
                                                     return (
-                                                        <IonSelectOption key={object.marca} value={object.marca}>
-                                                            {object.marca}
+                                                        <IonSelectOption key={object.id_marca} value={object.id_marca}>
+                                                            {object.nombre}
                                                         </IonSelectOption>
                                                     );
                                                 })}

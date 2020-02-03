@@ -268,8 +268,8 @@ export default class GlobalPC {
                     <IonSelect name={value + '.marca'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}>
                         {obj.state.marcas.map((object: any, i: any) => {
                             return (
-                                <IonSelectOption key={object.marca} value={object.marca}>
-                                    {object.marca}
+                                <IonSelectOption key={object.id_marca} value={object.id_marca}>
+                                    {object.nombre}
                                 </IonSelectOption>
                             );
                         })}
