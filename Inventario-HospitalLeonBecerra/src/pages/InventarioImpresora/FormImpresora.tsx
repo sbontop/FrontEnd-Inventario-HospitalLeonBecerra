@@ -902,7 +902,7 @@ export default class FormImpresora extends Component<{}, IState> {
                 */}
                 
                  <IonItem>
-                  <IonLabel position="stacked">Observación</IonLabel>
+                  <IonLabel position="stacked">Descripción</IonLabel>
                   <IonTextarea onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
                 </IonItem>
             </IonList>
