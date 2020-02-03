@@ -17,10 +17,6 @@ export default class AxiosIp {
   static filtrar_ip = (direccion_ip: any) => {
       return AxiosIp.instanceAxios.get(`/filtrar_ip/${direccion_ip}`);
   }
-
-  static marcas_ips = () => {
-    return AxiosIp.instanceAxios.get(`/marcas_routers`);
-  }
   
   static filtro_ip = (marca:any, fecha_registro: any) => {
     return AxiosIp.instanceAxios.get(`/filtrar_routers/${marca}/${fecha_registro}`);

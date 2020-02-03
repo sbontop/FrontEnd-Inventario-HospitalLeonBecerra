@@ -6,21 +6,49 @@ import { add, options } from 'ionicons/icons';
 import AxiosRouter from '../../services/AxiosRouter';
 import { RefresherEventDetail } from '@ionic/core';
 import { useState, useEffect } from 'react';
+import Respuesta from '../../components/Respuesta';
 
 const HomeRouter: React.FC = () => {
   const [routers, setRouters] = useState([] as any);
   const [marcas, setMarcas] = useState([] as any);
-  const [marca, setMarca] = useState([] as any);
+  const [marca, setMarca] = useState();
   const [showPopover, setShowPopover] = useState<{open: boolean}>({open: false});
   const [showLoading, setShowLoading] = useState(false);
-  const [fecha_registro, setFecha_registro] = useState([] as any);
+  const [fecha_registro, setFecha_registro] = useState();
 
   const aplicar_filtros = () => {
-    AxiosRouter.filtro_router(marca, fecha_registro.substring(0, 10)).then(res => {
-      setRouters(res.data);
-    }).catch(err => {
-      console.log(err);
-    });
+    console.log("m: ", marca)
+    console.log("f: ", fecha_registro)
+    if(marca === undefined && fecha_registro === undefined){
+      setMarca("Todas")
+      setFecha_registro(null)
+    }else if (marca===undefined || marca === ""){
+      setMarca("Todas")
+    }else{
+      AxiosRouter.filtro_router(marca, fecha_registro.substring(0,10)).then(res => {
+        setRouters(res.data);
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+    
+  }
+
+  const buscar = (e: any) => {
+    let codigo = e.target.value;
+    if (codigo) {
+        AxiosRouter.buscar_router(codigo).then(res => {
+            setRouters(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+    } else {
+        cargar_routers();
+    }
+}
+
+  const onClear = (e: any) => {
+    cargar_routers();
   }
 
   const handle_aplicar = () => {
@@ -71,7 +99,8 @@ const HomeRouter: React.FC = () => {
       </IonToolbar>
        
       <IonSearchbar placeholder="Buscar un router..."
-        // onIonChange={(e: CustomEvent) => this.props.setSearchText(e.detail.value)} 
+        onIonChange={(e: any) => { buscar(e) }} 
+        onIonClear={(e: any) => { onClear(e) }}
         >
       </IonSearchbar>  
 
@@ -86,6 +115,7 @@ const HomeRouter: React.FC = () => {
           message={'Cargando datos, espere por favor...'}
           duration={5000}
         />
+        <Respuesta informacion={routers.length}></Respuesta>
         {routers.map((r: any)=>{
           return (             
             <ListRouters key={`${r.id_router}`} 
@@ -109,9 +139,9 @@ const HomeRouter: React.FC = () => {
             <IonLabel>Marca</IonLabel>
             <IonSelect placeholder="Todas" name="Todas" value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
             <IonSelectOption selected>Todas</IonSelectOption>
-            {marcas.map((m: any) => {
+            {marcas.map((m:any, i:number) => {
               return (
-                <IonSelectOption key={m.id_marca} value={m.nombre}>
+                <IonSelectOption key={i} value={m.nombre}>
                   {m.nombre} 
                 </IonSelectOption>
               );

@@ -70,7 +70,7 @@ class ListaCorreos extends React.Component<ICorreo, any>  {
       </IonList>
     );
   }
-};
+}
 
 
 export default ListaCorreos;
