@@ -94,7 +94,13 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
         else if (this.state.equipos.length === 0) {
             return (
                 <div key="sin datos">
-                    No hay datos disponibles
+                   <IonLabel className="ion-margin">
+                    <p className="ion-text-center ion-margin">No hay datos que mostrar</p>
+                    <p className="ion-text-center">
+                        <img src="./assets/img/sinResultados.png" alt=":(" />
+                    </p>
+
+                </IonLabel>
                 </div>
             )
         }
