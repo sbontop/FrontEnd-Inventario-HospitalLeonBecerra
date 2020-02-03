@@ -16,16 +16,21 @@ const FormularioRouter: React.FC = () => {
   const [numero_serie, setNumero_serie] = useState();
   const [descripcion, setDescripcion] = useState();
   const [guardar, setGuardar] = useState(false);
+  const [confirmar, setConfirmar] = useState(false);
+  const [incompleto, setIncompleto] = useState(false);
   const [error, setError] = useState(false);
   const [redireccionar, setRedireccionar] = useState(false);
   
-
   useEffect(() => {
     AxiosRouter.marcas_routers().then(res => {
       setMarcas(res.data); });    
   }, []);
 
-  const registrar = () => {      
+  const registrar = () => { 
+    if (codigo === undefined || nombre === undefined || pass === undefined || usuario === undefined || codigo === undefined
+      || clave === undefined || id_marca === undefined || modelo === undefined || numero_serie === undefined) {
+      setIncompleto(true);
+    } else {     
       let registro_equipo_router = {
         fecha_registro: new Date().toISOString().substr(0,10),
         estado_operativo: "Disponible",
@@ -47,11 +52,13 @@ const FormularioRouter: React.FC = () => {
 
       AxiosRouter.crear_equipo_router(registro_equipo_router).then(res => {
         console.log("marca>",id_marca);
-        setGuardar(true);
+        setConfirmar(true);
       }).catch(err => {
         setError(true);
-      });   
-  }
+      });
+    }   
+  } 
+  
 
   const volver_principal = () => {
     setGuardar(false);
@@ -73,23 +80,20 @@ const FormularioRouter: React.FC = () => {
         </IonButtons>
       </IonToolbar>
       <IonContent className="ion-padding">
-        <IonToolbar class="ion-text-center">
-        <IonRow class="ion-text-center">
+        <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">   
+        <IonList>
+          <IonRow class="ion-text-center">
             <IonCol>
               <img src={process.env.PUBLIC_URL+"/assets/img/router.png"} alt=""/>
             </IonCol>
             <IonCol>            
-              <IonList>
                 <IonItem>
                   <IonLabel position="floating">Código<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
-                </IonItem>             
-              </IonList>
+                </IonItem> 
             </IonCol>
-          </IonRow>
-        </IonToolbar>  
-        <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">      
-          <IonList>
+          </IonRow>   
+          
             <IonItem>
               <IonLabel position="floating">Nombre<IonText color="danger">*</IonText></IonLabel>
               <IonInput required type="text" name="nombre" value={nombre} onIonChange={(e) => setNombre((e.target as HTMLInputElement).value)} ></IonInput>
@@ -108,10 +112,10 @@ const FormularioRouter: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-              <IonSelect value={id_marca} onIonChange={(e) => setId_marca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                {marcas.map((m: any) => {
+              <IonSelect name="id_marca" value={id_marca} onIonChange={(e) => setId_marca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+                {marcas.map((m:any, index:number) => {
                   return (
-                    <IonSelectOption key={m.nombre} value={m.id_marca}>
+                    <IonSelectOption key={index} value={m.id_marca}>
                       {m.nombre} 
                     </IonSelectOption>
                   );
@@ -144,7 +148,13 @@ const FormularioRouter: React.FC = () => {
           isOpen={guardar}
           onDidDismiss={() => volver_principal()}
           header={'Guardado con éxito'}
-          message={'Se ha guardado exitosamente el Router'}
+          message={'Se ha guardado exitosamente el equipo'}
+          buttons={['Aceptar']}
+        />
+        <IonAlert
+          isOpen={incompleto}
+          onDidDismiss={() => setIncompleto(false)}
+          header={'Debe asegurarse de completar todos los campos'}
           buttons={['Aceptar']}
         />
         <IonAlert
@@ -153,6 +163,29 @@ const FormularioRouter: React.FC = () => {
           message={'Asegurese de agregar un un registro que no exista'}
           buttons={['Aceptar']}
         /> 
+        <IonAlert
+        isOpen={confirmar}
+        header={'Confirmación'}
+        message={'¿Está seguro de agregar este nuevo registro?'}
+        buttons={[         
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            cssClass: 'danger',
+            handler: (blah:any) => {
+              setConfirmar(false)
+            }
+          },
+          {
+            cssClass: 'success',
+            text: 'Aceptar',
+            handler: () => {
+              console.log('Aceptar');
+              setGuardar(true)              
+            }
+          }        
+        ]}
+      />
       </IonContent>
     </IonPage>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
-    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption
+    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
 import { add, options } from 'ionicons/icons';
@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 
 const HomeIp: React.FC = () => {
     const [ips, setIps] = useState([] as any);
-    const [marcas, setMarcas] = useState([] as any);
+    // const [marcas, setMarcas] = useState([] as any);
     const [showPopover, setShowPopover] = useState<{ open: boolean }>({ open: false });
     const [showLoading, setShowLoading] = useState(false);
     const [marca, setMarca] = useState([] as any);
@@ -67,11 +67,11 @@ const HomeIp: React.FC = () => {
         });
     }, []);
 
-    useEffect(() => {
-        AxiosIp.marcas_ips().then(res => {
-            setMarcas(res.data);
-        });
-    }, []);
+    // useEffect(() => {
+    //     AxiosIp.marcas_ips().then(res => {
+    //         setMarcas(res.data);
+    //     });
+    // }, []);
 
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
         setTimeout(() => {
@@ -135,7 +135,7 @@ const HomeIp: React.FC = () => {
                 onDidDismiss={e => setShowPopover({ open: false })}>
                 <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                 <IonList>
-                    <IonItem>
+                    {/* <IonItem>
                         <IonLabel>Marca</IonLabel>
                         <IonSelect placeholder="Todas" name="Todas" value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                             <IonSelectOption selected>Todas</IonSelectOption>
@@ -147,7 +147,7 @@ const HomeIp: React.FC = () => {
                                 );
                             })}
                         </IonSelect>
-                    </IonItem>
+                    </IonItem> */}
                     <IonItem>
                         <IonLabel>Fecha registro</IonLabel>
                         <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e) => setFecha_registro(e.detail.value)}

@@ -1,8 +1,8 @@
 import {
     IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert,
-    IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonRow, IonCol, IonTextarea
+    IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonRow, IonCol
 } from '@ionic/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AxiosIp from '../../services/AxiosIp';
 import { Redirect } from 'react-router';
 
@@ -14,18 +14,10 @@ const FormularioIp: React.FC = () => {
     const [fortigate, setFortigate] = useState();
     const [observacion, setObservacion] = useState();
     const [maquinas_adicionales, setMaquinas_adicionales] = useState();
-
-    const [marcas, setMarcas] = useState([] as any);
     const [guardar, setGuardar] = useState(false);
     const [error, setError] = useState(false);
     const [redireccionar, setRedireccionar] = useState(false);
 
-
-    useEffect(() => {
-        AxiosIp.marcas_ips().then(res => {
-            setMarcas(res.data);
-        });
-    }, []);
 
     const registrar = () => {
         let registro_ip_obj = {
