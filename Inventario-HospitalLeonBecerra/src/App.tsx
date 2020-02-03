@@ -40,6 +40,7 @@ import './theme/variables.css';
 import HomeCorreo from './pages/InventarioCorreo/HomeCorreo';
 import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
 import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
+import GlobalPC from './pages/InventarioPC/GlobalPC';
 
 const appPages: AppPage[] = [
   {
@@ -68,8 +69,9 @@ const App: React.FC = () => (
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
           <Route path="/consulta" component={Consulta} exact={true} />
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
+          {/* <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} /> */}
           <Route path="/inventarios" component={Inventarios} exact={true} />
-          <Route path="/consultdesk" render={() => <ConsultarDesktop tipo="desktop" />} exact={true} />
+          <Route path="/consultdesk" render={() => <ConsultarDesktop tipo={GlobalPC.varDesktop} />} exact={true} />
           <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo="laptop" />} exact={true} />
           <Route path="/formdesktop" component={FormPCDesk} exact={true} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />

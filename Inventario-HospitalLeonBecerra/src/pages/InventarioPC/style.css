@@ -46,3 +46,10 @@
   margin-left: 1;
   flex: 1,
 }
+
+ion-avatar> img{
+  border-radius:0%;
+  height: 100%;
+  width: 100%;
+}
+

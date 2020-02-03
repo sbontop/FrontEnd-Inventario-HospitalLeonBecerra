@@ -35,6 +35,7 @@ const FormularioCorreo: React.FC = () => {
         cedula: cedula
       }
 
+
       AxiosCorreo.crear_correo(registro_correo).then(res => {
         setAlerta(true);
       }).catch(err => {
@@ -44,6 +45,7 @@ const FormularioCorreo: React.FC = () => {
 
     }
   }
+
 
   const buscar_usuario = () => {
     if (usuario === undefined || usuario === "") {
@@ -63,16 +65,19 @@ const FormularioCorreo: React.FC = () => {
         setError(true);
       });
     }
-
   }
+
+
   const cambiar_estados = () => {
     setAlerta(false);
     setDirigir(true);
   }
 
+
   if (dirigir) {
     return (<Redirect to="/homeCorreo" />);
   }
+
 
   return (
     <IonPage>
@@ -104,11 +109,11 @@ const FormularioCorreo: React.FC = () => {
               <IonInput className="ion-margin-top" disabled name="bspi_punto">{punto}</IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel position="stacked">Correo<IonText color="danger">*</IonText></IonLabel>
-              <IonInput className="ion-margin-top" placeholder="example@hospitalleonbecerra.org" type="email" name="correo" value={correo} onIonChange={(e) => setCorreo((e.target as HTMLInputElement).value)}></IonInput>
+              <IonLabel position="floating">Correo<IonText color="danger">*</IonText></IonLabel>
+              <IonInput className="ion-margin-top" placeholder="example@hospitalleonbecerra.org"  name="correo" onIonChange={(e) => setCorreo((e.target as HTMLInputElement).value)}></IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel position="stacked">Contraseña<IonText color="danger">*</IonText></IonLabel>
+              <IonLabel position="floating">Contraseña<IonText color="danger">*</IonText></IonLabel>
               <IonInput className="ion-margin-top" name="contrasena" onIonChange={(e) => setContrasena((e.target as HTMLInputElement).value)}></IonInput>
             </IonItem>
             <IonList>
@@ -131,7 +136,6 @@ const FormularioCorreo: React.FC = () => {
                   </IonCol>
                 </IonRow>
               </IonGrid>
-
             </p>
           </IonList>
         </form>
@@ -165,7 +169,6 @@ const FormularioCorreo: React.FC = () => {
           header={'Se ha producido un error al realizar su solicitud, inténtelo más tarde'}
           buttons={['Aceptar']}
         />
-
       </IonContent>
     </IonPage>
   );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AxiosPC from '../../services/AxiosPC';
-import { IonList, IonItem, IonIcon, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid} from '@ionic/react';
+import { IonList, IonItem, IonIcon, IonLabel, IonRow, IonCol, IonInput, IonText, IonSelect, IonSelectOption, IonGrid } from '@ionic/react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -14,6 +14,7 @@ export default interface IState {
     showLoading: any;
     expanded: any;
     setExpanded: any;
+    marcas: any;
     data: any;
     errorMsj: any;
     confirmMsj: any;
@@ -30,11 +31,16 @@ export default interface IState {
 
 export default class GlobalPC {
 
+    static varDesktop= "desktop";
+    static varLaptop = "laptop";
+    static varIdDesktop = -1;
+    static varIdLaptop = -1;
+
     static handleChange = (panel: number, obj: React.Component<{}, IState>) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         obj.setState({
             expanded: !isExpanded ? -1 : panel
         });
-       
+
     };
 
     static nextTab = (obj: React.Component<{}, IState>) => {
@@ -44,6 +50,21 @@ export default class GlobalPC {
         });
     }
 
+    static getMarcas(obj: React.Component<{}, IState>) {
+        AxiosPC.mostrar_marcas().then((res: any) => {
+
+
+            obj.setState({
+                marcas: res.data
+            });
+
+            console.log("DATA:", obj.state.marcas);
+
+        }).catch((err: any) => {
+            console.log(err.response.data);
+
+        });
+    }
 
     static onChangeCodInput = (e: any, obj: React.Component<{}, IState>) => {
         const { name, value } = e.target;
@@ -109,7 +130,7 @@ export default class GlobalPC {
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosPC.crear_pc( obj.state.data,op).then(response => {
+        AxiosPC.crear_pc(obj.state.data, op).then(response => {
             obj.setState({
                 showLoading: false,
                 showAlertSuccess: true
@@ -177,7 +198,7 @@ export default class GlobalPC {
                                 <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
                                 <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
                             </IonItem>
-                           
+
                         </IonList>
                     </IonCol>
                 </IonRow>
@@ -188,20 +209,20 @@ export default class GlobalPC {
     }
 
     static generatePrincipalForm = (list: any, obj: React.Component<{}, IState>, idx: any) => {
-        
+
         return list.map((value: any, index: any) => {
-            
+
             return (
-                <ExpansionPanel key={value + idx} expanded={obj.state.expanded === (index + idx)} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => { 
-                    console.log((index + idx))                   
-                        obj.setState({
-                            expanded: !isExpanded ? -1 : (index + idx)
-                        })
+                <ExpansionPanel key={value + idx} expanded={obj.state.expanded === (index + idx)} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+                    console.log((index + idx))
+                    obj.setState({
+                        expanded: !isExpanded ? -1 : (index + idx)
+                    })
                 }}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         id="panel1bh-header">
-                        <Typography>{value.split("-")[1].toUpperCase().replace("_"," ")}</Typography>
+                        <Typography>{value.split("-")[1].toUpperCase().replace("_", " ")}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <IonGrid>
@@ -242,7 +263,17 @@ export default class GlobalPC {
                 </IonItem>
                 <IonItem>
                     <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required type="text" className="root" name= {value + '.marca'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
+                    {/* <IonInput required type="text" className="root" name= {value + '.marca'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput> */}
+                    {/* <IonLabel position="stacked">Tipo <IonText color="danger">*</IonText></IonLabel> */}
+                    <IonSelect name={value + '.marca'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}>
+                        {obj.state.marcas.map((object: any, i: any) => {
+                            return (
+                                <IonSelectOption key={object.marca} value={object.marca}>
+                                    {object.marca}
+                                </IonSelectOption>
+                            );
+                        })}
+                    </IonSelect>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
