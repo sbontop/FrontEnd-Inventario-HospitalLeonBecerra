@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
-import { IonContent, IonToolbar, IonButton,  IonPopover, IonListHeader,IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonTitle, IonHeader,IonSearchbar,IonPage, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonLoading, IonIcon} from '@ionic/react';
+import { IonContent, IonToolbar, IonButton, IonRefresher, IonRefresherContent, IonPopover, IonListHeader,IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonTitle, IonHeader,IonSearchbar,IonPage, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonLoading, IonIcon} from '@ionic/react';
 import { Redirect } from 'react-router';
-import AxiosImpresora from '../services/AxiosImpresora';
-import { options,add } from 'ionicons/icons';
+import AxiosImpresora from '../../services/AxiosImpresora';
+import { RefresherEventDetail } from '@ionic/core';
+import { options,add/*,clipboard*/ } from 'ionicons/icons';
 
 
-import ListaImpresoras from '../components/correoComponents/ListaImpresoras';
+import ListaImpresoras from '../../components/impresoraComponents/ListaImpresoras';
 
 interface IState {
-  expanded: any;
-  setExpanded: any;
   data:any;
   confirmacion:any;
   guardar:any;
@@ -32,6 +31,7 @@ interface IState {
   codigo:any;
   busqueda:any;
   hay_datos:any;
+  refrescar:any;
 }
 
 
@@ -39,75 +39,12 @@ type Item = {
   src: string;
   text: string;
 };
-/*
-const tiposImpresoras = [{id: 'Multifuncional'},
-  {
-    id: 'Matricial'
-  },
-  {
-    id: 'Bazaletes'
-  },
-  {
-   id: 'Impresora'
-  },
-  {
-    id: 'Escaner',
-  }
-];
-*/
 
-/*
-const estadosImpresoras = [{id: 'Operativa'},
-  {
-    id: 'En revisión'
-  },
-  {
-    id: 'Reparado'
-  },
-  {
-    id: 'De baja',
-  },
-  {
-    id: 'Disponible',
-  }
-];*/
 
-/*
-const departamentosCustodia = [{id: 'Coordinación'},
-  {
-    id: 'Dirección'
-  },
-  {
-    id: 'Proveeduría'
-  },
-  {
-    id: 'Activos fijos'
-  },
-  {
-    id: 'Administración'
-  },
-  {
-    id: 'Admisión',
-  }
-];
-*/
-
-/*
-const puntos = [{id: 'Hogar Ines Chambers'},
-  {
-    id: 'Hospital León Becerra',
-  },
-];
-*/
-
-//const axios = require('axios').default;
-
-export default class Consulta extends Component<{}, IState> {
+export default class HomeImpresora extends Component<{}, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
-        expanded: Number,
-        setExpanded: false,
         data:{},
         confirmacion: false,
         redirectTo: false,
@@ -128,12 +65,13 @@ export default class Consulta extends Component<{}, IState> {
         codigo: String,
         busqueda:[],
         buscando_datos: false,
-        hay_datos:false
+        hay_datos:false,
+        refrescar:false
     }
   }
 
   componentDidMount = () => {
-    this.state.marcas_impresoras.push({marca:"Todos"})
+    //this.state.marcas_impresoras.push({marca:"Todos"})
     AxiosImpresora.mostrar_marcas_impresoras().then((res:any) => {
       let marcas = res.data;
       //marcas.push(res.data);
@@ -173,10 +111,7 @@ export default class Consulta extends Component<{}, IState> {
       //marcas.push(res.data);
       //console.log("RESPUESTA:",res.data);
       //console.log("RESPUESTA 4:",departamentosCustodia);
-
       console.log("RESPUESTA DE codi: ",res.data);
-
-
       this.setState({
         impresoras:res.data,
         mostrando_datos:false,
@@ -202,16 +137,9 @@ export default class Consulta extends Component<{}, IState> {
 
       });
     }
-
-    
-
-
-
-
-
   }
   
-  getImpresoras=()=>{
+   getImpresoras=()=>{
     this.setState({
       mostrando_datos:true
     });
@@ -260,6 +188,24 @@ export default class Consulta extends Component<{}, IState> {
     
   }
 
+  doRefresh=(event: CustomEvent<RefresherEventDetail>)=> {
+    
+    console.log('Begin async operation');
+
+    this.setState({
+      refrescar:true
+    });
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      this.getImpresoras();
+      event.detail.complete();
+      //this.setState({
+      //  refrescar:false
+      //});
+    }, 2000);
+  }
+
   imprimir=()=>{
     console.log("Valor cod: ",this.state.codigo);
   }
@@ -269,134 +215,22 @@ export default class Consulta extends Component<{}, IState> {
     this.getConsultar();
   }
 
-  verificar=()=>{
-    let json=this.state.data.printer;
-    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
-    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","encargado_registro","descripcion"];
-
-    let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Observación"];
-    let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","descripcion"];
-
-
-    if(json!==undefined){
-      if(Object.keys(json).length!==lista_campos_completos.length){
-        
-        let lista_campos_ingresados: any=Object.keys(json);
-        let lista_campos_faltantes: String[]=[];
-        let texto:String="";
-        for(let campo_registro in lista_campos_completos){
-          if(!lista_campos_ingresados.includes(lista_campos_completos[campo_registro])){
-            lista_campos_faltantes.push(lista_nombres_campos[campo_registro]);     
-              texto=texto+" "+lista_nombres_campos[campo_registro]+",";
-          }
-        }  
-        if(texto.slice(-1)===','){
-          texto=texto.slice(0,-1);
-        }
-        this.setState({
-          campos_incompletos:texto,
-          incompleto:true
-        })
-      
-      }else if(Object.keys(json).length===lista_campos_completos.length){
-        this.setState({guardar:true})
-      }
-
-    }else{
-      
-      let texto:String="";
-      for (let indice in lista_nombres_campos){
-        texto=texto+" "+lista_nombres_campos[indice]+",";
-      }
-      if(texto.slice(-1)===','){
-        texto=texto.slice(0,-1);
-      }
-
-      this.setState({
-        campos_incompletos:texto,
-        incompleto:true
-      })
-      
-    }
-  }
-
-  enviar=()=> {
-    this.setState({
-      guardar:false,
-      cargando:true
-    });
-
-
-
-    let json=this.state.data.printer;
-    console.log("JSON ACTUALIZADO:",json);
-    console.log("Longitud:",Object.keys(json).length);
-
-    AxiosImpresora.crear_impresora(json).then(res => {
-      this.setState({
-        cargando:false,
-        confirmacion:true,
-      });
-    }).catch(err => {
-      //console.log(err);
-      this.setState({
-        cargando:false,
-        error_servidor:true,
-      });
-    });
-
-    /*
-    axios.post('http://localhost:8000/api/impresora', json)
-    .then((response: any) =>{
-      console.log("JSON:",response);
-
-      this.setState({
-        cargando:false,
-        confirmacion:true,
-      });
-      
-    },(err:any) => {
-      this.setState({
-        cargando:false,
-        error_servidor:true,
-      });
-
-  });*/
-
-  }  
-
-  /*
-  sendData = () => {
-
-    let json=this.state.data.printer;
-    let am={"a":1};
-    
-    for(let j in am){
-      console.log(j);
-      console.log(typeof(j));
-    }
-
-    console.log(am);
-
-    for(let i in json){
-      console.log(i); // a, b, c
-      console.log(typeof(i));
-      //njson.String(i)=json[i];
-    }
-    console.log(json);
-    axios.post('http://localhost:8000/api/impresora', json)
-    .then(function (response:any) {
-      console.log("JSON DE INFORMACION:",response);
-    })
-    .catch(function (error:any) {
-      console.log("ERROR2:",error);
-    });
-  }*/
   
+  
+  
+  accion = () =>{
+    this.setState({
+      //mostrando_datos:true
+      refrescar:false
+    })
+    this.getImpresoras();
+    
+  }
 
   aplicar_filtros = () => {
     this.setState({
-      mostrando_datos:true
+      mostrando_datos:true,
+      popOver:false
     });
     console.log("MARCAS", this.state.marcas_impresoras);
     let correo: any[] = [];
@@ -419,6 +253,7 @@ export default class Consulta extends Component<{}, IState> {
 
     } else if (this.state.filtro_marca === "Todos" && this.state.filtro_fecha.substring(0, 10) !== "") {
       console.log("Se ha activado el filtro por fecha y todos");
+      
       AxiosImpresora.filtrar_impresoras(this.state.filtro_fecha.substring(0, 10),'Todos').then((res:any) => {
         correo.push(res.data);
         this.setState({
@@ -439,8 +274,11 @@ export default class Consulta extends Component<{}, IState> {
     } else if (this.state.filtro_marca !== "Todos" && this.state.filtro_fecha.substring(0, 10) !== "") {
       console.log("Se ha activado el filtro por fecha y un dpto especifico");
       console.log("FILTRO MARCA CASE: ",this.state.filtro_marca);
+
     console.log("FILTRO FECHA CASE: ",this.state.filtro_fecha);
     console.log("FILTRO FECHA CASE: ",this.state.filtro_fecha.substring(0, 10));
+
+    console.log("UPDATE VALUE FILTER:",this.state.filtro_marca);
 
       AxiosImpresora.filtrar_impresoras(this.state.filtro_marca, this.state.filtro_fecha.substring(0, 10)).then((res:any) => {
         correo.push(res.data);
@@ -487,15 +325,15 @@ export default class Consulta extends Component<{}, IState> {
       return (<Redirect to="/Equipos" />);
     }
     
-    if (this.state.mostrando_datos){
-          
+    if (this.state.mostrando_datos && this.state.refrescar!==true){
+      console.log("INICIOOOOOOOOO",this.state.refrescar);
       return (      
         <IonPage>     
-          <IonToolbar color="primary">
+          <IonToolbar color="danger">
             <IonButtons slot="start">
-                <IonBackButton defaultHref="/tiposequiposinventario"></IonBackButton>
+                <IonBackButton defaultHref="/home"></IonBackButton>
             </IonButtons>
-            <IonTitle>Inventario de Impresoras</IonTitle>
+            <IonTitle>Registro Impresoras</IonTitle>
           </IonToolbar>
           <IonContent fullscreen>
           <IonLoading
@@ -514,23 +352,26 @@ export default class Consulta extends Component<{}, IState> {
           <IonHeader>
             <IonToolbar color="primary">
               <IonButtons slot="start">
-                <IonBackButton defaultHref="tiposequipos inventario" />
+                <IonBackButton defaultHref="home" />
               </IonButtons>
               <IonTitle >Inventario de Impresoras</IonTitle>
               <IonButtons slot="end">
                 <IonButton routerLink="/FormImpresora"><IonIcon icon={add}></IonIcon></IonButton>
                 <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
+                {/*<IonButton onClick={this.accion} ><IonIcon icon={clipboard}></IonIcon></IonButton>*/}
+
               </IonButtons>
               <IonPopover
                 isOpen={this.state.popOver}
                 onDidDismiss={e => this.setState({ popOver: false })}>
                 <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
+               
                 <IonList>
                 
                   <IonItem>
                     <IonLabel>Marca</IonLabel>
-                    <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
-                    <IonSelectOption key={"Todos"} value={"Todos"} selected>Todos</IonSelectOption>
+                    <IonSelect name="printer.marca" onIonChange={(e) => this.setState({filtro_marca:(e.target as HTMLInputElement).value})} >
+                    
                     {this.state.marcas_impresoras.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.marca}>
@@ -586,15 +427,16 @@ export default class Consulta extends Component<{}, IState> {
         </IonHeader>
         */}
   
-  <IonHeader>
+          <IonHeader>
             <IonToolbar color="primary">
               <IonButtons slot="start">
-                <IonBackButton defaultHref="tiposequiposinventario" />
+                <IonBackButton defaultHref="home" />
               </IonButtons>
               <IonTitle >Inventario de Impresoras</IonTitle>
               <IonButtons slot="end">
                 <IonButton routerLink="/FormImpresora"><IonIcon icon={add}></IonIcon></IonButton>
                 <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
+                {/*<IonButton onClick={this.accion} ><IonIcon icon={clipboard}></IonIcon></IonButton>*/}
               </IonButtons>
               <IonPopover
                 isOpen={this.state.popOver}
@@ -605,9 +447,7 @@ export default class Consulta extends Component<{}, IState> {
                   <IonItem>
                   <IonLabel>Marca</IonLabel>
                     <IonSelect name="printer.marca" onIonChange={(e) => this.setState({filtro_marca:(e.target as HTMLInputElement).value})} >
-                    <IonSelectOption key={"Todos"} value={"Todos"} selected>Todos</IonSelectOption>
                     {this.state.marcas_impresoras.map((object:any, i:any) => {
-                      
                       return (
 
                         <IonSelectOption key={object.marca} value={object.marca}>
@@ -639,15 +479,67 @@ export default class Consulta extends Component<{}, IState> {
   
           
   
-        <IonContent fullscreen>
   
   {/*-- Searchbar with cancel button always shown --*/}
-  <IonSearchbar type="text" placeholder="Ingrese código" onIonBlur={this.op} onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} showCancelButton="always"></IonSearchbar>
-  {/*<IonSearchbar type="text" placeholder="Ingrese código" onClick={this.op} onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} showCancelButton="never"></IonSearchbar>*/}
+  {/*<IonSearchbar type="text" placeholder="Ingrese código" onIonBlur={this.op} onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} showCancelButton="always"></IonSearchbar>*/}
+  {/*<IonSearchbar type="text" placeholder="Ingrese código" onIonChange={(e) => {this.op; this.setState({codigo:(e.target as HTMLInputElement).value})} } showCancelButton="never"></IonSearchbar>*/}
   
+  <IonSearchbar placeholder={"Buscar por código"} 
+                  //onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} 
+                  onIonChange={(e:any)=>{this.setState({
+                    codigo:e.target.value,
+                    
+                          })
+                      }
+                  }
+                  onIonCancel={(e: any) => { this.op() }} 
+                  cancelButtonIcon="md-search" 
+                  showCancelButton="focus"
+                >
+                    </IonSearchbar>
+  
+  <IonContent>
+
+  <IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
+        <IonRefresherContent
+          pullingIcon="arrow-dropdown"
+          pullingText="Pull to refresh"
+          refreshingSpinner="circles"
+          refreshingText="Actualizando...">
+        </IonRefresherContent>
+      </IonRefresher>
         {this.state.impresoras.map((dato: any) => {
               return (
-                <ListaImpresoras key={dato.id_impresora} codigo={dato.codigo} estado_operativo={dato.estado_operativo} marca={dato.marca} />
+                //`${r.id_router}`
+                //dato.id_impresora
+                <ListaImpresoras key={dato.id_impresora} //key={`${dato.id_impresora}`} 
+                id_impresora={dato.id_impresora}
+                numero_serie={dato.numero_serie}
+                tipo={dato.tipo}
+                toner={dato.toner}
+                cinta={dato.cinta}
+                rollo={dato.rollo}
+                rodillo={dato.rodillo}
+                marca={dato.marca}
+                codigo={dato.codigo} 
+                estado_operativo={dato.estado_operativo} 
+                modelo={dato.modelo}
+                tinta={dato.modelo}
+                cartucho={dato.cartucho}
+                descripcion={dato.descripcion}
+                />
+                /*
+                id_impresora:string,
+                numero_serie:string;
+                tipo: string;
+                marca: string;
+                codigo: string;
+                estado_operativo: string;
+                modelo: string,
+                tinta: string,
+                cartucho: string,
+                descripcion: string
+                */
               )
             })
             }

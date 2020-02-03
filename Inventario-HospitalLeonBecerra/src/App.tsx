@@ -6,7 +6,7 @@ import { AppPage } from './declarations';
 import Equipos from './pages/Equipos';
 import Inventarios from './pages/Inventarios';
 import FormPCDesk from './pages/InventarioPC/FormPCDesk';
-import FormImpresora from './pages/FormImpresora';
+import FormImpresora from './pages/InventarioImpresora/FormImpresora';
 import TiposEquiposInventario from './pages/TiposEquiposInventario';
 import HomeRouter from './pages/InventarioRouter/HomeRouter';
 import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
@@ -16,7 +16,7 @@ import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import { home, desktop, list } from 'ionicons/icons';
-import Consulta from './pages/Consulta';
+import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -67,7 +67,7 @@ const App: React.FC = () => (
         <Menu appPages={appPages} />
         <IonRouterOutlet id="main">
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
-          <Route path="/consulta" component={Consulta} exact={true} />
+          <Route path="/consulta" component={HomeImpresora} exact={true} />
           <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
           {/* <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} /> */}
           <Route path="/inventarios" component={Inventarios} exact={true} />
