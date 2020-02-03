@@ -98,7 +98,7 @@ const HomeRouter: React.FC = () => {
         </IonButtons>
       </IonToolbar>
        
-      <IonSearchbar placeholder="Buscar un router..."
+      <IonSearchbar placeholder="Buscar router por código..."
         onIonChange={(e: any) => { buscar(e) }} 
         onIonClear={(e: any) => { onClear(e) }}
         >

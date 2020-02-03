@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
-    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime
+    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
 import { add, options } from 'ionicons/icons';
@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 
 const HomeIp: React.FC = () => {
     const [ips, setIps] = useState([] as any);
-    // const [marcas, setMarcas] = useState([] as any);
+     const [marcas, setMarcas] = useState([] as any);
     const [showPopover, setShowPopover] = useState<{ open: boolean }>({ open: false });
     const [showLoading, setShowLoading] = useState(false);
     const [marca, setMarca] = useState([] as any);
@@ -24,7 +24,7 @@ const HomeIp: React.FC = () => {
     }
 
     const aplicar_filtros = () => {
-        AxiosIp.filtro_ip(marca, fecha_registro.substring(0, 10)).then(res => {
+        AxiosIp.filtro_ip(marca, "2020-02-02").then(res => {
             setIps(res.data);
         }).catch(err => {
             console.log(err);
@@ -67,11 +67,11 @@ const HomeIp: React.FC = () => {
         });
     }, []);
 
-    // useEffect(() => {
-    //     AxiosIp.marcas_ips().then(res => {
-    //         setMarcas(res.data);
-    //     });
-    // }, []);
+     useEffect(() => {
+         AxiosIp.listado_ips().then(res => {
+             setMarcas(res.data);
+         });
+     }, []);
 
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
         setTimeout(() => {
@@ -93,7 +93,7 @@ const HomeIp: React.FC = () => {
                 </IonButtons>
             </IonToolbar>
 
-            <IonSearchbar placeholder="Buscar un router..."
+            <IonSearchbar placeholder="Buscar dirección IP..."
                 onIonChange={(e: any) => { onChange(e) }}
                 onIonClear={(e: any) => { onClear(e) }}
             >
@@ -135,8 +135,8 @@ const HomeIp: React.FC = () => {
                 onDidDismiss={e => setShowPopover({ open: false })}>
                 <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                 <IonList>
-                    {/* <IonItem>
-                        <IonLabel>Marca</IonLabel>
+                     {/* <IonItem>
+                        <IonLabel>Tipo de equipo</IonLabel>
                         <IonSelect placeholder="Todas" name="Todas" value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                             <IonSelectOption selected>Todas</IonSelectOption>
                             {marcas.map((m: any) => {
