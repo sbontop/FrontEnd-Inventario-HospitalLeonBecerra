@@ -221,18 +221,18 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                             onDidDismiss={e => this.setState({ popOver: false })}>
                             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                             <IonList>
-                                <IonItem hidden = {true}>
+                                <IonItem >
                                     <IonList >
                                     
                                         <IonItem >
                                             <IonLabel position="floating">Codigo del Equipo</IonLabel>
                                             <IonInput required type="text" className="root" name='codigo' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}></IonInput>
                                         </IonItem>
-                                        <IonItem >
+                                        <IonItem hidden = {true}>
                                             <IonLabel position="floating">Num Serie</IonLabel>
                                             <IonInput required type="text" className="root" name='num_serie' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}></IonInput>
                                         </IonItem>
-                                        <IonItem>
+                                        <IonItem hidden = {true}>
                                             <IonLabel position="floating">Usuario Registra</IonLabel>
                                             <IonInput required type="text" className="root" name='user' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}></IonInput>
                                         </IonItem>
