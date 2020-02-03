@@ -205,13 +205,13 @@ export default class FormImpresora extends Component<{}, IState> {
 
     let json=this.state.data.printer;
     
-    //if(json.hasOwnProperty('descripcion')){
-    //  valor=true;
-    //  cantidad=Object.keys(json).length-1;
-    //}else{
-    //  valor=true;
-    //  cantidad=Object.keys(json).length;
-    //}
+    if(json.hasOwnProperty('descripcion')){
+      //valor=true;
+      cantidad=Object.keys(json).length-1;
+    }else{
+      //valor=true;
+      cantidad=Object.keys(json).length;
+    }
 
     //Si no tiene normal
     
@@ -284,6 +284,7 @@ export default class FormImpresora extends Component<{}, IState> {
             texto=texto.slice(0,-1);
             console.log("Matricialllll");
           }
+          console.log("Cantidad:",cantidad);
           this.setState({
             campos_incompletos:texto,
             incompleto:true
@@ -526,7 +527,7 @@ export default class FormImpresora extends Component<{}, IState> {
   render(){
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
       //return (<Redirect to="/Consulta" />);
-      return (<Redirect to="/opinveqinfo" />);
+      return (<Redirect to="/consulta" />);
       
 
 
