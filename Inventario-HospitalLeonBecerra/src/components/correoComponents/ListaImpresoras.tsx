@@ -27,7 +27,7 @@ import {
               </IonItem>
      );
    }
-   };
+   }
    
    
    export default ListaImpresoras;

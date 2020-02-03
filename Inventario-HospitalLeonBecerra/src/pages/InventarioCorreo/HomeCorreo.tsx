@@ -139,6 +139,6 @@ class HomeCorreo extends React.Component<any, any> {
       </IonPage>
     );
   }
-};
+}
 
 export default HomeCorreo;
