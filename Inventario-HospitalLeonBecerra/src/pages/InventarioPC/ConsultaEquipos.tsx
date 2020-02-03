@@ -211,7 +211,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                         <IonButtons slot="start">
                             <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>
                         </IonButtons>
-                        <IonTitle>Equipos Desktop</IonTitle>
+                        <IonTitle>{"Equipos " + (this.props.tipo !== "desktop"?"Laptop": "Desktop")}</IonTitle>
                         <IonButtons slot="end">
                             <IonButton routerLink={this.props.tipo === "desktop" ? "/formdesktop" : "/formlaptop"}><IonIcon icon={add}></IonIcon></IonButton>
                             <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
@@ -221,14 +221,14 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                             onDidDismiss={e => this.setState({ popOver: false })}>
                             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                             <IonList>
-                                <IonItem>
-                                    <IonList>
+                                <IonItem hidden = {true}>
+                                    <IonList >
                                     
-                                        <IonItem>
+                                        <IonItem >
                                             <IonLabel position="floating">Codigo del Equipo</IonLabel>
                                             <IonInput required type="text" className="root" name='codigo' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}></IonInput>
                                         </IonItem>
-                                        <IonItem>
+                                        <IonItem >
                                             <IonLabel position="floating">Num Serie</IonLabel>
                                             <IonInput required type="text" className="root" name='num_serie' onIonChange={(e: any) => { this.onChangeInput(e.target.name,e.target.value) }}></IonInput>
                                         </IonItem>
