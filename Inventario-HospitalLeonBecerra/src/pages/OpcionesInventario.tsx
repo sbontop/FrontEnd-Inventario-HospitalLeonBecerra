@@ -9,7 +9,7 @@ export default class OpcionesInventario extends Component <{history:any}, any>{
         return (
 
             <IonList>
-                <IonItem className = "ion-activatable">
+                <IonItem className = "ion-activatable"  onClick={() => {this.props.history.push('/homeIp')}}>
                     <IonRippleEffect></IonRippleEffect>
                     <IonThumbnail slot="start">
                         <img src={process.env.PUBLIC_URL+"/assets/img/ip.png"} alt="" />

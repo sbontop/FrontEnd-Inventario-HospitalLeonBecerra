@@ -28,6 +28,10 @@ export default class AxiosCorreo {
     return AxiosCorreo.instanceAxios.get(`/buscar_empleado/${empleado}`);
   }
 
+  static empleado_por_filtro = (empleado:any) => {
+    return AxiosCorreo.instanceAxios.get(`/empleados_nombre/${empleado}`);
+  }
+
   
 
 

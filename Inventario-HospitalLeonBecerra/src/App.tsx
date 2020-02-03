@@ -10,6 +10,8 @@ import FormImpresora from './pages/FormImpresora';
 import TiposEquiposInventario from './pages/TiposEquiposInventario';
 import HomeRouter from './pages/InventarioRouter/HomeRouter';
 import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
+import HomeIp from './pages/InventarioIp/HomeIp';
+import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
@@ -75,6 +77,8 @@ const App: React.FC = () => (
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
           <Route path="/homerouter" component={HomeRouter} exact={true} />
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
+          <Route path="/homeip" component={HomeIp} exact={true} />
+          <Route path="/formularioip" component={FormularioIp} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
