@@ -1,8 +1,8 @@
 import axios from 'axios';
 export default class AxiosImpresora {
   static instanceAxios = axios.create({
-    //baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
+    //baseURL: 'http://localhost:8000/api',
 
   });
 

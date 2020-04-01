@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default class AxiosPC {
     static instanceAxios = axios.create({
-        //baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
-        baseURL: 'http://localhost:8000/api',
+        baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
+        //baseURL: 'http://localhost:8000/api',
 
       });
 
@@ -23,10 +23,30 @@ export default class AxiosPC {
       }
 
       static getEquipos=(body:any)=>{
-        return AxiosPC.instanceAxios.post('/getdesktop',body);
+        return AxiosPC.instanceAxios.post('/getequipos',body);
       }
 
       static mostrar_marcas= () => {
         return AxiosPC.instanceAxios.get(`/listado_marcas`);
       }
+
+      static deleteEquipo=(idequipo:any)=>{
+        
+        return AxiosPC.instanceAxios.put(`/deleteequipo/${idequipo}`);
+      }
+
+      static getEquipoByID =(idequipo:any, op:any)=>{
+        if(op===1){
+          return AxiosPC.instanceAxios.get(`/getLaptopByID/${idequipo}`);
+        }
+        return AxiosPC.instanceAxios.get(`/getDesktopByID/${idequipo}`);
+      }
+      
+      static editEquipo=(idequipo:any, body:any, op:any)=>{
+        if(op===2){
+          return AxiosPC.instanceAxios.put(`/editdesktop/${idequipo}`,body);
+        }
+        return AxiosPC.instanceAxios.put(`/editlaptop/${idequipo}`,body);
+      }
+       
 }

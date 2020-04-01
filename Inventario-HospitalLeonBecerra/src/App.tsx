@@ -68,12 +68,15 @@ const App: React.FC = () => (
         <IonRouterOutlet id="main">
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
           <Route path="/consulta" component={HomeImpresora} exact={true} />
-          <Route path="/formlaptop" component={FormPCLaptop} exact={true} />
+          <Route path="/formlaptop" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
+          <Route path="/form-laptop/edit/:id" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
           {/* <Route path="/opinveqinfo" component={OpInvEqInfo} exact={true} /> */}
           <Route path="/inventarios" component={Inventarios} exact={true} />
           <Route path="/consultdesk" render={() => <ConsultarDesktop tipo={GlobalPC.varDesktop} />} exact={true} />
-          <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo="laptop" />} exact={true} />
-          <Route path="/formdesktop" component={FormPCDesk} exact={true} />
+          <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo={GlobalPC.varLaptop} />} exact={true} />
+          {/* <Route path="/formdesktop" component={FormPCDesk} exact={true} /> */}
+          <Route path="/formdesktop" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
+          <Route path="/form-desktop/edit/:id" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
           <Route path="/homerouter" component={HomeRouter} exact={true} />
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />

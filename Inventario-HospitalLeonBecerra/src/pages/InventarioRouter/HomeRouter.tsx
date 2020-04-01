@@ -19,18 +19,20 @@ const HomeRouter: React.FC = () => {
   const aplicar_filtros = () => {
     console.log("m: ", marca)
     console.log("f: ", fecha_registro)
-    if(marca === undefined && fecha_registro === undefined){
+    if(marca === undefined || fecha_registro === undefined){
       setMarca("Todas")
       setFecha_registro(null)
     }else if (marca===undefined || marca === ""){
       setMarca("Todas")
-    }else{
-      AxiosRouter.filtro_router(marca, fecha_registro.substring(0,10)).then(res => {
+    }
+   // else{
+      AxiosRouter.filtro_router(marca, (fecha_registro===null || fecha_registro===undefined?"": fecha_registro.substring(0,10))).then(res => {
         setRouters(res.data);
+        console.log(res.data);
       }).catch(err => {
         console.log(err);
       });
-    }
+   // }
     
   }
 
