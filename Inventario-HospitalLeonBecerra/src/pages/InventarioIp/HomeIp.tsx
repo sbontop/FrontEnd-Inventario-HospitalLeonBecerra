@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
-    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption
+    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
 import { add, options } from 'ionicons/icons';

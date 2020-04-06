@@ -6,6 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import './style.css';
+import { trash, create, arrowBack } from 'ionicons/icons';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { IonList, IonItem, IonLoading, IonIcon, IonAlert, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
@@ -14,34 +15,47 @@ import GlobalPC from "./GlobalPC";
 
 
 
-export default class FormPCDesk extends Component<{}, IState> {
+export default class FormPCDesk extends Component<any, IState> {
 
     constructor(props: any) {
         super(props);
         this.state = {
             backAction: false,
-            showAlertSuccess: Boolean,
+            showAlertSuccess: false,
             expanded: Number,
             setExpanded: false,
             data: {},
-            marcas:[],
-            showLoading: Boolean,
+            marcas: [],
+            showLoading: false,
             errorMsj: '',
             confirmMsj: '',
+            confirmHeader: 'Confirmacion',
             errorHeader: '',
-            confirmHeader: '',
-            showAlertError: Boolean,
-            showAlertConfirm: Boolean,
+            showAlertError: false,
+            showAlertConfirm: false,
             ramTabs: ['cpu-memoria_ram_1'],
-            storageTabs: ['cpu-disco_duro_1']
+            storageTabs: ['cpu-disco_duro_1'],
+            disabled_form: false,
+            loadingMessage: "Registrando Informacion. Espere por favor...",
+            confirmMessage: "¿Esta seguro de registrar este equipo?",
+            successMessage: 'El equipo se registro exitosamente!',
+            listIP:[],
+            listEmp:[]
         }
     }
 
     static pcList = ['pc-monitor', 'pc-teclado', 'pc-parlantes', 'pc-mouse'];
     static cpuList = ['cpu-tarjeta_red', 'cpu-case', 'cpu-fuente_poder']
 
-    componentDidMount = () =>{
+    componentDidMount = () => {
+        console.log("mounted desktop");
+
+        GlobalPC.getListIP(this);
         GlobalPC.getMarcas(this);
+        GlobalPC.getListEmpleado(this);
+        if (this.props.match.params.id !== undefined) {
+            GlobalPC.getEquipoByID(this, 2);
+        }
     }
 
 
@@ -52,9 +66,9 @@ export default class FormPCDesk extends Component<{}, IState> {
         console.log('analisis', this.state.data);
         let dataCopy = this.state.data;
         let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'cpu-tarjeta_madre', 'cpu-procesador'];
-        let indValues = ['marca', 'modelo', 'num_serie', "codigo"];
-        let valuesTM = ['ram_soportada', 'num_slots', 'disc_conect'];
+        let formValues = ['pc-codigo', 'cpu-tarjeta_madre', 'cpu-procesador',"pc-nombre",'pc-usuario'];
+        let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
+        let valuesTM = ['ram_soportada', 'numero_slots', 'disc_conect'];
         let valuesRD = ['tipo', 'capacidad'];
         let valuesP = ['frecuencia', 'nucleos'];
         let ramSoportada = 0;
@@ -78,10 +92,13 @@ export default class FormPCDesk extends Component<{}, IState> {
                 if (dataCopy[arrPrincipal[_k]].length <= 0) return 'Debe ingresar el Codigo del Equipo';
             }
 
-            if (arrPrincipal[_k] !== 'pc-codigo' && arrPrincipal[_k] !== 'pc-descripcion') {
+            if (arrPrincipal[_k] !== 'pc-codigo' && arrPrincipal[_k] !== 'pc-descripcion' && arrPrincipal[_k].indexOf('num_') === -1) {
                 for (var _j = 0; _j < indValues.length; _j++) {
-                    if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(indValues[_j]) < 0) return 'Debe ingresar datos en el campo ' + indValues[_j].replace('_', ". ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
-
+                    if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(indValues[_j]) < 0) {
+                        console.log(indValues[_j])
+                        console.log(arrPrincipal[_k])
+                        return 'Debe ingresar datos en el campo ' + indValues[_j].replace('_', " ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
+                    }
                 }
             }
             if (arrPrincipal[_k] === 'cpu-tarjeta_madre') {
@@ -90,7 +107,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                 }
                 if ((Number(dataCopy[arrPrincipal[_k]]['ram_soportada']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['ram_soportada'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['ram_soportada']) <= 0)) return 'La Ram Soportada por la tarjeta Madre no es correcta. Deben ser numeros positivos pares multipos de 2. '
                 ramSoportada = Number(dataCopy[arrPrincipal[_k]]['ram_soportada']);
-                slotsTotal = Number(dataCopy[arrPrincipal[_k]]['num_slots']);
+                slotsTotal = Number(dataCopy[arrPrincipal[_k]]['numero_slots']);
                 discConect = Number(dataCopy[arrPrincipal[_k]]['disc_conect']);
             }
 
@@ -140,12 +157,12 @@ export default class FormPCDesk extends Component<{}, IState> {
 
 
 
-    addTabStorage = () => {
+    public addTabStorage = () => {
         let newTab = 'cpu-disco_duro_' + (this.state.storageTabs.length + 1);
         this.setState((prevState) => ({ storageTabs: [...prevState.storageTabs, newTab] }));
     }
 
-    removeTabStorage = (index: any) => {
+    public removeTabStorage = (index: any) => {
         let tab = 'cpu-disco_duro_' + (index + 1);
         let dataCopy = Object.assign({}, this.state.data);
         delete dataCopy[tab];
@@ -156,7 +173,7 @@ export default class FormPCDesk extends Component<{}, IState> {
 
     render() {
 
-        if (!this.state.showAlertSuccess || this.state.backAction) {
+        if (this.state.backAction) {
             return (<Redirect to="/consultdesk" />);
         }
 
@@ -181,11 +198,11 @@ export default class FormPCDesk extends Component<{}, IState> {
                             {GlobalPC.generateGeneralForm(value, this)}
                             <IonItem>
                                 <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['capacidad'] : null} className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                             </IonItem>
                             <IonItem>
                                 <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                             </IonItem>
 
                         </IonList>
@@ -204,9 +221,14 @@ export default class FormPCDesk extends Component<{}, IState> {
                     <IonToolbar color="primary">
 
                         <IonButtons slot="start">
-                            <div onClick={(e: any) => { this.setState({ backAction: true }) }}> <IonBackButton defaultHref="/home" ></IonBackButton></div>
+                            <div > <IonButton onClick={(e: any) => { this.setState({ backAction: true }) }}  ><IonIcon icon={arrowBack}></IonIcon></IonButton></div>
                         </IonButtons>
-                        <IonTitle>Equipos Informáticos</IonTitle>
+                        {/* <IonTitle>Equipos Informáticos</IonTitle> */}
+                        <IonTitle>{this.props.match.params.id === undefined ? "Equipos Informáticos" : "Editar Equipo"}</IonTitle>
+                        <IonButtons slot="end" hidden={this.props.match.params.id === undefined}>
+                            <IonButton onClick={(e: any) => { this.setState({ disabled_form: !this.state.disabled_form }) }}><IonIcon icon={create}></IonIcon> </IonButton>
+                            <IonButton onClick={(e: any) => { this.setState({ confirmMessage: "¿Esta seguro de eliminar este equipo?", showAlertConfirm: true }) }} ><IonIcon icon={trash}></IonIcon> </IonButton>
+                        </IonButtons>
                     </IonToolbar>
                 </IonHeader>
 
@@ -227,7 +249,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating" >Código<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required type="text" name='pc-codigo' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
+                                            <IonInput required disabled={this.state.disabled_form} type="text" name='pc-codigo' value={this.state.data["pc-codigo"]} onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
                                         </IonItem>
 
 
@@ -235,6 +257,9 @@ export default class FormPCDesk extends Component<{}, IState> {
                                 </IonCol>
                             </IonRow>
                             <div>
+                            <IonList>
+                                {GlobalPC.generateFormExt(this)}
+                            </IonList>
 
 
 
@@ -266,15 +291,15 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                         {GlobalPC.generateGeneralForm("cpu-tarjeta_madre", this)}
                                                         <IonItem>
                                                             <IonLabel position="floating">Ram Soportada (GBs)<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.ram_soportada' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['ram_soportada'] : null} className="root" name='cpu-tarjeta_madre.ram_soportada' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Numero de slots para Ram<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.num_slots' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['numero_slots'] : null} className="root" name='cpu-tarjeta_madre.numero_slots' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Numero de Conexiones para Disco Duro<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required type="number" className="root" name='cpu-tarjeta_madre.disc_conect' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['disc_conect'] : null} className="root" name='cpu-tarjeta_madre.disc_conect' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -351,7 +376,7 @@ export default class FormPCDesk extends Component<{}, IState> {
                                         expanded: !isExpanded ? -1 : 7
                                     });
 
-                                } }>
+                                }}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -368,11 +393,11 @@ export default class FormPCDesk extends Component<{}, IState> {
                                                         {GlobalPC.generateGeneralForm('cpu-procesador', this)}
                                                         <IonItem>
                                                             <IonLabel position="floating">Frecuencia<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["cpu-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['frecuencia'] : null} type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de nucleos<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["cpu-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['nucleos'] : null} type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -394,16 +419,16 @@ export default class FormPCDesk extends Component<{}, IState> {
                             </div>
                             <IonItem>
                                 <IonLabel position="floating" >DESCRIPCION GENERAL<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required type="text" name='pc-descripcion' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
+                                <IonInput required disabled={this.state.disabled_form} value={this.state.data["pc-descripcion"]} type="text" name='pc-descripcion' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
                             </IonItem>
                             <br />
                             <IonRow class="ion-text-center">
                                 <IonCol>
-                                    <IonButton color="success" class="ion-no-margin" onClick={(e: any) => { GlobalPC.saveHandler(this.validarData(), this) }}>Guardar</IonButton>
+                                    <IonButton color="success" class="ion-no-margin" onClick={(e: any) => { GlobalPC.saveHandler(this.validarData(), this) }}>{"Guardar " + (this.props.match.params.id !== undefined ? "Cambios" : "Equipo")}</IonButton>
                                     <IonLoading
                                         isOpen={this.state.showLoading}
 
-                                        message={'Registrando Informacion. Espero por favor...'}
+                                        message={this.state.loadingMessage}
 
                                     />
 
@@ -412,7 +437,7 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                         header={this.state.confirmHeader}
 
-                                        message={'¿Esta seguro de registrar este equipo?'}
+                                        message={this.state.confirmMessage}
                                         buttons={[
                                             {
                                                 text: 'No',
@@ -425,7 +450,24 @@ export default class FormPCDesk extends Component<{}, IState> {
                                             {
                                                 text: 'Si',
                                                 handler: () => {
-                                                    GlobalPC.sendData(2, this);
+                                                    if (this.props.match.params.id !== undefined) {
+                                                        if (this.state.confirmMessage.indexOf("eliminar") > -1) {
+                                                            GlobalPC.deleteEquipo(this, this.props.match.params.id);
+                                                        } else {
+                                                            this.setState({
+                                                                data: {
+                                                                    ...this.state.data,
+                                                                    "num_memoria_ram": this.state.ramTabs.length,
+                                                                    "num_disco_duro": this.state.storageTabs.length
+                                                                }
+                                                            });
+                                                            console.log(this.state.data);
+                                                            GlobalPC.editEquipo(this, this.props.match.params.id, this.state.data, 2);
+                                                        }
+                                                    } else {
+                                                        GlobalPC.sendData(2, this);
+                                                    }
+
                                                 }
                                             }
                                         ]}
@@ -450,13 +492,13 @@ export default class FormPCDesk extends Component<{}, IState> {
 
                                         header={'Registro Exitoso'}
 
-                                        message={'El equipo se registro exitosamente!'}
+                                        message={this.state.successMessage}
                                         buttons={[
                                             {
                                                 text: 'Ok',
                                                 handler: () => {
                                                     this.setState({
-                                                        showAlertSuccess: false
+                                                        showAlertSuccess: false, backAction: true
                                                     })
                                                 }
                                             }
