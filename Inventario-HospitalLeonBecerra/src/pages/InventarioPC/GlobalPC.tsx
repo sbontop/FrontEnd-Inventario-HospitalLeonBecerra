@@ -30,8 +30,11 @@ export default interface IState {
     loadingMessage: any;
     confirmMessage: any;
     successMessage: any;
+<<<<<<< HEAD
     listIP: any;
     listEmp: any;
+=======
+>>>>>>> 88531dfd7f84a222b0381570abfbec74e4105129
 }
 
 
@@ -57,6 +60,7 @@ export default class GlobalPC {
                 marcas: res.data
             });
             console.log("DATA:", obj.state.marcas);
+
         }).catch((err: any) => {
             console.log(err.response.data);
         });
@@ -81,9 +85,9 @@ export default class GlobalPC {
             console.log("DATA:", obj.state.listEmp);
         }).catch((err: any) => {
             console.log(err.response.data);
-        });
-    }
 
+    });
+    }
     static onChangeCodInput = (e: any, obj: React.Component<any, IState>) => {
         const { name, value } = e.target;
         obj.setState({
@@ -116,8 +120,8 @@ export default class GlobalPC {
             obj.setState({
                 showAlertConfirm: true,
                 confirmHeader: 'Confirmacion',
-                confirmMessage: edit ? "¿Esta seguro de editar este equipo?" : "¿Esta seguro de registrar este equipo?",
-                // successMessage: edit?'El equipo se edito exitosamente!':
+                confirmMessage: edit?"¿Esta seguro de editar este equipo?":"¿Esta seguro de registrar este equipo?",
+               // successMessage: edit?'El equipo se edito exitosamente!':
             });
             console.log(obj.state.data)
         }
@@ -155,7 +159,7 @@ export default class GlobalPC {
         AxiosPC.crear_pc(obj.state.data, op).then(response => {
             obj.setState({
                 showLoading: false,
-                successMessage: "El equipo se registro exitosamente!",
+                successMessage:"El equipo se registro exitosamente!",
                 showAlertSuccess: true
             })
             console.log(response);
@@ -185,20 +189,20 @@ export default class GlobalPC {
         });
     }
 
-    static editEquipo(obj: any, idequipo: any, body: any, op: any) {
+    static editEquipo(obj: any, idequipo: any, body:any, op:any){
         obj.setState({
             loadingMessage: "Registrando la nueva Informacion del equipo. Espere por favor...",
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosPC.editEquipo(idequipo, body, op).then(response => {
+        AxiosPC.editEquipo(idequipo,body,op).then(response=>{
             obj.setState({
                 showLoading: false,
                 successMessage: 'La informacion del equipo se edito exitosamente!',
                 showAlertSuccess: true
             })
             console.log(response);
-        }, err => {
+        }, err=>{
             obj.setState({
                 showLoading: false
             })
@@ -209,7 +213,7 @@ export default class GlobalPC {
 
     static deleteEquipo = (obj: any, idequipo: any) => {
         obj.setState({
-            loadingMessage: "Eliminando equipo. Espere por favor...",
+            loadingMessage: "Eliminando equipo. Espere por favor...", 
             showLoading: true,
             showAlertConfirm: false
         })
@@ -227,7 +231,6 @@ export default class GlobalPC {
             console.log(err.response.data);
         })
     }
-
 
 
     static getEquipoByID = (obj: React.Component<any, IState>, op: any) => {
@@ -255,6 +258,7 @@ export default class GlobalPC {
         });
     }
 
+  
 
 
     static generateRamForm = (obj: React.Component<any, IState>) => {
@@ -420,6 +424,7 @@ export default class GlobalPC {
             </div>
         );
     }
+
 
 
 
