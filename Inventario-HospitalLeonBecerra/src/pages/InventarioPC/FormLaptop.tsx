@@ -40,7 +40,8 @@ export default class FormPCLaptop extends Component<any, IState> {
             confirmMessage: "",
             successMessage: '',
             listIP:[],
-            listEmp:[]
+            listEmp:[],
+            listSO:[]
 
         }
     }
@@ -50,6 +51,7 @@ export default class FormPCLaptop extends Component<any, IState> {
         GlobalPC.getMarcas(this);
         GlobalPC.getListIP(this);
         GlobalPC.getListEmpleado(this);
+        GlobalPC.getListSO(this);
 
         if (this.props.match.params.id !== undefined) {
 
@@ -68,7 +70,7 @@ export default class FormPCLaptop extends Component<any, IState> {
         console.log(this.state.data)
         let dataCopy = this.state.data;
         let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", 'pc-ram_soportada', 'pc-numero_slots', "pc-disco_duro_1","pc-procesador","pc-nombre",'pc-usuario'];
+        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", 'pc-ram_soportada', 'pc-numero_slots', "pc-disco_duro_1","pc-procesador","pc-nombre",'pc-usuario',"pc-so","pc-tipo_so","pc-licencia","pc-service"];
         let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
         let valuesRD = ['tipo', 'capacidad'];
         let valuesP = ['frecuencia', 'nucleos'];
@@ -202,8 +204,8 @@ export default class FormPCLaptop extends Component<any, IState> {
                             </IonRow>
 
                             <div>
-
-                                <ExpansionPanel expanded={this.state.expanded === 1} onChange={GlobalPC.handleChange(1, this)}>
+                            {GlobalPC.generateSOForm(this,1)}
+                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={GlobalPC.handleChange(2, this)}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -223,7 +225,7 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                <ExpansionPanel expanded={this.state.expanded === 2} onChange={GlobalPC.handleChange(2, this)}>
+                                <ExpansionPanel expanded={this.state.expanded === 3} onChange={GlobalPC.handleChange(3, this)}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
@@ -263,9 +265,10 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                < ExpansionPanel expanded={this.state.expanded === 3} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+                                
+                                < ExpansionPanel expanded={this.state.expanded === 4} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
                                     this.setState({
-                                        expanded: !isExpanded ? -1 : 3
+                                        expanded: !isExpanded ? -1 : 4
                                     });
 
                                 }}>
@@ -285,11 +288,11 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                         {GlobalPC.generateGeneralForm('pc-procesador', this)}
                                                         <IonItem>
                                                             <IonLabel position="floating">Frecuencia<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["cpu-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['frecuencia'] : null} type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['frecuencia'] : null} type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de nucleos<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["cpu-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['nucleos'] : null} type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['nucleos'] : null} type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -336,7 +339,7 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                 handler: () => {
                                                     if(this.props.match.params.id !== undefined){
                                                         if(this.state.confirmMessage.indexOf("eliminar")>-1){
-                                                            GlobalPC.deleteEquipo(this,this.props.match.params.id);
+                                                            GlobalPC.deleteEquipo(this,this.props.match.params.id,"laptop");
                                                         }else{
                                                             this.setState({
                                                                 data: {

@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default class AxiosPC {
     static instanceAxios = axios.create({
-        baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
-        //baseURL: 'http://localhost:8000/api',
+        //baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
+        baseURL: 'http://localhost:8000/api',
 
       });
 
@@ -38,9 +38,13 @@ export default class AxiosPC {
         return AxiosPC.instanceAxios.get(`/mostrar_empleados`);
       }
 
-      static deleteEquipo=(idequipo:any)=>{
+      static get_lista_so= () => {
+        return AxiosPC.instanceAxios.get(`/listar_so`);
+      }
+
+      static deleteEquipo=(idequipo:any,tipo:any)=>{
         
-        return AxiosPC.instanceAxios.put(`/deleteequipo/${idequipo}`);
+        return AxiosPC.instanceAxios.put(`/deleteequipo/${idequipo}/${tipo}`);
       }
 
       static getEquipoByID =(idequipo:any, op:any)=>{

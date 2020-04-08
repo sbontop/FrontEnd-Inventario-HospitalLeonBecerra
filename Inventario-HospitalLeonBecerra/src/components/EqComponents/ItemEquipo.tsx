@@ -40,7 +40,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
         showLoading: true,
         showAlertConfirm: false
       })
-      AxiosPC.deleteEquipo(this.props.info.id_equipo).then((response: any) => {
+      AxiosPC.deleteEquipo(this.props.info.id_equipo,this.props.tipo).then((response: any) => {
         if(this.state.mounted)
         {
           this.setState({

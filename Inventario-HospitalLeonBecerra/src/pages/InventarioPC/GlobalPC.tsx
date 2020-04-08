@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AxiosPC from '../../services/AxiosPC';
-import { IonList, IonItem, IonIcon, IonLabel, IonRow, IonCol, IonInput, IonText, IonSelect, IonSelectOption, IonGrid } from '@ionic/react';
+import { IonList, IonItem, IonIcon, IonLabel, IonRow, IonCol, IonInput, IonText, IonSelect, IonSelectOption, IonGrid, IonToggle } from '@ionic/react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -30,11 +30,9 @@ export default interface IState {
     loadingMessage: any;
     confirmMessage: any;
     successMessage: any;
-<<<<<<< HEAD
     listIP: any;
     listEmp: any;
-=======
->>>>>>> 88531dfd7f84a222b0381570abfbec74e4105129
+    listSO: any;
 }
 
 
@@ -76,7 +74,16 @@ export default class GlobalPC {
             console.log(err.response.data);
         });
     }
-
+    static getListSO(obj: React.Component<any, IState>) {
+        AxiosPC.get_lista_so().then((res: any) => {
+            obj.setState({
+                listSO: res.data
+            });
+            console.log("DATA:", obj.state.listSO);
+        }).catch((err: any) => {
+            console.log(err.response.data);
+        });
+    }
     static getListEmpleado(obj: React.Component<any, IState>) {
         AxiosPC.get_lista_empleados().then((res: any) => {
             obj.setState({
@@ -86,7 +93,7 @@ export default class GlobalPC {
         }).catch((err: any) => {
             console.log(err.response.data);
 
-    });
+        });
     }
     static onChangeCodInput = (e: any, obj: React.Component<any, IState>) => {
         const { name, value } = e.target;
@@ -120,8 +127,8 @@ export default class GlobalPC {
             obj.setState({
                 showAlertConfirm: true,
                 confirmHeader: 'Confirmacion',
-                confirmMessage: edit?"¿Esta seguro de editar este equipo?":"¿Esta seguro de registrar este equipo?",
-               // successMessage: edit?'El equipo se edito exitosamente!':
+                confirmMessage: edit ? "¿Esta seguro de editar este equipo?" : "¿Esta seguro de registrar este equipo?",
+                // successMessage: edit?'El equipo se edito exitosamente!':
             });
             console.log(obj.state.data)
         }
@@ -159,7 +166,7 @@ export default class GlobalPC {
         AxiosPC.crear_pc(obj.state.data, op).then(response => {
             obj.setState({
                 showLoading: false,
-                successMessage:"El equipo se registro exitosamente!",
+                successMessage: "El equipo se registro exitosamente!",
                 showAlertSuccess: true
             })
             console.log(response);
@@ -189,20 +196,20 @@ export default class GlobalPC {
         });
     }
 
-    static editEquipo(obj: any, idequipo: any, body:any, op:any){
+    static editEquipo(obj: any, idequipo: any, body: any, op: any) {
         obj.setState({
             loadingMessage: "Registrando la nueva Informacion del equipo. Espere por favor...",
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosPC.editEquipo(idequipo,body,op).then(response=>{
+        AxiosPC.editEquipo(idequipo, body, op).then(response => {
             obj.setState({
                 showLoading: false,
                 successMessage: 'La informacion del equipo se edito exitosamente!',
                 showAlertSuccess: true
             })
             console.log(response);
-        }, err=>{
+        }, err => {
             obj.setState({
                 showLoading: false
             })
@@ -211,13 +218,13 @@ export default class GlobalPC {
     }
 
 
-    static deleteEquipo = (obj: any, idequipo: any) => {
+    static deleteEquipo = (obj: any, idequipo: any,tipo:any) => {
         obj.setState({
-            loadingMessage: "Eliminando equipo. Espere por favor...", 
+            loadingMessage: "Eliminando equipo. Espere por favor...",
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosPC.deleteEquipo(idequipo).then((response: any) => {
+        AxiosPC.deleteEquipo(idequipo,tipo).then((response: any) => {
             obj.setState({
                 showLoading: false,
                 successMessage: 'El equipo se elimino exitosamente!',
@@ -258,7 +265,7 @@ export default class GlobalPC {
         });
     }
 
-  
+
 
 
     static generateRamForm = (obj: React.Component<any, IState>) => {
@@ -275,7 +282,7 @@ export default class GlobalPC {
                                             <b><IonText color="danger">{'Memoria ' + (index + 1)}</IonText></b>
                                         </IonCol>
                                         <IonCol size="2" >
-                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { GlobalPC.removeTabRam(index, obj) }} />
+                                            <IonIcon name='close' hidden={index === 0 || obj.props.match.params.id !== undefined} size="small" onClick={(e: any) => { GlobalPC.removeTabRam(index, obj) }} />
                                         </IonCol>
                                     </IonRow>
                                 </IonGrid>
@@ -386,7 +393,7 @@ export default class GlobalPC {
 
     static generateFormExt(obj: React.Component<any, IState>) {
         return (
-            <div key ={"ext"}>
+            <div key={"ext"}>
                 <IonItem>
                     <IonLabel position="floating">Nombre del PC<IonText color="danger">*</IonText></IonLabel>
                     <IonInput type="text" disabled={obj.state.disabled_form} className="root" value={obj.state.data["pc-nombre"]} name='pc-nombre' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}></IonInput>
@@ -396,9 +403,12 @@ export default class GlobalPC {
                     <IonInput type="text" disabled={obj.state.disabled_form} className="root" value={obj.state.data["pc-usuario"]} name='pc-usuario' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}></IonInput>
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="floating">Direccion del IP<IonText color="danger">*</IonText></IonLabel>
+                    <IonLabel position="floating">Direccion del IP</IonLabel>
                     {/* <IonInput required type="text" className="root" name='pc-marca' onIonChange={(e:any)=>{GlobalPC.onChangeCodInput(e,this)}}></IonInput> */}
                     <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-ip"]} name='pc-ip' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
+                        <IonSelectOption value={null}>
+                            Ninguno
+                                </IonSelectOption>
                         {obj.state.listIP.map((object: any, i: any) => {
                             return (
                                 <IonSelectOption key={object.id_ip} value={object.direccion_ip}>
@@ -409,9 +419,10 @@ export default class GlobalPC {
                     </IonSelect>
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="floating">Asignar a Empleado<IonText color="danger">*</IonText></IonLabel>
+                    <IonLabel position="floating">Asignar a Empleado</IonLabel>
                     {/* <IonInput required type="text" className="root" name='pc-marca' onIonChange={(e:any)=>{GlobalPC.onChangeCodInput(e,this)}}></IonInput> */}
                     <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-empleado"]} name='pc-empleado' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
+                        <IonSelectOption value={null}> Ninguno</IonSelectOption>
                         {obj.state.listEmp.map((object: any, i: any) => {
                             return (
                                 <IonSelectOption key={object.id} value={object.id}>
@@ -426,6 +437,83 @@ export default class GlobalPC {
     }
 
 
+    static generateSOForm(obj: React.Component<any, IState>, idx: any) {
+        return (
+            <div key={"SOForm"}>
+                <ExpansionPanel expanded={obj.state.expanded === (idx)} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+                    console.log((idx))
+                    obj.setState({
+                        expanded: !isExpanded ? -1 : idx
+                    })
+                }}>
+                    <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        id="panel1bh-header">
+                        <Typography>Sistema Operativo</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <IonGrid>
+                            <IonRow class="ion-text-center">
+                                <IonCol>
+                                    <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                        <IonItem>
+                                            <IonLabel position="floating">Sistema Operativo<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-so"]} name='pc-so' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
+
+                                                {obj.state.listSO.map((object: any, i: any) => {
+                                                    return (
+                                                        <IonSelectOption key={object.so + "_" + i} value={object.so}>
+                                                            {object.so}
+                                                        </IonSelectOption>
+                                                    );
+                                                })}
+                                            </IonSelect>
+                                        </IonItem>
+
+                                        <IonItem>
+                                            <IonLabel position="floating">Tipo de Sistema Operativo<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-tipo_so"]} name='pc-tipo_so' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
+                                                <IonSelectOption value={"64 Bits"}>64 Bits</IonSelectOption>
+                                                <IonSelectOption value={"32 Bits"}>32 Bits</IonSelectOption>
+                                            </IonSelect>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="fixed">Licencia<IonText color="danger">*</IonText></IonLabel>
+                                            <IonToggle disabled={obj.state.disabled_form} checked={obj.state.data["pc-licencia"]} name='pc-licencia' onIonChange={(e: any) => {
+                                                obj.setState({
+                                                    data: {
+                                                        ...obj.state.data,
+                                                        [e.target.name]: e.detail.checked
+                                                    }
+                                                });
+                                            }} />
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="fixed">Service Pack<IonText color="danger">*</IonText></IonLabel>
+                                            <IonToggle disabled={obj.state.disabled_form} checked={obj.state.data["pc-service"]} name='pc-service' onIonChange={(e: any) => { obj.setState({
+                                                    data: {
+                                                        ...obj.state.data,
+                                                        [e.target.name]: e.detail.checked
+                                                    }
+                                                }); }} />
+                                        </IonItem>
+                                    </IonList >
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
+
+
+                    </ExpansionPanelDetails>
+                    <ExpansionPanelActions>
+                        {/* <Button size="small">Cancel</Button> */}
+                        <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(obj) }}>
+                            Siguiente
+                                </Button>
+                    </ExpansionPanelActions>
+                </ExpansionPanel>
+            </div>
+        );
+    }
 
 
 }

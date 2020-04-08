@@ -40,7 +40,8 @@ export default class FormPCDesk extends Component<any, IState> {
             confirmMessage: "¿Esta seguro de registrar este equipo?",
             successMessage: 'El equipo se registro exitosamente!',
             listIP:[],
-            listEmp:[]
+            listEmp:[],
+            listSO:[]
         }
     }
 
@@ -53,6 +54,7 @@ export default class FormPCDesk extends Component<any, IState> {
         GlobalPC.getListIP(this);
         GlobalPC.getMarcas(this);
         GlobalPC.getListEmpleado(this);
+        GlobalPC.getListSO(this);
         if (this.props.match.params.id !== undefined) {
             GlobalPC.getEquipoByID(this, 2);
         }
@@ -66,7 +68,7 @@ export default class FormPCDesk extends Component<any, IState> {
         console.log('analisis', this.state.data);
         let dataCopy = this.state.data;
         let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'cpu-tarjeta_madre', 'cpu-procesador',"pc-nombre",'pc-usuario'];
+        let formValues = ['pc-codigo', 'cpu-tarjeta_madre', 'cpu-procesador',"pc-nombre",'pc-usuario',"pc-so","pc-tipo_so","pc-licencia","pc-service"];
         let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
         let valuesTM = ['ram_soportada', 'numero_slots', 'disc_conect'];
         let valuesRD = ['tipo', 'capacidad'];
@@ -413,7 +415,8 @@ export default class FormPCDesk extends Component<any, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                {GlobalPC.generatePrincipalForm(FormPCDesk.cpuList, this, FormPCDesk.pcList.length + 4)}
+                                {GlobalPC.generateSOForm(this,8)}
+                                {GlobalPC.generatePrincipalForm(FormPCDesk.cpuList, this, FormPCDesk.pcList.length + 5)}
 
 
                             </div>
@@ -452,7 +455,7 @@ export default class FormPCDesk extends Component<any, IState> {
                                                 handler: () => {
                                                     if (this.props.match.params.id !== undefined) {
                                                         if (this.state.confirmMessage.indexOf("eliminar") > -1) {
-                                                            GlobalPC.deleteEquipo(this, this.props.match.params.id);
+                                                            GlobalPC.deleteEquipo(this, this.props.match.params.id,"desktop");
                                                         } else {
                                                             this.setState({
                                                                 data: {
