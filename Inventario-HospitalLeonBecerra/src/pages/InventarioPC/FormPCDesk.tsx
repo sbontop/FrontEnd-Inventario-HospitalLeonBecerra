@@ -24,7 +24,10 @@ export default class FormPCDesk extends Component<any, IState> {
             showAlertSuccess: false,
             expanded: Number,
             setExpanded: false,
-            data: {},
+            data: {
+                "pc-licencia":false,
+                "pc-service":false
+            },
             marcas: [],
             showLoading: false,
             errorMsj: '',
@@ -41,7 +44,9 @@ export default class FormPCDesk extends Component<any, IState> {
             successMessage: 'El equipo se registro exitosamente!',
             listIP:[],
             listEmp:[],
-            listSO:[]
+            listSO:[],
+            listOffice:[],
+            fuente:false
         }
     }
 
@@ -55,6 +60,7 @@ export default class FormPCDesk extends Component<any, IState> {
         GlobalPC.getMarcas(this);
         GlobalPC.getListEmpleado(this);
         GlobalPC.getListSO(this);
+        GlobalPC.getListOffice(this);
         if (this.props.match.params.id !== undefined) {
             GlobalPC.getEquipoByID(this, 2);
         }
@@ -66,12 +72,11 @@ export default class FormPCDesk extends Component<any, IState> {
     validarData = () => {
         console.log('analisis', this.state.ramTabs);
         console.log('analisis', this.state.data);
-        let dataCopy = this.state.data;
-        let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'cpu-tarjeta_madre', 'cpu-procesador',"pc-nombre",'pc-usuario',"pc-so","pc-tipo_so","pc-licencia","pc-service"];
+        let formValues = [ 'cpu-tarjeta_madre', 'cpu-procesador'];
+        let formValues_2 = ['pc-codigo',"pc-nombre",'pc-usuario',"pc-so","pc-tipo_so","pc-licencia","pc-service","pc-office","pc-empleado","pc-ip"];
         let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
-        let valuesTM = ['ram_soportada', 'numero_slots', 'disc_conect'];
-        let valuesRD = ['tipo', 'capacidad'];
+        let valuesTM = ['ram_soportada', 'slots_ram', 'conexiones_disco'];
+        let valuesRD = ['tipo', 'capacidad',"tipo_capacidad"];
         let valuesP = ['frecuencia', 'nucleos'];
         let ramSoportada = 0;
         let slotsTotal = 0;
@@ -79,26 +84,35 @@ export default class FormPCDesk extends Component<any, IState> {
         let discConect = 0;
         formValues = formValues.concat(this.state.ramTabs);
         formValues = formValues.concat(this.state.storageTabs);
+        formValues = formValues.concat(formValues_2);
         formValues = formValues.concat(FormPCDesk.pcList);
         formValues = formValues.concat(FormPCDesk.cpuList);
-
+        if(this.state.fuente){
+            formValues = formValues.concat(["pc-ups_regulador"]); 
+        }else{
+            let dataCop = Object.assign({}, this.state.data);
+            delete dataCop["pc-ups_regulador"];
+            this.setState({
+                data:dataCop
+            })
+            formValues = formValues.filter((value:any)=>{return value!=="pc-ups_regulador"});
+        }
+        let dataCopy = this.state.data;
+        let arrPrincipal = Object.keys(dataCopy);
         for (var _i = 0; _i < formValues.length; _i++) {
             if (arrPrincipal.indexOf(formValues[_i]) < 0) {
                 return 'No se han ingresado datos sobre ' + formValues[_i].split('-')[1].toUpperCase().replace('_', " ");
             }
         }
-
         for (var _k = 0; _k < arrPrincipal.length; _k++) {
 
             if (arrPrincipal[_k] === 'pc-codigo') {
                 if (dataCopy[arrPrincipal[_k]].length <= 0) return 'Debe ingresar el Codigo del Equipo';
             }
-
-            if (arrPrincipal[_k] !== 'pc-codigo' && arrPrincipal[_k] !== 'pc-descripcion' && arrPrincipal[_k].indexOf('num_') === -1) {
+//            if (arrPrincipal[_k] !== 'pc-codigo' && arrPrincipal[_k] !== 'pc-descripcion' && arrPrincipal[_k].indexOf('num_') === -1) {
+            if (formValues_2.indexOf(arrPrincipal[_k])===-1&& arrPrincipal[_k] !== 'pc-descripcion' && arrPrincipal[_k].indexOf('num_') === -1) {
                 for (var _j = 0; _j < indValues.length; _j++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(indValues[_j]) < 0) {
-                        console.log(indValues[_j])
-                        console.log(arrPrincipal[_k])
                         return 'Debe ingresar datos en el campo ' + indValues[_j].replace('_', " ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                     }
                 }
@@ -109,35 +123,26 @@ export default class FormPCDesk extends Component<any, IState> {
                 }
                 if ((Number(dataCopy[arrPrincipal[_k]]['ram_soportada']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['ram_soportada'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['ram_soportada']) <= 0)) return 'La Ram Soportada por la tarjeta Madre no es correcta. Deben ser numeros positivos pares multipos de 2. '
                 ramSoportada = Number(dataCopy[arrPrincipal[_k]]['ram_soportada']);
-                slotsTotal = Number(dataCopy[arrPrincipal[_k]]['numero_slots']);
-                discConect = Number(dataCopy[arrPrincipal[_k]]['disc_conect']);
+                slotsTotal = Number(dataCopy[arrPrincipal[_k]]['slots_ram']);
+                discConect = Number(dataCopy[arrPrincipal[_k]]['conexiones_disco']);
             }
-
-
-
             if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1 || arrPrincipal[_k].indexOf('cpu-disco_duro') !== -1) {
                 for (var _r = 0; _r < valuesRD.length; _r++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesRD[_r]) < 0) return 'Debe ingresar datos en el campo ' + valuesRD[_r].replace('_', ". ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
-
                 if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
                     if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
-                    ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
-
+                    //ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
+                    let r = Number(dataCopy[arrPrincipal[_k]]['capacidad']);
+                    ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"]==="GB" ? r : r/1000);
                 }
-
             }
             if (arrPrincipal[_k].indexOf('cpu-procesador') !== -1) {
                 for (var _m = 0; _m < valuesP.length; _m++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesP[_m]) < 0) return 'Debe ingresar datos en el campo ' + valuesP[_m].replace('_', ". ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
-
-
             }
         }
-
-
-
         if (slotsTotal < this.state.ramTabs.length) {
             return 'La cantidad de Tarjetas de Memoria Ram no coinciden con La cantidad de Slots Disponibles en la Tarjeta Madre.'
         }
@@ -159,17 +164,17 @@ export default class FormPCDesk extends Component<any, IState> {
 
 
 
-    public addTabStorage = () => {
-        let newTab = 'cpu-disco_duro_' + (this.state.storageTabs.length + 1);
-        this.setState((prevState) => ({ storageTabs: [...prevState.storageTabs, newTab] }));
-    }
+    // public addTabStorage = () => {
+    //     let newTab = 'cpu-disco_duro_' + (this.state.storageTabs.length + 1);
+    //     this.setState((prevState) => ({ storageTabs: [...prevState.storageTabs, newTab] }));
+    // }
 
-    public removeTabStorage = (index: any) => {
-        let tab = 'cpu-disco_duro_' + (index + 1);
-        let dataCopy = Object.assign({}, this.state.data);
-        delete dataCopy[tab];
-        this.setState((prevState) => ({ storageTabs: prevState.storageTabs.filter((value: any) => { return value !== tab }), data: dataCopy }));
-    }
+    // public removeTabStorage = (index: any) => {
+    //     let tab = 'cpu-disco_duro_' + (index + 1);
+    //     let dataCopy = Object.assign({}, this.state.data);
+    //     delete dataCopy[tab];
+    //     this.setState((prevState) => ({ storageTabs: prevState.storageTabs.filter((value: any) => { return value !== tab }), data: dataCopy }));
+    // }
 
 
 
@@ -179,40 +184,40 @@ export default class FormPCDesk extends Component<any, IState> {
             return (<Redirect to="/consultdesk" />);
         }
 
-        const storagetabs = this.state.storageTabs.map((value: any, index: any) => {
-            return (
-                <IonRow key={index} class="ion-text-center">
+        // const storagetabs = this.state.storageTabs.map((value: any, index: any) => {
+        //     return (
+        //         <IonRow key={index} class="ion-text-center">
 
-                    <IonCol>
-                        <IonList lines="full" className="ion-no-margin ion-no-padding">
-                            <IonItem className="root" >
-                                <IonGrid>
-                                    <IonRow className="root" >
-                                        <IonCol size="10">
-                                            <b><IonText color="primary">{'Disco Duro ' + (index + 1)}</IonText></b>
-                                        </IonCol>
-                                        <IonCol size="2" >
-                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { this.removeTabStorage(index) }} />
-                                        </IonCol>
-                                    </IonRow>
-                                </IonGrid>
-                            </IonItem>
-                            {GlobalPC.generateGeneralForm(value, this)}
-                            <IonItem>
-                                <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['capacidad'] : null} className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
-                            </IonItem>
+        //             <IonCol>
+        //                 <IonList lines="full" className="ion-no-margin ion-no-padding">
+        //                     <IonItem className="root" >
+        //                         <IonGrid>
+        //                             <IonRow className="root" >
+        //                                 <IonCol size="10">
+        //                                     <b><IonText color="primary">{'Disco Duro ' + (index + 1)}</IonText></b>
+        //                                 </IonCol>
+        //                                 <IonCol size="2" >
+        //                                     <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { this.removeTabStorage(index) }} />
+        //                                 </IonCol>
+        //                             </IonRow>
+        //                         </IonGrid>
+        //                     </IonItem>
+        //                     {GlobalPC.generateGeneralForm(value, this)}
+        //                     <IonItem>
+        //                         <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
+        //                         <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['capacidad'] : null} className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+        //                     </IonItem>
+        //                     <IonItem>
+        //                         <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
+        //                         <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data[value] !== undefined && this.state.data[value] !== null ? this.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+        //                     </IonItem>
 
-                        </IonList>
-                    </IonCol>
-                </IonRow>
-            );
-        });
-        // const ramtabs = this
+        //                 </IonList>
+        //             </IonCol>
+        //         </IonRow>
+        //     );
+        // });
+        // // const ramtabs = this
 
 
         return (
@@ -251,7 +256,7 @@ export default class FormPCDesk extends Component<any, IState> {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating" >Código<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required disabled={this.state.disabled_form} type="text" name='pc-codigo' value={this.state.data["pc-codigo"]} onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
+                                            <IonInput required disabled={this.props.match.params.id !== undefined} type="text" name='pc-codigo' value={this.state.data["pc-codigo"]} onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
                                         </IonItem>
 
 
@@ -297,11 +302,11 @@ export default class FormPCDesk extends Component<any, IState> {
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Numero de slots para Ram<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['numero_slots'] : null} className="root" name='cpu-tarjeta_madre.numero_slots' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['slots_ram'] : null} className="root" name='cpu-tarjeta_madre.slots_ram' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Numero de Conexiones para Disco Duro<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['disc_conect'] : null} className="root" name='cpu-tarjeta_madre.disc_conect' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["cpu-tarjeta_madre"] !== undefined && this.state.data["cpu-tarjeta_madre"] !== null ? this.state.data["cpu-tarjeta_madre"]['conexiones_disco'] : null} className="root" name='cpu-tarjeta_madre.conexiones_disco' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -337,7 +342,7 @@ export default class FormPCDesk extends Component<any, IState> {
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-                                        <Button size="small" onClick={(e: any) => { GlobalPC.addTabRam(this) }}>Agregar Memoria Ram</Button>
+                                        <Button size="small" hidden={this.props.match.params.id !== undefined} onClick={(e: any) => { GlobalPC.addTabRam(this) }}>Agregar Memoria Ram</Button>
                                         <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(this) }}>
                                             Siguiente
                                         </Button>
@@ -358,16 +363,16 @@ export default class FormPCDesk extends Component<any, IState> {
                                     <ExpansionPanelDetails>
 
 
-                                        <IonGrid>
+                                        {/* <IonGrid>
                                             {storagetabs}
-                                        </IonGrid>
-
+                                        </IonGrid> */}
+                                        {GlobalPC.generateStorageForm(this)}
 
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-                                        {/* <Button size="small">Cancel</Button> */}
-                                        <Button size="small" onClick={this.addTabStorage}>Agregar Disco Duro</Button>
+                                        
+                                        <Button size="small" hidden={this.props.match.params.id !== undefined} onClick={(e: any) => { GlobalPC.addTabStorage(this) }}>Agregar Disco Duro</Button>
                                         <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(this) }}>
                                             Siguiente
                                         </Button>
@@ -394,7 +399,7 @@ export default class FormPCDesk extends Component<any, IState> {
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
                                                         {GlobalPC.generateGeneralForm('cpu-procesador', this)}
                                                         <IonItem>
-                                                            <IonLabel position="floating">Frecuencia<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonLabel position="floating">Frecuencia (GHz)<IonText color="danger">*</IonText></IonLabel>
                                                             <IonInput disabled={this.state.disabled_form} value={this.state.data["cpu-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['frecuencia'] : null} type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
@@ -416,8 +421,9 @@ export default class FormPCDesk extends Component<any, IState> {
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
                                 {GlobalPC.generateSOForm(this,8)}
-                                {GlobalPC.generatePrincipalForm(FormPCDesk.cpuList, this, FormPCDesk.pcList.length + 5)}
-
+                                {GlobalPC.generateFuenteForm(this,9)}
+                                {GlobalPC.generatePrincipalForm(FormPCDesk.cpuList, this, FormPCDesk.pcList.length + 6)}
+                                
 
                             </div>
                             <IonItem>

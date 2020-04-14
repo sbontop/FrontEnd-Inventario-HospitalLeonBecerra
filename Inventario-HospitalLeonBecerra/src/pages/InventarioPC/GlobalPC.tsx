@@ -33,6 +33,8 @@ export default interface IState {
     listIP: any;
     listEmp: any;
     listSO: any;
+    listOffice: any;
+    fuente: any;
 }
 
 
@@ -70,6 +72,16 @@ export default class GlobalPC {
                 listIP: res.data
             });
             console.log("DATA:", obj.state.listIP);
+        }).catch((err: any) => {
+            console.log(err.response.data);
+        });
+    }
+    static getListOffice(obj: React.Component<any, IState>) {
+        AxiosPC.get_lista_office().then((res: any) => {
+            obj.setState({
+                listOffice: res.data
+            });
+            console.log("DATA:", obj.state.listOffice);
         }).catch((err: any) => {
             console.log(err.response.data);
         });
@@ -145,6 +157,13 @@ export default class GlobalPC {
         obj.setState((prevState) => ({ storageTabs: [...prevState.storageTabs, newTab] }));
     }
 
+    static removeTabStorage = (index: any, obj: React.Component<any, IState>) => {
+        let tab = 'cpu-disco_duro_' + (index + 1);
+        let dataCopy = Object.assign({}, obj.state.data);
+        delete dataCopy[tab];
+        obj.setState((prevState) => ({ storageTabs: prevState.storageTabs.filter((value: any) => { return value !== tab }), data: dataCopy }));
+    }
+
     static addTabRam = (obj: React.Component<any, IState>) => {
         let newTab = 'cpu-memoria_ram_' + (obj.state.ramTabs.length + 1);
         obj.setState((prevState) => ({ ramTabs: [...prevState.ramTabs, newTab] }));
@@ -218,13 +237,13 @@ export default class GlobalPC {
     }
 
 
-    static deleteEquipo = (obj: any, idequipo: any,tipo:any) => {
+    static deleteEquipo = (obj: any, idequipo: any, tipo: any) => {
         obj.setState({
             loadingMessage: "Eliminando equipo. Espere por favor...",
             showLoading: true,
             showAlertConfirm: false
         })
-        AxiosPC.deleteEquipo(idequipo,tipo).then((response: any) => {
+        AxiosPC.deleteEquipo(idequipo, tipo).then((response: any) => {
             obj.setState({
                 showLoading: false,
                 successMessage: 'El equipo se elimino exitosamente!',
@@ -248,8 +267,13 @@ export default class GlobalPC {
             for (let i = 1; i < response.data["num_memoria_ram"]; i++) {
                 GlobalPC.addTabRam(obj);
             }
-            for (let j = 1; j < response.data["num_disco_duro"] && op !== 1; j++) {
+            for (let j = 1; j < response.data["num_disco_duro"]; j++) {
                 GlobalPC.addTabStorage(obj)
+            }
+            if(response.data["pc-ups_regulador"]!==null){
+                obj.setState({
+                    fuente:true
+                })
             }
             obj.setState({
                 data: response.data,
@@ -265,7 +289,52 @@ export default class GlobalPC {
         });
     }
 
+    static generateStorageForm = (obj: React.Component<any, IState>) => {
+        return obj.state.storageTabs.map((value: any, index: any) => {
+            return (
+                <IonRow key={index} class="ion-text-center">
 
+                    <IonCol>
+                        <IonList lines="full" className="ion-no-margin ion-no-padding">
+                            <IonItem className="root" >
+                                <IonGrid>
+                                    <IonRow className="root" >
+                                        <IonCol size="10">
+                                            <b><IonText color="primary">{'Disco Duro ' + (index + 1)}</IonText></b>
+                                        </IonCol>
+                                        <IonCol size="2" >
+                                            <IonIcon name='close' hidden={index === 0} size="small" onClick={(e: any) => { GlobalPC.removeTabStorage(index, obj) }} />
+                                        </IonCol>
+                                    </IonRow>
+                                </IonGrid>
+                            </IonItem>
+                            {GlobalPC.generateGeneralForm(value, obj)}
+                            <IonItem>
+                                <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
+                                <IonInput disabled={obj.state.disabled_form} required type="number" value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['capacidad'] : null} className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Tipo de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
+                                <IonSelect disabled={obj.state.disabled_form} value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['tipo_capacidad'] : null} className="root" name={value + '.tipo_capacidad'}   onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}>
+                                    <IonSelectOption value={"TB"}>TB (TeraByte)</IonSelectOption>
+                                    <IonSelectOption value={"GB"}>GB (GigaByte)</IonSelectOption>
+                                    <IonSelectOption value={"MB"}>MB (MegaByte)</IonSelectOption>
+                                </IonSelect>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Tipo de Disco<IonText color="danger">*</IonText></IonLabel>
+                                <IonSelect disabled={obj.state.disabled_form} value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'}   onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}>
+                                    <IonSelectOption value={"SSD"}>SSD</IonSelectOption>
+                                    <IonSelectOption value={"HDD"}>HDD</IonSelectOption>
+                                </IonSelect>
+                            </IonItem>
+
+                        </IonList>
+                    </IonCol>
+                </IonRow>
+            );
+        });
+    }
 
 
     static generateRamForm = (obj: React.Component<any, IState>) => {
@@ -288,13 +357,26 @@ export default class GlobalPC {
                                 </IonGrid>
                             </IonItem>
                             {GlobalPC.generateGeneralForm(value, obj)}
+                            
                             <IonItem>
-                                <IonLabel position="floating">Capacidad<IonText color="danger">*</IonText></IonLabel>
+                                <IonLabel position="floating">Capacidad de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
                                 <IonInput required disabled={obj.state.disabled_form} type="number" value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['capacidad'] : null} className="root" name={value + '.capacidad'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
                             </IonItem>
                             <IonItem>
-                                <IonLabel position="floating">Tipo<IonText color="danger">*</IonText></IonLabel>
-                                <IonInput required disabled={obj.state.disabled_form} type="text" value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
+                                <IonLabel position="floating">Tipo de Almacenamiento<IonText color="danger">*</IonText></IonLabel>
+                                <IonSelect disabled={obj.state.disabled_form} value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['tipo_capacidad'] : null} className="root" name={value + '.tipo_capacidad'}   onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}>
+                                    <IonSelectOption value={"GB"}>GB (GigaByte)</IonSelectOption>
+                                    <IonSelectOption value={"MB"}>MB (MegaByte)</IonSelectOption>
+                                </IonSelect>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Tipo de Memoria<IonText color="danger">*</IonText></IonLabel>
+                                <IonSelect disabled={obj.state.disabled_form} value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['tipo'] : null} className="root" name={value + '.tipo'}   onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj); console.log(obj.state.data) }}>
+                                    <IonSelectOption value={"DDR"}>DDR</IonSelectOption>
+                                    <IonSelectOption value={"DDR2"}>DDR2</IonSelectOption>
+                                    <IonSelectOption value={"DDR3"}>DDR3</IonSelectOption>
+                                    <IonSelectOption value={"DDR4"}>DDR4</IonSelectOption>
+                                </IonSelect>
                             </IonItem>
 
                         </IonList>
@@ -357,7 +439,7 @@ export default class GlobalPC {
             <div key={value}>
                 <IonItem>
                     <IonLabel position="floating">Codigo<IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required disabled={obj.state.disabled_form} type="text" value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['codigo'] : null} className="root" name={value + '.codigo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
+                    <IonInput required disabled={obj.props.match.params.id !== undefined} type="text" value={obj.state.data[value] !== undefined && obj.state.data[value] !== null ? obj.state.data[value]['codigo'] : null} className="root" name={value + '.codigo'} onIonChange={(e: any) => { GlobalPC.onChangeInput(e, obj) }}></IonInput>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
@@ -411,7 +493,7 @@ export default class GlobalPC {
                                 </IonSelectOption>
                         {obj.state.listIP.map((object: any, i: any) => {
                             return (
-                                <IonSelectOption key={object.id_ip} value={object.direccion_ip}>
+                                <IonSelectOption key={object.id_ip} value={object.id_ip}>
                                     {object.direccion_ip}
                                 </IonSelectOption>
                             );
@@ -436,7 +518,69 @@ export default class GlobalPC {
         );
     }
 
+    
 
+    static generateFuenteForm(obj: React.Component<any, IState>, idx: any) {
+        return (
+            <div key={"FuenteForm"} hidden={obj.props.match.params.id !== undefined && (obj.state.data["pc-ups_regulador"] === undefined || obj.state.data["pc-ups_regulador"] === null)}>
+                < ExpansionPanel expanded={obj.state.expanded === idx} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+                    obj.setState({
+                        expanded: !isExpanded ? -1 : idx
+                    });
+
+                }}>
+                    <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        id="panel4bh-header"
+                    >
+                        <Typography >FUENTE DE ALIMENTACION</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+
+
+                        <IonGrid>
+                            <IonRow class="ion-text-center">
+                                <IonCol>
+                                    <IonList lines="full" className="ion-no-margin ion-no-padding">
+                                        <IonItem>
+                                            <IonLabel position="floating">Tipo de Fuente de alimentacion<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect disabled={obj.props.match.params.id !== undefined} value={obj.state.data["pc-ups_regulador"] !== undefined && obj.state.data["pc-ups_regulador"] !== null ? obj.state.data["pc-ups_regulador"]['tipo_equipo'] : null} name='pc-ups_regulador.tipo_equipo' onIonChange={(e: any) => {
+                                               GlobalPC.onChangeInput(e, obj)
+                                               obj.setState({
+                                                fuente: obj.state.data["pc-ups_regulador"]['tipo_equipo']!==null
+                                            })
+
+                                            }}>
+                                                <IonSelectOption value={null}>Ninguno</IonSelectOption>
+                                                <IonSelectOption value={"ups"}>UPS</IonSelectOption>
+                                                <IonSelectOption value={"regulador"}>REGULADOR</IonSelectOption>
+                                            </IonSelect>
+                                        </IonItem>
+                                        <div hidden={obj.state.fuente}>
+                                            <p className="ion-text-center ion-margin">Seleccione un tipo de fuente de alimentacion para registrar su informacion</p>
+                                        </div>
+                                        <div hidden={!obj.state.fuente}>
+                                            {GlobalPC.generateGeneralForm('pc-ups_regulador', obj)}
+                                        </div>
+
+
+                                    </IonList>
+                                </IonCol>
+                            </IonRow>
+                        </IonGrid>
+
+
+
+                    </ExpansionPanelDetails>
+                    <ExpansionPanelActions>
+                        <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(obj) }}>
+                            Siguiente
+                                        </Button>
+                    </ExpansionPanelActions>
+                </ExpansionPanel>
+            </div>
+        )
+    }
     static generateSOForm(obj: React.Component<any, IState>, idx: any) {
         return (
             <div key={"SOForm"}>
@@ -449,7 +593,7 @@ export default class GlobalPC {
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon />}
                         id="panel1bh-header">
-                        <Typography>Sistema Operativo</Typography>
+                        <Typography>SISTEMA OPERATIVO</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <IonGrid>
@@ -470,11 +614,25 @@ export default class GlobalPC {
                                             </IonSelect>
                                         </IonItem>
 
+
                                         <IonItem>
                                             <IonLabel position="floating">Tipo de Sistema Operativo<IonText color="danger">*</IonText></IonLabel>
                                             <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-tipo_so"]} name='pc-tipo_so' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
                                                 <IonSelectOption value={"64 Bits"}>64 Bits</IonSelectOption>
                                                 <IonSelectOption value={"32 Bits"}>32 Bits</IonSelectOption>
+                                            </IonSelect>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="floating">Version de Office<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-office"]} name='pc-office' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
+
+                                                {obj.state.listOffice.map((object: any, i: any) => {
+                                                    return (
+                                                        <IonSelectOption key={object.office + "_" + i} value={object.office}>
+                                                            {object.office}
+                                                        </IonSelectOption>
+                                                    );
+                                                })}
                                             </IonSelect>
                                         </IonItem>
                                         <IonItem>
@@ -490,12 +648,14 @@ export default class GlobalPC {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="fixed">Service Pack<IonText color="danger">*</IonText></IonLabel>
-                                            <IonToggle disabled={obj.state.disabled_form} checked={obj.state.data["pc-service"]} name='pc-service' onIonChange={(e: any) => { obj.setState({
+                                            <IonToggle disabled={obj.state.disabled_form} checked={obj.state.data["pc-service"]} name='pc-service' onIonChange={(e: any) => {
+                                                obj.setState({
                                                     data: {
                                                         ...obj.state.data,
                                                         [e.target.name]: e.detail.checked
                                                     }
-                                                }); }} />
+                                                });
+                                            }} />
                                         </IonItem>
                                     </IonList >
                                 </IonCol>

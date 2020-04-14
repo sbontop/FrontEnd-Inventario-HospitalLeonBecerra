@@ -31,9 +31,11 @@ export default class AxiosPC {
       }
 
       static get_listaip= () => {
-        return AxiosPC.instanceAxios.get(`/listar_ips`);
+        return AxiosPC.instanceAxios.get(`/ips_libres`);
       }
-
+      static get_lista_office= () => {
+        return AxiosPC.instanceAxios.get(`/listar_office`);
+      }
       static get_lista_empleados= () => {
         return AxiosPC.instanceAxios.get(`/mostrar_empleados`);
       }

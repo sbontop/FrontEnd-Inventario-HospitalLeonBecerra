@@ -6,7 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import './style.css';
-import { trash, create,arrowBack } from 'ionicons/icons';
+import { trash, create, arrowBack } from 'ionicons/icons';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { IonList, IonItem, IonLoading, IonIcon, IonSelect, IonAlert, IonSelectOption, IonButton, IonLabel, IonRow, IonCol, IonInput, IonText, IonGrid, IonHeader, IonContent, IonTitle, IonPage, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
@@ -24,7 +24,10 @@ export default class FormPCLaptop extends Component<any, IState> {
             showAlertSuccess: false,
             expanded: Number,
             setExpanded: false,
-            data: {},
+            data: {
+                "pc-licencia": false,
+                "pc-service": false
+            },
             marcas: [],
             showLoading: false,
             errorMsj: '',
@@ -34,14 +37,16 @@ export default class FormPCLaptop extends Component<any, IState> {
             showAlertError: false,
             showAlertConfirm: false,
             ramTabs: ['cpu-memoria_ram_1'],
-            storageTabs: ['pc-disco_duro_1'],
+            storageTabs: ['cpu-disco_duro_1'],
             disabled_form: false,
             loadingMessage: "",
             confirmMessage: "",
             successMessage: '',
-            listIP:[],
-            listEmp:[],
-            listSO:[]
+            listIP: [],
+            listEmp: [],
+            listSO: [],
+            listOffice: [],
+            fuente: false
 
         }
     }
@@ -52,15 +57,14 @@ export default class FormPCLaptop extends Component<any, IState> {
         GlobalPC.getListIP(this);
         GlobalPC.getListEmpleado(this);
         GlobalPC.getListSO(this);
-
+        GlobalPC.getListOffice(this);
         if (this.props.match.params.id !== undefined) {
-
             GlobalPC.getEquipoByID(this, 1);
         }
-        
+
 
     }
-    
+
     componentWillUnmount() {
         console.log("unmounted laptop");
 
@@ -68,16 +72,28 @@ export default class FormPCLaptop extends Component<any, IState> {
 
     validarData = () => {
         console.log(this.state.data)
-        let dataCopy = this.state.data;
-        let arrPrincipal = Object.keys(dataCopy);
-        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", 'pc-ram_soportada', 'pc-numero_slots', "pc-disco_duro_1","pc-procesador","pc-nombre",'pc-usuario',"pc-so","pc-tipo_so","pc-licencia","pc-service"];
+        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", 'pc-ram_soportada','pc-conexiones_disco', 'pc-slots_ram', "pc-procesador", "pc-nombre", 'pc-usuario', "pc-so", "pc-tipo_so", "pc-licencia", "pc-service", "pc-office", "pc-empleado", "pc-ip"];
         let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
-        let valuesRD = ['tipo', 'capacidad'];
+        let valuesRD = ['tipo', 'capacidad', "tipo_capacidad"];
         let valuesP = ['frecuencia', 'nucleos'];
         let ramSoportada = 0;
         let slotsTotal = 0;
+        let discConect = 0;
         let ramTotal = 0;
         formValues = formValues.concat(this.state.ramTabs);
+        formValues = formValues.concat(this.state.storageTabs);
+        if (this.state.fuente) {
+            formValues = formValues.concat(["pc-ups_regulador"]);
+        } else {
+            let dataCop = Object.assign({}, this.state.data);
+            delete dataCop["pc-ups_regulador"];
+            this.setState({
+                data: dataCop
+            })
+            formValues = formValues.filter((value: any) => { return value !== "pc-ups_regulador" });
+        }
+        let dataCopy = this.state.data;
+        let arrPrincipal = Object.keys(dataCopy);
         for (var _i = 0; _i < formValues.length; _i++) {
             if (arrPrincipal.indexOf(formValues[_i]) < 0) {
                 return 'No se han ingresado datos sobre ' + formValues[_i].split('-')[1].toUpperCase().replace('_', " ");
@@ -85,21 +101,25 @@ export default class FormPCLaptop extends Component<any, IState> {
         }
         if ((Number(dataCopy['pc-ram_soportada']) === 1 ? 2 : Number(dataCopy['pc-ram_soportada'])) % 2 !== 0 || Number((dataCopy['pc-ram_soportada']) <= 0)) return 'La Ram Soportada por la tarjeta Madre no es correcta. Deben ser numeros positivos pares multipos de 2. '
         ramSoportada = Number(dataCopy['pc-ram_soportada']);
-        slotsTotal = Number(dataCopy['pc-numero_slots']);
+        slotsTotal = Number(dataCopy['pc-slots_ram']);
+        discConect =  Number(dataCopy['pc-conexiones_disco']);
         for (var _k = 0; _k < arrPrincipal.length; _k++) {
-            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1||(arrPrincipal[_k].indexOf('pc-disco_duro')!== -1)) {
+            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1 || (arrPrincipal[_k].indexOf('pc-disco_duro') !== -1 || (arrPrincipal[_k].indexOf('pc-ups_regulador') !== -1) || arrPrincipal[_k].indexOf('pc-procesador') !== -1)) {
                 for (var _j = 0; _j < indValues.length; _j++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(indValues[_j]) < 0) return 'Debe ingresar datos en el campo ' + indValues[_j].replace('_', " ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
+            }
+            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1 || (arrPrincipal[_k].indexOf('pc-disco_duro') !== -1)) {
                 for (var _r = 0; _r < valuesRD.length; _r++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesRD[_r]) < 0) return 'Debe ingresar datos en el campo ' + valuesRD[_r].replace('_', " ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
-                if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
-                    if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)){
-                        return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
-                    } 
-                    ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
+            }
+            if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
+                if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) {
+                    return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
                 }
+                let r = Number(dataCopy[arrPrincipal[_k]]['capacidad']);
+                ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"] === "GB" ? r : r / 1000);
             }
             if (arrPrincipal[_k].indexOf('pc-procesador') !== -1) {
                 for (var _m = 0; _m < valuesP.length; _m++) {
@@ -108,10 +128,13 @@ export default class FormPCLaptop extends Component<any, IState> {
             }
         }
         if (slotsTotal < this.state.ramTabs.length) {
-            return 'La cantidad de Tarjetas de Memoria Ram no coinciden con La cantidad de Slots Disponibles en la Tarjeta Madre.'
+            return 'La cantidad de Tarjetas de Memoria Ram no coinciden con La cantidad de Slots Disponibles en el Equipo.'
         }
         if (ramSoportada < ramTotal) {
-            return 'La Memoria(s) Ram ingresadas sobre pasan la capacidad de la Tarjeta Madre.'
+            return 'La Memoria(s) Ram ingresadas sobre pasan la capacidad del Equipo.'
+        }
+        if (discConect < this.state.storageTabs.length) {
+            return 'La cantidad de Discos Duro no coinciden con La cantidad de Conexiones Disponibles en el Equipo.'
         }
         return '';
     }
@@ -128,13 +151,13 @@ export default class FormPCLaptop extends Component<any, IState> {
             <IonPage>
                 <IonHeader>
                     <IonToolbar color="primary">
-                        <IonButtons  slot="start">
+                        <IonButtons slot="start">
                             <div > <IonButton onClick={(e: any) => { this.setState({ backAction: true }) }}  ><IonIcon icon={arrowBack}></IonIcon></IonButton></div>
                         </IonButtons>
                         <IonTitle>{this.props.match.params.id === undefined ? "Equipos Informáticos" : "Editar Equipo"}</IonTitle>
                         <IonButtons slot="end" hidden={this.props.match.params.id === undefined}>
-                            <IonButton onClick={(e: any) => { this.setState({ disabled_form:!this.state.disabled_form }) }}><IonIcon icon={create}></IonIcon> </IonButton>
-                            <IonButton onClick={(e: any) => { this.setState({ confirmMessage:"¿Esta seguro de eliminar este equipo?", showAlertConfirm:true }) }} ><IonIcon icon={trash}></IonIcon> </IonButton>
+                            <IonButton onClick={(e: any) => { this.setState({ disabled_form: !this.state.disabled_form }) }}><IonIcon icon={create}></IonIcon> </IonButton>
+                            <IonButton onClick={(e: any) => { this.setState({ confirmMessage: "¿Esta seguro de eliminar este equipo?", showAlertConfirm: true }) }} ><IonIcon icon={trash}></IonIcon> </IonButton>
                         </IonButtons>
                     </IonToolbar>
                 </IonHeader>
@@ -155,7 +178,7 @@ export default class FormPCLaptop extends Component<any, IState> {
                                     <IonList>
                                         <IonItem>
                                             <IonLabel position="floating" >Código<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput disabled={this.state.disabled_form} required type="text" value={this.state.data["pc-codigo"]} name='pc-codigo' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
+                                            <IonInput disabled={this.props.match.params.id !== undefined} required type="text" value={this.state.data["pc-codigo"]} name='pc-codigo' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }} ></IonInput>
                                         </IonItem>
                                     </IonList>
                                 </IonCol>
@@ -190,7 +213,11 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating">Numero de slots para Ram<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-numero_slots"]} className="root" name='pc-numero_slots' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
+                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-slots_ram"]} className="root" name='pc-slots_ram' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="floating">Numero de Conexiones para Disco Duro<IonText color="danger">*</IonText></IonLabel>
+                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-conexiones_disco"]} className="root" name='pc-conexiones_disco' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
                                         </IonItem>
 
                                         {GlobalPC.generateFormExt(this)}
@@ -204,13 +231,13 @@ export default class FormPCLaptop extends Component<any, IState> {
                             </IonRow>
 
                             <div>
-                            {GlobalPC.generateSOForm(this,1)}
+                                {GlobalPC.generateSOForm(this, 1)}
                                 <ExpansionPanel expanded={this.state.expanded === 2} onChange={GlobalPC.handleChange(2, this)}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
                                     >
-                                        <Typography >Memoria Ram</Typography>
+                                        <Typography >MEMORIA RAM</Typography>
                                     </ExpansionPanelSummary>
                                     <ExpansionPanelDetails>
 
@@ -219,7 +246,7 @@ export default class FormPCLaptop extends Component<any, IState> {
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-                                        <Button size="small" onClick={(e: any) => { GlobalPC.addTabRam(this) }}>Agregar Memoria Ram</Button>
+                                        <Button size="small" hidden={this.props.match.params.id !== undefined} onClick={(e: any) => { GlobalPC.addTabRam(this) }}>Agregar Memoria Ram</Button>
                                         <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(this) }}>
                                             Siguiente
                                         </Button>
@@ -230,15 +257,12 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         expandIcon={<ExpandMoreIcon />}
                                         id="panel4bh-header"
                                     >
-                                        <Typography >Disco Duro</Typography>
+                                        <Typography >DISCO DURO</Typography>
                                     </ExpansionPanelSummary>
                                     <ExpansionPanelDetails>
 
                                         <IonGrid>
-                                            <IonRow class="ion-text-center">
-                                                {/* <IonCol size="3">
-                                                    <img src={process.env.PUBLIC_URL + "/assets/img/desktop.png"} alt="" />
-                                                </IonCol> */}
+                                            {/* <IonRow class="ion-text-center">
                                                 <IonCol>
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
 
@@ -254,18 +278,19 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
-                                            </IonRow>
+                                            </IonRow> */}
+                                            {GlobalPC.generateStorageForm(this)}
                                         </IonGrid>
 
                                     </ExpansionPanelDetails>
                                     <ExpansionPanelActions>
-
+                                        <Button size="small" hidden={this.props.match.params.id !== undefined} onClick={(e: any) => { GlobalPC.addTabStorage(this) }}>Agregar Disco Duro</Button>
                                         <Button size="small" color="primary" onClick={(e: any) => { GlobalPC.nextTab(this) }}>
                                             Siguiente
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                
+
                                 < ExpansionPanel expanded={this.state.expanded === 4} onChange={(event: React.ChangeEvent<{}>, isExpanded: boolean) => {
                                     this.setState({
                                         expanded: !isExpanded ? -1 : 4
@@ -287,12 +312,12 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                     <IonList lines="full" className="ion-no-margin ion-no-padding">
                                                         {GlobalPC.generateGeneralForm('pc-procesador', this)}
                                                         <IonItem>
-                                                            <IonLabel position="floating">Frecuencia<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['frecuencia'] : null} type="number" className="root" name='cpu-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonLabel position="floating">Frecuencia (GHz)<IonText color="danger">*</IonText></IonLabel>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["pc-procesador"] !== null ? this.state.data["pc-procesador"]['frecuencia'] : null} type="number" className="root" name='pc-procesador.frecuencia' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                         <IonItem>
                                                             <IonLabel position="floating">Número de nucleos<IonText color="danger">*</IonText></IonLabel>
-                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["cpu-procesador"] !== null ? this.state.data["cpu-procesador"]['nucleos'] : null} type="number" className="root" name='cpu-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
+                                                            <IonInput disabled={this.state.disabled_form} value={this.state.data["pc-procesador"] !== undefined && this.state.data["pc-procesador"] !== null ? this.state.data["pc-procesador"]['nucleos'] : null} type="number" className="root" name='pc-procesador.nucleos' onIonChange={(e: any) => { GlobalPC.onChangeInput(e, this) }}></IonInput>
                                                         </IonItem>
                                                     </IonList>
                                                 </IonCol>
@@ -308,11 +333,12 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
+                                {GlobalPC.generateFuenteForm(this, 5)}
                             </div>
                             <br />
                             <IonRow class="ion-text-center">
                                 <IonCol>
-                                    <IonButton color="success" class="ion-no-margin" disabled={this.state.disabled_form} onClick={(e: any) => { GlobalPC.saveHandler(this.validarData(), this) }}>{"Guardar "+(this.props.match.params.id !== undefined?"Cambios":"Equipo")}</IonButton>
+                                    <IonButton color="success" class="ion-no-margin" disabled={this.state.disabled_form} onClick={(e: any) => { GlobalPC.saveHandler(this.validarData(), this) }}>{"Guardar " + (this.props.match.params.id !== undefined ? "Cambios" : "Equipo")}</IonButton>
                                     <IonLoading
                                         isOpen={this.state.showLoading}
                                         message={this.state.loadingMessage}
@@ -337,21 +363,21 @@ export default class FormPCLaptop extends Component<any, IState> {
                                             {
                                                 text: 'Si',
                                                 handler: () => {
-                                                    if(this.props.match.params.id !== undefined){
-                                                        if(this.state.confirmMessage.indexOf("eliminar")>-1){
-                                                            GlobalPC.deleteEquipo(this,this.props.match.params.id,"laptop");
-                                                        }else{
+                                                    if (this.props.match.params.id !== undefined) {
+                                                        if (this.state.confirmMessage.indexOf("eliminar") > -1) {
+                                                            GlobalPC.deleteEquipo(this, this.props.match.params.id, "laptop");
+                                                        } else {
                                                             this.setState({
                                                                 data: {
                                                                     ...this.state.data,
                                                                     "num_memoria_ram": this.state.ramTabs.length,
-                                                                    "num_disco_duro":this.state.storageTabs.length
+                                                                    "num_disco_duro": this.state.storageTabs.length
                                                                 }
                                                             });
                                                             console.log(this.state.data);
-                                                            GlobalPC.editEquipo(this,this.props.match.params.id,this.state.data,1);
+                                                            GlobalPC.editEquipo(this, this.props.match.params.id, this.state.data, 1);
                                                         }
-                                                    }else{
+                                                    } else {
                                                         GlobalPC.sendData(1, this);
                                                     }
 
