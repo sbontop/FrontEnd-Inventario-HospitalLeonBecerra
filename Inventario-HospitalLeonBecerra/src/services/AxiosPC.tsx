@@ -33,6 +33,9 @@ export default class AxiosPC {
       static get_listaip= () => {
         return AxiosPC.instanceAxios.get(`/ips_libres`);
       }
+      static get_ip_id= (id:any) => {
+        return AxiosPC.instanceAxios.get(`/ipbyidonly/${id}`);
+      }
       static get_lista_office= () => {
         return AxiosPC.instanceAxios.get(`/listar_office`);
       }
