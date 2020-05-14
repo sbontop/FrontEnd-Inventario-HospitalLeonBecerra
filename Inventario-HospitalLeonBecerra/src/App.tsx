@@ -67,6 +67,7 @@ const App: React.FC = () => (
         <Menu appPages={appPages} />
         <IonRouterOutlet id="main">
           <Route path="/formimpresora" component={FormImpresora} exact={true} />
+          <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
           <Route path="/consulta" component={HomeImpresora} exact={true} />
           <Route path="/formlaptop" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
           <Route path="/form-laptop/edit/:id" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
@@ -90,6 +91,10 @@ const App: React.FC = () => (
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+
   </IonApp>
 );
 
