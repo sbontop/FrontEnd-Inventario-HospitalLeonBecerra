@@ -3,6 +3,7 @@ import React, {Component } from 'react';
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading, IonIcon} from '@ionic/react';
 import { Redirect, RouteProps } from 'react-router';
 import { RouteComponentProps } from 'react-router-dom';
+import { withIonLifeCycle } from '@ionic/react';
 import {trash} from 'ionicons/icons'
 
 
@@ -36,6 +37,7 @@ interface IState {
   campos_incompletos:any;
   error_servidor:any;
   marcas:any;
+  marca_tinta_anterior:any;
   see:any;
   childVisible:any;
   tipo_seleccion:any;
@@ -78,20 +80,9 @@ const tiposImpresoras = [{id: 'Multifuncional'},
   }
 ];
 
-let estadosImpresoras = [{id: 'Operativa'},
-  {
-    id: 'En revisión'
-  },
-  {
-    id: 'Reparado'
-  },
-  {
-    id: 'De baja',
-  },
-  {
-    id: 'Disponible',
-  }
-];
+let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
+
+//let estadosImpresoras:object = [];
 
 const departamentosCustodia = [{id: 'Coordinación'},
   {
@@ -144,7 +135,7 @@ const tipo_tinta = [{id: 'Epson'},
 
 
 
-export default class FormImpresora extends Component<{} , IState> {
+class FormImpresora extends Component<{} , IState> {
   private id:any;
   private c = false;
   constructor(props: any) {
@@ -170,6 +161,7 @@ export default class FormImpresora extends Component<{} , IState> {
         campos_incompletos:"",
         error_servidor:false,
         marcas:[],
+        marca_tinta_anterior:"",
         see:false,
         childVisible:false,
         tipo_seleccion:"",
@@ -192,36 +184,16 @@ export default class FormImpresora extends Component<{} , IState> {
         estado_anterior:"",
         seleccion: false,
         marca_anterior: "",
+        
         id_marca_anterior: "",
         eliminar:false
     }
 
   }
 
-  
+  /*
   componentDidMount = () => {
-    AxiosImpresora.mostrar_marcas().then((res:any) => {
-      //let marcas = [];
-      //marcas.push(res.data);
-      console.log("RESPUESTA:",res.data);
-      console.log("RESPUESTA 4:",departamentosCustodia);
-
-      this.setState({
-        marcas:res.data
-      }); 
-
-      console.log("DATA:",this.state.marcas);
-
-      console.log('Types: ',res.data);
-
-    }).catch((err:any) => {
-      //console.log(err);
-      this.setState({
-        cargando:false,
-        error_servidor:true,
-      });
-      console.log('Error 1');
-    });
+    this.mostrar_marcas();
     this.mostrar_direcciones_ip_libres();
     this.mostrar_empleados();
 
@@ -231,27 +203,63 @@ export default class FormImpresora extends Component<{} , IState> {
     //console.log('Direccion 6: ',this.id_impresora_editar);
     
     //alert(this.id);
-    console.log(this.id+"");
+    //console.log(this.id+"");
 
 
-    console.log('hand: ',this.state.id_impresora_editar);
+    //console.log('hand: ',this.state.id_impresora_editar);
 
     if (this.id !== undefined){
-      console.log('this.id');
+      //console.log('this.id');
       this.obtenerImpresoraById();
     }
 
 
-    console.log('Marca anterior 96: ',this.state.marca_anterior);
+    //console.log('Marca anterior 96: ',this.state.marca_anterior);
 
     if(this.id !== undefined){
       //this.onClick();
     }
 
 
-    console.log('this.state.data.printer 6: ',this.state.data.printer);
+    //console.log('this.state.data.printer 6: ',this.state.data.printer);
 
 
+  }
+
+
+  */
+
+  ionViewWillEnter() {
+    estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
+    this.mostrar_marcas();
+    this.mostrar_direcciones_ip_libres();
+    this.mostrar_empleados();
+
+  
+    this.fn();
+    
+    //console.log('Direccion 6: ',this.id_impresora_editar);
+    
+    //alert(this.id);
+    //console.log(this.id+"");
+
+
+    //console.log('hand: ',this.state.id_impresora_editar);
+
+    if (this.id !== undefined){
+      //console.log('this.id');
+      this.obtenerImpresoraById();
+    }
+
+
+    //console.log('Marca anterior 96: ',this.state.marca_anterior);
+
+    if(this.id !== undefined){
+      //this.onClick();
+    }
+
+
+    //console.log('this.state.data.printer 6: ',this.state.data.printer);
   }
 
   private urlParameters: Array<any> = [];
@@ -263,8 +271,8 @@ export default class FormImpresora extends Component<{} , IState> {
       cargando: true
     });
 
-    console.log('Metodo');
-    console.log(this.id);
+    //console.log('Metodo');
+    //console.log(this.id);
     AxiosImpresora.mostrar_dato_impresora_by_id(this.id).then((res:any) => {
       //console.log("RESPUESTA:",res.data);
       
@@ -310,6 +318,7 @@ export default class FormImpresora extends Component<{} , IState> {
         ip_anterior: res.data[0].ip,
         id_ip_anterior: res.data[0].id_ip,
         marca_anterior: res.data[0].nombre,
+        marca_tinta_anterior: res.data[0].tinta,
         id_marca_anterior: res.data[0].id_marca,
         
         /*estado_anterior: (() => {
@@ -327,23 +336,42 @@ export default class FormImpresora extends Component<{} , IState> {
         //confirmacion:true,
       });
 
+      //console.log("data_impresora_by_id: ",this.state.data_impresora_by_id);
 
-
-      console.log('estado_anterior ', this.state.estado_anterior);
-      console.log('Ip value: ',this.state.ip_anterior);
+      //console.log('estado_anterior ', this.state.estado_anterior);
+      //console.log('Ip value: ',this.state.ip_anterior);
 
       //this.state.data_impresora_by_id.estado_operativo = this.state.estado_anterior;
 
-      for (var i=0; i<estadosImpresoras.length; i++){
+      for (let i=0; i<estadosImpresoras.length; i++){
         if (estadosImpresoras[i].id === this.state.estado_anterior){
           estadosImpresoras.splice(i,1);
         }
       }
 
-      for (var j=0; j<estadosImpresoras.length; j++){
+      
+      /* for (var j=0; j<this.state.marcas.length; j++){
         if (this.state.marcas[j].marca === this.state.marca_anterior){
           this.state.marcas.splice(j,1);
         }
+      } */
+
+      for (var j=0; j<this.state.marcas.length; j++){
+
+        if ( this.state.marca_anterior === this.state.marca_tinta_anterior ) {
+          if (this.state.marcas[j].marca === this.state.marca_anterior){
+            this.state.marcas.splice(j,1);
+          }
+        }else{
+          if (this.state.marcas[j].marca === this.state.marca_anterior){
+            this.state.marcas.splice(j,1);
+          }
+          if (this.state.marcas[j].marca === this.state.marca_tinta_anterior){
+            this.state.marcas.splice(j,1);
+          }
+        }
+
+
       }
 
       /*
@@ -367,21 +395,24 @@ export default class FormImpresora extends Component<{} , IState> {
       
       
 
-      console.log('Array: ',this.state.marcas);
+      //console.log('Array: ',this.state.marcas);
+      //console.log('Arreglo: ',this.state.marcas_tinta);
 
 
-      console.log('Marca: ',this.state.data_impresora_by_id.id_marca)
+      //console.log('Marca: ',this.state.data_impresora_by_id.id_marca)
 
-      console.log('Service: ',this.state.value)
+      //console.log('Service: ',this.state.value)
 
 
-      console.log('data_impresora_by_id: ',this.state.data_impresora_by_id);
-      console.log('data_impresora_by_id: ',this.state.data_impresora_by_id.numero_serie);
-      console.log('data_impresora_by_id: ',this.state.data_impresora_by_id['numero_serie']);
-      console.log('Util: ',this.state.data.printer.numero_serie);
-      console.log('Obteniendo por id '+this.id+" ", this.state.data);
+      //console.log('data_impresora_by_id: ',this.state.data_impresora_by_id);
+      //console.log('data_impresora_by_id: ',this.state.data_impresora_by_id.numero_serie);
+      //console.log('data_impresora_by_id: ',this.state.data_impresora_by_id['numero_serie']);
+      //console.log('Util: ',this.state.data.printer.numero_serie);
+      //console.log('Obteniendo por id '+this.id+" ", this.state.data);
 
       //console.log("DATA:",res.data);
+
+      console.log("data_impresora_by_id: ",this.state.data_impresora_by_id);
 
     }).catch((err:any) => {
 
@@ -397,7 +428,7 @@ export default class FormImpresora extends Component<{} , IState> {
   fn =()=>{
   
 
-    console.log('Direccion: ',document.URL.split("/").length);
+    //console.log('Direccion: ',document.URL.split("/").length);
 
 
     if (document.URL.indexOf("edit") > 0) {
@@ -435,7 +466,7 @@ export default class FormImpresora extends Component<{} , IState> {
       value : e.target.value
     })
 
-    console.log("Valor ss: ",this.state.value);
+    //console.log("Valor ss: ",this.state.value);
 
   }
 
@@ -468,17 +499,17 @@ export default class FormImpresora extends Component<{} , IState> {
 
   onChangeInput = (e:any) =>{
     let m = this.state.data_impresora_by_id.id_marca;
-    console.log('Out: ',this.state.data_impresora_by_id.id_marca);
+    //console.log('Out: ',this.state.data_impresora_by_id.id_marca);
 
     
 
-    console.log('Modified: ',e.target);
+    //console.log('Modified: ',e.target);
 
 
     const { name, value } = e.target;
     let val = name.split(".");
-    console.log('name: ',name);
-    console.log('value: ',value);
+    //console.log('name: ',name);
+    //console.log('value: ',value);
     
     if (val[1] === 'ip' && value === this.state.ip_anterior){
       this.setState({
@@ -504,7 +535,7 @@ export default class FormImpresora extends Component<{} , IState> {
 //     tipo_seleccion:this.state.data
    })
    //value = {this.state.data_impresora_by_id.asignado}
-   console.log('Pl: ',this.state.data_impresora_by_id);
+   //console.log('Pl: ',this.state.data_impresora_by_id);
    
   }
 
@@ -514,10 +545,37 @@ export default class FormImpresora extends Component<{} , IState> {
         this.setState({
           lista_direcciones_ip : res.data
         });
-        console.log("DATA:", res.data);
+        //console.log("DATA:", res.data);
     }).catch((err: any) => {
         console.log(err);
     });
+}
+
+mostrar_marcas() {
+  AxiosImpresora.mostrar_marcas().then((res:any) => {
+    //let marcas = [];
+    //marcas.push(res.data);
+    //console.log("RESPUESTA:",res.data);
+    //console.log("RESPUESTA 4:",departamentosCustodia);
+
+    this.setState({
+      marcas:res.data,
+    }); 
+
+    console.log("this.state.marcas: ",this.state.marcas);
+
+    //console.log("DATA:",this.state.marcas);
+
+    //console.log('Types: ',res.data);
+
+  }).catch((err:any) => {
+    //console.log(err);
+    this.setState({
+      cargando:false,
+      error_servidor:true,
+    });
+    console.log('Error 1');
+  });
 }
 
 mostrar_empleados() {
@@ -525,14 +583,14 @@ mostrar_empleados() {
       this.setState({
         lista_empleados : res.data
       });
-      console.log("DATA:", res.data);
+      //console.log("DATA:", res.data);
   }).catch((err: any) => {
       console.log(err);
   });
 }
 
   verificar=()=>{
-    console.log("Información printer:",this.state.data.printer);
+    //console.log("Información printer:",this.state.data.printer);
     //console.log("Información printer arreglo:",this.state.data.printer);
     //console.log("TYPE OF PRINTER",this.state.tipo_seleccion);
     //console.log("SAVE:",this.state.data.printer);
@@ -583,7 +641,7 @@ mostrar_empleados() {
     //Si no tiene normal
     
 
-    console.log("Sin eliminar: ", json);
+    //console.log("Sin eliminar: ", json);
     //delete json['descripcion'];
     console.log("Eliminado : ",json);
     //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
@@ -619,7 +677,7 @@ mostrar_empleados() {
       let campo_nombre_completo:String="";
       let valor_vacio: String="";
       if(this.state.data_impresora_by_id.tipo==="Impresora"){
-        console.log('Condición 1');
+        //console.log('Condición 1');
           // 8!==8 cantidad: 8         9-1!==8 cantidad: 9
           // let lista_campos_completos_impresora:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","tinta","cartucho"];
 
@@ -635,10 +693,10 @@ mostrar_empleados() {
             //console.log('Espacios 4: ',text+'z');
   
   
-            console.log('L:',lista_valores_imgresados);
-            console.log('Clave: ',lista_campos_ingresados);
-            console.log('Valor: ',lista_valores_imgresados);
-            console.log('CamposCompletos: ',lista_campos_completos_impresora);
+            //console.log('L:',lista_valores_imgresados);
+            //console.log('Clave: ',lista_campos_ingresados);
+            //console.log('Valor: ',lista_valores_imgresados);
+            //console.log('CamposCompletos: ',lista_campos_completos_impresora);
             //let lista_campos_faltantes: String[]=[];
   
   
@@ -654,7 +712,7 @@ mostrar_empleados() {
                   texto = texto+" "+campo_nombre_completo+",";
               }
               //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
-              console.log('Valor vacio: ',valor_vacio);
+              //console.log('Valor vacio: ',valor_vacio);
   
             }
   
@@ -687,10 +745,10 @@ mostrar_empleados() {
             //console.log('Espacios 4: ',text+'z');
   
   
-            console.log('L:',lista_valores_imgresados);
-            console.log('Clave: ',lista_campos_ingresados);
-            console.log('Valor: ',lista_valores_imgresados);
-            console.log('CamposCompletos: ',lista_campos_completos_matricial);
+            //console.log('L:',lista_valores_imgresados);
+            //console.log('Clave: ',lista_campos_ingresados);
+            //console.log('Valor: ',lista_valores_imgresados);
+            //console.log('CamposCompletos: ',lista_campos_completos_matricial);
             //let lista_campos_faltantes: String[]=[];
   
   
@@ -706,7 +764,7 @@ mostrar_empleados() {
                   texto = texto+" "+campo_nombre_completo+",";
               }
               //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
-              console.log('Valor vacio: ',valor_vacio);
+              //console.log('Valor vacio: ',valor_vacio);
   
             }
   
@@ -739,11 +797,11 @@ mostrar_empleados() {
             //console.log('Espacios 2:',(json.rodillo+'').trim().length);
             //console.log('Espacios 4: ',text+'z');
   
-  
+            /*
             console.log('L:',lista_valores_imgresados);
             console.log('Clave: ',lista_campos_ingresados);
             console.log('Valor: ',lista_valores_imgresados);
-            console.log('CamposCompletos: ',lista_campos_completos_brazalete);
+            console.log('CamposCompletos: ',lista_campos_completos_brazalete);*/
             //let lista_campos_faltantes: String[]=[];
   
   
@@ -759,7 +817,7 @@ mostrar_empleados() {
                   texto = texto+" "+campo_nombre_completo+",";
               }
               //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
-              console.log('Valor vacio: ',valor_vacio);
+              //console.log('Valor vacio: ',valor_vacio);
   
             }
   
@@ -794,10 +852,10 @@ mostrar_empleados() {
             //console.log('Espacios 4: ',text+'z');
   
   
-            console.log('L:',lista_valores_imgresados);
+            /*console.log('L:',lista_valores_imgresados);
             console.log('Clave: ',lista_campos_ingresados);
             console.log('Valor: ',lista_valores_imgresados);
-            console.log('CamposCompletos: ',lista_campos_completos_multifuncional);
+            console.log('CamposCompletos: ',lista_campos_completos_multifuncional);*/
             //let lista_campos_faltantes: String[]=[];
   
   
@@ -813,7 +871,7 @@ mostrar_empleados() {
                   texto = texto+" "+campo_nombre_completo+",";
               }
               //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
-              console.log('Valor vacio: ',valor_vacio);
+              //console.log('Valor vacio: ',valor_vacio);
   
             }
   
@@ -965,14 +1023,14 @@ mostrar_empleados() {
 
 
   onClick=()=> {
-    console.log("INGRESOOOOOO");
-    console.log("TIPO DE SELECCIÓN:",this.state.tipo_seleccion);
+    //console.log("INGRESOOOOOO");
+    //console.log("TIPO DE SELECCIÓN:",this.state.tipo_seleccion);
     //console.log("TIPO DE SELECCIÓN:",this.state.data.printer.tipo);
     //mat1=this.state.data.printer.tipo;
     //mat1=true;
-    console.log("Var: ",mat1);
+    //console.log("Var: ",mat1);
     if(this.state.data_impresora_by_id.tipo==="Matricial"){
-      console.log("En el if");
+      //console.log("En el if");
       this.setState({
         matricial:true,
         brazalete:false,
@@ -1029,14 +1087,14 @@ mostrar_empleados() {
       eliminar:false,
       eliminando:true
     });
-    console.log('Delete: ',this.id);
+    //console.log('Delete: ',this.id);
     AxiosImpresora.eliminar_impresora(this.state.data_impresora_by_id.id_equipo).then((res:any) => {
-      console.log("RESPUESTA:",res.data);
+      //console.log("RESPUESTA:",res.data);
       this.setState({
         eliminando:false,
         confirmacion_eliminar:true,
       });
-      console.log('Delete completed: ',this.id);
+      //console.log('Delete completed: ',this.id);
 
       //console.log("DATA:",this.state.impresoras);
 
@@ -1091,7 +1149,7 @@ mostrar_empleados() {
     descripcion: "Not exits"};
     */
     console.log("JSON ACTUALIZADO:",json);
-    console.log("Longitud:",Object.keys(json).length);
+    //console.log("Longitud:",Object.keys(json).length);
     
 
     let json_datos_editados = this.clone(json);
@@ -1137,8 +1195,8 @@ mostrar_empleados() {
           existe_repetido:true,
         });
       }
-      console.log('Impresora: ',res.data.length);
-      console.log('Impresora: ',res.data.log);
+      //console.log('Impresora: ',res.data.length);
+      //console.log('Impresora: ',res.data.log);
 
     }).catch(err => {
       //console.log(err);
@@ -1167,8 +1225,8 @@ mostrar_empleados() {
           cargando:false,
           confirmacion:true,
         });
-      console.log('Impresora: ',res.data.length);
-      console.log('Impresora: ',res.data.log);
+      //console.log('Impresora: ',res.data.length);
+      //console.log('Impresora: ',res.data.log);
 
     }).catch(err => {
       this.setState({
@@ -1282,7 +1340,7 @@ mostrar_empleados() {
       <IonAlert
             isOpen={this.state.existe_repetido}
             header={'Información repetida'}
-            message={'El código/numero de serie ya existen en la base de datos'}
+            message={'El código ya existe en la base de datos'}
             buttons={[              
               {
                 cssClass: 'success',
@@ -1442,13 +1500,27 @@ mostrar_empleados() {
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.id_marca" value = {this.state.data_impresora_by_id.id_marca} onIonChange={this.onChangeInput} >
-                    {this.id!==undefined?
+                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
                       <IonSelectOption value = {this.state.id_marca_anterior}>
-                      {this.state.marca_anterior}
-                    </IonSelectOption>:
-                    null
+                        {this.state.marca_anterior}
+                      </IonSelectOption>:
+                      null
                     }
                     
+                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
+                      <div>
+                        <IonSelectOption value = {this.state.id_marca_anterior}>
+                          {this.state.marca_anterior}
+                        </IonSelectOption>
+                        <IonSelectOption>
+                          {this.state.marca_tinta_anterior}
+                        </IonSelectOption>
+                      </div>
+                      
+                      :
+                      null
+                    }
+
                     {this.state.marcas.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.id_marca}>
@@ -1573,10 +1645,30 @@ mostrar_empleados() {
                 {
                   this.state.multifuncional?
                   <div>
-                 <IonItem>
+                                 <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
+                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
+                      <IonSelectOption value = {this.state.marca_tinta_anterior}>
+                        {this.state.marca_tinta_anterior}
+                      </IonSelectOption>:
+                      null
+                    }
+                    
+                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
+                      <div>
+                        <IonSelectOption value = {this.state.marca_tinta_anterior}>
+                          {this.state.marca_tinta_anterior}
+                        </IonSelectOption>
+                        <IonSelectOption>
+                          {this.state.marca_anterior}
+                        </IonSelectOption>
+                      </div>
+                      
+                      :
+                      null
+                    }
 
                     {this.state.marcas.map((object:any, i:any) => {
                       return (
@@ -1586,6 +1678,7 @@ mostrar_empleados() {
                       );
                     })}
                   </IonSelect>
+
                 </IonItem>
                   <IonItem>
                   <IonLabel position="stacked">Cartucho<IonText color="danger">*</IonText></IonLabel>
@@ -1629,7 +1722,7 @@ mostrar_empleados() {
 
 
 
-                <IonItem>
+{/*                 <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
@@ -1643,8 +1736,79 @@ mostrar_empleados() {
                     })}
                   </IonSelect>
 
+                </IonItem> */}
+
+
+
+                <IonItem>
+                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+                  
+                  <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
+                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
+                      <IonSelectOption value = {this.state.marca_tinta_anterior}>
+                        {this.state.marca_tinta_anterior}
+                      </IonSelectOption>:
+                      null
+                    }
+                    
+                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
+                      <div>
+                        <IonSelectOption value = {this.state.marca_tinta_anterior}>
+                          {this.state.marca_tinta_anterior}
+                        </IonSelectOption>
+                        <IonSelectOption>
+                          {this.state.marca_anterior}
+                        </IonSelectOption>
+                      </div>
+                      
+                      :
+                      null
+                    }
+
+                    {this.state.marcas.map((object:any, i:any) => {
+                      return (
+                        <IonSelectOption key={object.marca} value={object.marca}>
+                          {object.marca}
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+
                 </IonItem>
 
+
+
+
+
+
+                
+                
+{/*                 <IonItem>
+                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+                  
+                  <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
+                    {this.id!==undefined?
+                      <IonSelectOption value = {this.state.id_marca_anterior}>
+                      {this.state.marca_anterior}
+                    </IonSelectOption>:
+                    null
+                    }
+                    
+                    {this.state.marcas.map((object:any, i:any) => {
+                      return (
+                        <IonSelectOption key={object.marca} value={object.id_marca}>
+                          {object.marca}
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+
+                </IonItem>
+
+
+
+
+ */}
 
                   <IonItem>
                     <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
@@ -1820,3 +1984,10 @@ mostrar_empleados() {
       
 }
 
+
+
+
+
+
+
+export default withIonLifeCycle(FormImpresora);
