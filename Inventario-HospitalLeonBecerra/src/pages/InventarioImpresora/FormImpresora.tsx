@@ -38,6 +38,7 @@ interface IState {
   error_servidor:any;
   marcas:any;
   marca_tinta_anterior:any;
+  id_marca_tinta_anterior:any,
   see:any;
   childVisible:any;
   tipo_seleccion:any;
@@ -184,6 +185,7 @@ class FormImpresora extends Component<{} , IState> {
         estado_anterior:"",
         seleccion: false,
         marca_anterior: "",
+        id_marca_tinta_anterior:"",
         
         id_marca_anterior: "",
         eliminar:false
@@ -320,7 +322,7 @@ class FormImpresora extends Component<{} , IState> {
         marca_anterior: res.data[0].nombre,
         marca_tinta_anterior: res.data[0].tinta,
         id_marca_anterior: res.data[0].id_marca,
-        
+         
         /*estado_anterior: (() => {
           switch (res.data[0].estado_operativo) {
             case 'D':   return 'Disponible';
@@ -1500,20 +1502,31 @@ mostrar_empleados() {
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.id_marca" value = {this.state.data_impresora_by_id.id_marca} onIonChange={this.onChangeInput} >
-                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
+                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior && (this.state.data_impresora_by_id.tipo==="Multifuncional" || this.state.data_impresora_by_id.tipo==="Impresora")?
                       <IonSelectOption value = {this.state.id_marca_anterior}>
                         {this.state.marca_anterior}
                       </IonSelectOption>:
                       null
                     }
                     
-                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
+                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior && (this.state.data_impresora_by_id.tipo==="Multifuncional" || this.state.data_impresora_by_id.tipo==="Impresora")?
                       <div>
                         <IonSelectOption value = {this.state.id_marca_anterior}>
                           {this.state.marca_anterior}
                         </IonSelectOption>
                         <IonSelectOption>
-                          {this.state.marca_tinta_anterior}
+                          {this.state.marca_tinta_anterior} 
+                        </IonSelectOption>
+                      </div>
+                      
+                      :
+                      null
+                    }
+
+                    {this.id!==undefined && (this.state.data_impresora_by_id.tipo!=="Multifuncional" && this.state.data_impresora_by_id.tipo!=="Impresora")?
+                      <div>
+                        <IonSelectOption value = {this.state.id_marca_anterior}>
+                          {this.state.marca_anterior}
                         </IonSelectOption>
                       </div>
                       
@@ -1963,7 +1976,7 @@ mostrar_empleados() {
           </IonRow>
           <IonRow class="ion-text-center">
             <IonCol>
-              <IonButton onClick={this.verificar} color="success" class="ion-no-margin">Guardar</IonButton>
+                      <IonButton onClick={this.verificar} color="success" class="ion-no-margin">{this.id!==undefined?'Guardar cambios':'Guardar'}</IonButton>
             </IonCol>
             <IonCol>
               <IonButton onClick={(e:any)=>{this.setState({guardar: true, redireccionar:true})}} color="danger" class="ion-no-margin">Cancelar</IonButton>          
