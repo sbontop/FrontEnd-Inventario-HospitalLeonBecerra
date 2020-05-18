@@ -158,7 +158,8 @@ class HomeImpresora extends Component<{lista:any}, IState> {
       })
     }
     this.setState({
-      codigo : this.state.busqueda_codigo
+      codigo : this.state.busqueda_codigo,
+      page_number_buscar_filtro: 0
     })
     if (this.state.busqueda_codigo!==""){
       this.setState({
@@ -364,6 +365,9 @@ getImpresorasNext=(e:any)=>{
     console.log('State of option filter: ',this.state.opcion_buscar_filtro);
     this.setState({
       page_number_buscar_filtro : this.state.page_number_buscar_filtro + 1,
+      page_number_busqueda_codigo:0,
+      codigo:"",
+      busqueda_codigo:""
     })
 
     console.log('State of option filter after: ',this.state.opcion_buscar_filtro);
