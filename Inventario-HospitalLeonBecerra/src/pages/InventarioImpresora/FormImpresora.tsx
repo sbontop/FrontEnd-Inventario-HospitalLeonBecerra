@@ -497,7 +497,7 @@ mostrar_empleados() {
         impresora:true,
         escaner:false
       });
-    }else if(this.state.data_impresora_by_id.tipo==="Escaner"){
+    }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
       this.setState({
         matricial:false,
         brazalete:false,

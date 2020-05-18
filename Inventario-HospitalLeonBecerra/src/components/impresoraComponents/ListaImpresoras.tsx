@@ -31,8 +31,6 @@ import {
   id_equipo: string,
   onRemove: any
  }
- 
-
 
  interface estados {
   ventanaDetalle: boolean,
@@ -40,8 +38,6 @@ import {
   cargando: boolean,
   confirmacion: boolean
 }
-
-
 
  class ListaImpresoras extends React.Component<IPrinter, estados, {history:any}>  {
 
@@ -57,17 +53,12 @@ import {
 
   verificar =() =>{
     this.setState({guardar:true})
-
-    
-
   }
 
-  
   _remove(){
     if(this.props.onRemove)
         this.props.onRemove();
 }
-
 
   eliminar = () =>{
 
@@ -103,9 +94,6 @@ import {
                 
               <IonRippleEffect></IonRippleEffect>
                 <h2><b>IMPRESORA: {this.props.codigo}</b></h2>
-                
-                
-
                 {
                   this.props.estado_operativo==='D'?
                     <h3>Estado: Disponible</h3>
@@ -131,13 +119,9 @@ import {
                     <h3>Estado: Operativa</h3>
                   :null
                 }
-
-
-
                 <p>Marca: {this.props.marca}</p>
                 {/*<IonRippleEffect></IonRippleEffect>*/}
                 
-
                 {/*
                 <p>IMPRESORA: {this.props.codigo}</p>
                 <p><small>Estado: {this.props.estado_operativo}</small></p>
@@ -146,11 +130,8 @@ import {
                 */}
 
               </IonLabel>
-              {/*<IonThumbnail>
-                <img src={process.env.PUBLIC_URL+"/assets/img/printer.png"} alt=""/>
-              </IonThumbnail>*/}
-              <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/icon_printer.png"} alt="imagen" /></IonAvatar>
 
+              <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/icon_printer.png"} alt="imagen" /></IonAvatar>
               {/*<IonButton class="btn1" fill="clear"> X </IonButton>*/}
              
               {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}></IonIcon></IonButton>*/}
@@ -158,16 +139,10 @@ import {
               {/*<IonButton size="large" color="warning" class="bp" routerLink={"/FormImpresora/edit/"+this.props.obj.id_equipo} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>*/}
               {/* <IonButton size="large" color="warning" class="bp" routerLink={"/formimpresora/edit/"+this.props.id_impresora} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
               <IonButton size="large" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton> */}
-
-
               <IonButton size="default" color="warning" class="bp" routerLink={"/formimpresora/edit/"+this.props.id_impresora} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
               <IonButton size="default" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton>
-
               {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}><Redirect to={"/FormImpresora/edit/"+this.props.id_equipo} /></IonIcon></IonButton>*/}
-
-
             </IonItem>
-            
             <IonPopover cssClass="vista"
         isOpen={this.state.ventanaDetalle}
         onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
@@ -266,7 +241,7 @@ import {
                 : null
                }
                {
-                this.props.tipo==="Escaner"? 
+                this.props.tipo==="Escáner"? 
                 <div>
                 <IonItem>
                   <IonLabel>Rodillo: {this.props.rodillo}</IonLabel>
@@ -276,8 +251,6 @@ import {
                 : null
                }
               </div>
-
-
 
               <div>
             {
@@ -291,24 +264,16 @@ import {
                 </IonItem>
                }
             </div>
- 
-
-            
             <div>
             {
                 (this.props.direccion_ip!==null && this.props.direccion_ip!=='' && this.props.direccion_ip!==' ')? 
               <IonItem>
               <IonLabel>Dirección IP: {this.props.direccion_ip}</IonLabel>
-
               </IonItem>
                 : 
-                
               <IonItem>
               <IonLabel>Dirección IP: N/A</IonLabel>
-
-              </IonItem>
-
-   
+              </IonItem>   
                }
             </div>
 
@@ -329,11 +294,8 @@ import {
 
               </IonItem>
                 </div>
-
-   
                }
             </div>
-
             </IonList>
             <div className="ion-text-center ion-margin">
             <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>Cerrar</IonButton>
@@ -366,13 +328,12 @@ import {
         ]}
       />
 
-<IonLoading
+      <IonLoading
           isOpen={this.state.cargando}
           message={'Eliminando registro. Espere por favor...'}
-
       />
 
-<IonAlert
+      <IonAlert
             isOpen={this.state.confirmacion}
             header={'Registro eliminado'}
             message={'El registro ha sido eliminado satisfactoriamente'}
@@ -387,15 +348,10 @@ import {
               },
             ]}
           />
-
             </IonList>
-            
-
-
-
    );
  }
  };
  
- 
+
  export default ListaImpresoras;
