@@ -201,6 +201,7 @@ getImpresoras=()=>{
 
   this.setState({
     page_number_busqueda_codigo : 0,
+    page_number_buscar_filtro:0,
     pageNumber:1,
     disable_Infinite_Scroll:false,
     busqueda_codigo: "",
