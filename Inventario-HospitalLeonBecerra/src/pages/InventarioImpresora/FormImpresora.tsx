@@ -11,9 +11,7 @@ import AxiosImpresora from '../../services/AxiosImpresora';
 interface IState {
   ip_anterior:any,
   id_ip_anterior:any,
-  marca_anterior:any,
   confirmacion_eliminar:any,
-  id_marca_anterior:any,
   seleccion:any,
   eliminar:any;
   eliminando:any;
@@ -28,8 +26,6 @@ interface IState {
   campos_incompletos:any;
   error_servidor:any;
   marcas:any;
-  marca_tinta_anterior:any;
-  id_marca_tinta_anterior:any,
   childVisible:any;
   matricial:any;
   brazalete:any;
@@ -68,7 +64,6 @@ class FormImpresora extends Component<{} , IState> {
         campos_incompletos:"",
         error_servidor:false,
         marcas:[],
-        marca_tinta_anterior:"",
         childVisible:false,
         matricial:false,
         brazalete:false,
@@ -84,9 +79,6 @@ class FormImpresora extends Component<{} , IState> {
         id_ip_anterior:"",
         estado_anterior:"",
         seleccion: false,
-        marca_anterior: "",
-        id_marca_tinta_anterior:"",        
-        id_marca_anterior: "",
         eliminar:false
     }
 
@@ -130,9 +122,6 @@ class FormImpresora extends Component<{} , IState> {
         value: res.data[0].numero_serie,
         ip_anterior: res.data[0].ip,
         id_ip_anterior: res.data[0].id_ip,
-        marca_anterior: res.data[0].nombre,
-        marca_tinta_anterior: res.data[0].tinta,
-        id_marca_anterior: res.data[0].id_marca,        
       });
 
       console.log("data_impresora_by_id: ",this.state.data_impresora_by_id);
