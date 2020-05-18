@@ -1,70 +1,120 @@
 
 import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonLabel, IonItem, IonInput, IonButton, IonList,
-  IonSelect, IonSelectOption, IonAlert, IonText, IonIcon, IonButtons, IonBackButton, IonGrid, IonRow, IonCol
+  IonSelect, IonSelectOption, IonAlert, IonText, IonIcon, IonButtons, IonGrid, IonRow, IonCol
 } from '@ionic/react';
-import { search } from 'ionicons/icons';
-import React, { useState } from 'react';
+import { search, eye, arrowBack, eyeOff } from 'ionicons/icons';
+import React, { useState, useEffect } from 'react';
 import AxiosCorreo from '../../services/Axios.services';
-import { Redirect } from 'react-router';
+import { useParams, Redirect } from 'react-router';
+import './Style.css';
 
 const FormularioCorreo: React.FC = () => {
   const [alerta, setAlerta] = useState(false);
   const [dirigir, setDirigir] = useState(false);
   const [buscar, setBuscar] = useState(false);
-  const [vacio, setVacio] = useState(false);
+  const [mensaje, setMensaje] = useState("");
   const [incompleto, setIncompleto] = useState(false);
   const [error, setError] = useState(false);
-  const [usuario, setUsuario] = useState();
-  const [cedula, setCedula] = useState();
+  const [usuario, setUsuario] = useState("");
+  const [cedula, setCedula] = useState("");
   const [punto, setPunto] = useState();
-  const [departamento, setDepartamento] = useState();
-  const [correo, setCorreo] = useState();
-  const [contrasena, setContrasena] = useState();
-  const [estado, setEstado] = useState("En uso");
+  const [departamento, setDepartamento] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [contrasena, setContrasena] = useState("");
+  const [estado, setEstado] = useState("");
+  const [editionMode, setEditionMode] = useState(false);
+  const [passwordMode, setPasswordMode] = useState(true);
+  const { id } = useParams();
+
+
+  useEffect(() => {
+    if (id !== undefined) {
+      AxiosCorreo.correo_id(id).then(res => {
+        setEditionMode(true);
+        res.data.forEach(function (d: any) {
+          setCedula(d.cedula);
+          setUsuario(d.nombre + " " + d.apellido);
+          setDepartamento(d.departamento);
+          setPunto(d.bspi_punto);
+          setCorreo(d.correo);
+          setContrasena(d.contrasena);
+          setEstado(d.estado);
+        });
+      }).catch(err => {
+        setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+        setError(true);
+      });
+    }
+  }, [id]);
 
 
   const registrar_correo = () => {
-    if (usuario === undefined || correo === undefined || contrasena === undefined || estado === undefined) {
+    if (usuario === "" || correo === "" || contrasena === "") {
+      setMensaje("Debe completar todos los campos");
       setIncompleto(true);
     } else {
       let registro_correo = {
         correo: correo,
         contrasena: contrasena,
         estado: estado,
-        cedula: cedula
+        cedula: cedula,
+        id: id,
+      }
+      if (!editionMode) {
+        AxiosCorreo.crear_correo(registro_correo).then(res => {
+          setMensaje("Registro guardado satisfactoriamente")
+          setAlerta(true);
+        }).catch(error => {
+          setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+          if (error.response) {
+            setMensaje(error.response.data.log)
+          }
+          setError(true);
+        });
+      } else {
+        AxiosCorreo.editar_correo(registro_correo).then(res => {
+          setMensaje("Registro actualizado satisfactoriamente")
+          setAlerta(true);
+        }).catch(error => {
+          setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+          if (error.response) {
+            setMensaje(error.response.data.log)
+          }
+          setError(true);
+        });
       }
 
-
-      AxiosCorreo.crear_correo(registro_correo).then(res => {
-        setAlerta(true);
-      }).catch(err => {
-        console.log(err);
-        setError(true);
-      });
 
     }
   }
 
-
   const buscar_usuario = () => {
-    if (usuario === undefined || usuario === "") {
-      setVacio(true);
-    } else {
-      AxiosCorreo.buscar_empleado(usuario).then(res => {
-        if (res.data.length === 0) {
-          setBuscar(true);
-        } else {
-          res.data.forEach(function (d: any) {
-            setCedula(d.cedula);
-            setDepartamento(d.departamento);
-            setPunto(d.bspi_punto);
-          });
-        }
-      }).catch(err => {
-        setError(true);
-      });
+    if (!editionMode) {
+      if (usuario === "") {
+        setMensaje("Debe escribir los nombres del empleado");
+        setIncompleto(true);
+      } else {
+        AxiosCorreo.buscar_empleado(usuario).then(res => {
+          if (res.data.length === 0) {
+            setBuscar(true);
+          } else {
+            res.data.forEach(function (d: any) {
+              setCedula(d.cedula);
+              setDepartamento(d.departamento);
+              setPunto(d.bspi_punto);
+            });
+          }
+        }).catch(err => {
+          setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+          setError(true);
+        });
+      }
     }
+  }
+
+  const cambiar_tipo = () => {
+    passwordMode ? setPasswordMode(false) : setPasswordMode(true)
   }
 
 
@@ -84,46 +134,51 @@ const FormularioCorreo: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/homeCorreo" />
+            <IonButton routerLink="/homeCorreo"><IonIcon icon={arrowBack}></IonIcon></IonButton>
           </IonButtons>
           <IonTitle>Inventario de correo</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonTitle className="ion-text-center">Nuevo correo electrónico</IonTitle>
+        <IonTitle className="ion-text-center">{editionMode ? "Editar correo electrónico" : "Nuevo correo electrónico"}</IonTitle>
         <p className="ion-text-center">
           <img src="./assets/icon/user.png" alt="Usuario" />
         </p>
         <form onSubmit={(e) => { e.preventDefault(); registrar_correo(); }} action="post">
           <IonList>
             <IonItem>
-              <IonInput className="ion-margin-top" placeholder="Buscar Empleado" name="usuario" onIonChange={(e) => setUsuario((e.target as HTMLInputElement).value)}></IonInput>
-              <IonIcon icon={search} color="danger" onClick={() => buscar_usuario()} ></IonIcon>
+              <IonInput required className="ion-margin-top" disabled={editionMode} placeholder="Buscar Empleado" value={usuario} name="usuario" onIonChange={(e) => setUsuario((e.target as HTMLInputElement).value)}></IonInput>
+              <IonIcon icon={search} color={editionMode ? "light" : "danger"} onClick={() => buscar_usuario()} ></IonIcon>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Departamento</IonLabel>
-              <IonInput className="ion-margin-top" disabled name="departamento">{departamento}</IonInput>
+              <IonInput className="ion-margin-top" disabled name="departamento" value={departamento}></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">BSPI-Punto</IonLabel>
-              <IonInput className="ion-margin-top" disabled name="bspi_punto">{punto}</IonInput>
+              <IonInput className="ion-margin-top" disabled name="bspi_punto" value={punto}></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Correo<IonText color="danger">*</IonText></IonLabel>
-              <IonInput className="ion-margin-top" placeholder="example@hospitalleonbecerra.org"  name="correo" onIonChange={(e) => setCorreo((e.target as HTMLInputElement).value)}></IonInput>
+              <IonInput required inputmode="email" type="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" className="ion-margin-top" value={correo} placeholder="example@hospitalleonbecerra.org" name="correo" onIonChange={e => setCorreo(e.detail.value!)}></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Contraseña<IonText color="danger">*</IonText></IonLabel>
-              <IonInput className="ion-margin-top" name="contrasena" onIonChange={(e) => setContrasena((e.target as HTMLInputElement).value)}></IonInput>
+              <IonInput required type={passwordMode ? "password" : "text"} className="ion-margin-top" name="contrasena" value={contrasena} onIonChange={e => setContrasena(e.detail.value!)}></IonInput>
+              <IonIcon className="btn_eye_icon" icon={passwordMode ? eye : eyeOff} color="danger" onClick={() => cambiar_tipo()} ></IonIcon>
             </IonItem>
             <IonList>
-              <IonItem>
-                <IonLabel position="stacked">Estado<IonText color="danger">*</IonText></IonLabel>
-                <IonSelect className="ion-margin-top" value={estado} name="estado" onIonChange={(e) => setEstado(e.detail.value)} okText="Ok" cancelText="Cancelar">
-                  <IonSelectOption selected>En uso</IonSelectOption>
-                  <IonSelectOption>Inactivo</IonSelectOption>
-                </IonSelect>
-              </IonItem>
+              {
+                editionMode ?
+                  <IonItem>
+                    <IonLabel position="stacked">Estado<IonText color="danger">*</IonText></IonLabel>
+                    <IonSelect className="ion-margin-top" value={estado} name="estado" onIonChange={(e) => setEstado(e.detail.value)} okText="Ok" cancelText="Cancelar">
+                      <IonSelectOption value="EU">En uso</IonSelectOption>
+                      <IonSelectOption value="I">Inactivo</IonSelectOption>
+                    </IonSelect>
+                  </IonItem> : null
+              }
+
             </IonList>
             <p className="ion-text-center">
               <IonGrid>
@@ -142,31 +197,25 @@ const FormularioCorreo: React.FC = () => {
         <IonAlert
           isOpen={alerta}
           onDidDismiss={() => cambiar_estados()}
-          header={'Guardado con éxito'}
+          message={mensaje}
           buttons={['Aceptar']}
         />
         <IonAlert
           isOpen={incompleto}
           onDidDismiss={() => setIncompleto(false)}
-          header={'Debe asegurse de completar todos los campos'}
+          message={mensaje}
           buttons={['Aceptar']}
         />
         <IonAlert
           isOpen={buscar}
           onDidDismiss={() => setBuscar(false)}
-          header={'Usuario no existe, asegurese de escribir sus nombres correctamente'}
-          buttons={['Aceptar']}
-        />
-        <IonAlert
-          isOpen={vacio}
-          onDidDismiss={() => setVacio(false)}
-          header={'Debe escribir el nombre de un empleado'}
+          message={'Usuario no existe, asegurese de escribir sus nombres correctamente'}
           buttons={['Aceptar']}
         />
         <IonAlert
           isOpen={error}
           onDidDismiss={() => setError(false)}
-          header={'Se ha producido un error al realizar su solicitud, inténtelo más tarde'}
+          message={mensaje}
           buttons={['Aceptar']}
         />
       </IonContent>
