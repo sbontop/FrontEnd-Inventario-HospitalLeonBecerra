@@ -135,26 +135,6 @@ class FormImpresora extends Component<{} , IState> {
         id_marca_anterior: res.data[0].id_marca,        
       });
 
-      for (let i=0; i<estadosImpresoras.length; i++){
-        if (estadosImpresoras[i].id === this.state.estado_anterior){
-          estadosImpresoras.splice(i,1);
-        }
-      }
-
-      for (var j=0; j<this.state.marcas.length; j++){
-        if ( this.state.marca_anterior === this.state.marca_tinta_anterior ) {
-          if (this.state.marcas[j].marca === this.state.marca_anterior){
-            this.state.marcas.splice(j,1);
-          }
-        }else{
-          if (this.state.marcas[j].marca === this.state.marca_anterior){
-            this.state.marcas.splice(j,1);
-          }
-          if (this.state.marcas[j].marca === this.state.marca_tinta_anterior){
-            this.state.marcas.splice(j,1);
-          }
-        }
-      }
       console.log("data_impresora_by_id: ",this.state.data_impresora_by_id);
     }).catch((err:any) => {
       this.setState({
@@ -208,6 +188,7 @@ class FormImpresora extends Component<{} , IState> {
         this.setState({
           lista_direcciones_ip : res.data
         });
+        console.log('Lista: ',this.state.lista_direcciones_ip);
         //console.log("DATA:", res.data);
     }).catch((err: any) => {
         console.log(err);
@@ -783,42 +764,21 @@ mostrar_empleados() {
                 </IonItem>
               <IonList lines="full" class="ion-no-margin ion-no-padding">
     
+                    
               <IonItem>
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
-                  
                   <IonSelect name="printer.id_marca" value = {this.state.data_impresora_by_id.id_marca} onIonChange={this.onChangeInput} >
-                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior && (this.state.data_impresora_by_id.tipo==="Multifuncional" || this.state.data_impresora_by_id.tipo==="Impresora")?
-                      <IonSelectOption value = {this.state.id_marca_anterior}>
-                        {this.state.marca_anterior}
-                      </IonSelectOption>:
-                      null
-                    }                    
-                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior && (this.state.data_impresora_by_id.tipo==="Multifuncional" || this.state.data_impresora_by_id.tipo==="Impresora")?
-                      <div>
-                        <IonSelectOption value = {this.state.id_marca_anterior}>
-                          {this.state.marca_anterior}
-                        </IonSelectOption>
-                        <IonSelectOption>
-                          {this.state.marca_tinta_anterior} 
-                        </IonSelectOption>
-                      </div>:null
-                    }
-                    {this.id!==undefined && (this.state.data_impresora_by_id.tipo!=="Multifuncional" && this.state.data_impresora_by_id.tipo!=="Impresora")?
-                      <div>
-                        <IonSelectOption value = {this.state.id_marca_anterior}>
-                          {this.state.marca_anterior}
-                        </IonSelectOption>
-                      </div>:null
-                    }
 
-                    {this.state.marcas.map((object:any, i:any) => {
+                  {this.state.marcas.map((object:any, i:any) => {
                       return (
-                        <IonSelectOption key={object.marca} value={object.id_marca}>
-                          {object.marca}
+                        <IonSelectOption key={object.id_marca} value={object.id_marca}>
+                          {object.marca} 
                         </IonSelectOption>
                       );
                     })}
-                  </IonSelect>
+                    </IonSelect>
+
+
                 </IonItem>
 
                 <IonItem>
@@ -853,22 +813,6 @@ mostrar_empleados() {
                                  <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
-                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
-                      <IonSelectOption value = {this.state.marca_tinta_anterior}>
-                        {this.state.marca_tinta_anterior}
-                      </IonSelectOption>:null
-                    }
-                    
-                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
-                      <div>
-                        <IonSelectOption value = {this.state.marca_tinta_anterior}>
-                          {this.state.marca_tinta_anterior}
-                        </IonSelectOption>
-                        <IonSelectOption>
-                          {this.state.marca_anterior}
-                        </IonSelectOption>
-                      </div>:null
-                    }
                     {this.state.marcas.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.marca}>
@@ -901,23 +845,7 @@ mostrar_empleados() {
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
                   
                   <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
-                    {this.id!==undefined && this.state.marca_anterior === this.state.marca_tinta_anterior?
-                      <IonSelectOption value = {this.state.marca_tinta_anterior}>
-                        {this.state.marca_tinta_anterior}
-                      </IonSelectOption>:null
-                    }
-      
-                    {this.id!==undefined && this.state.marca_anterior !== this.state.marca_tinta_anterior?
-                      <div>
-                        <IonSelectOption value = {this.state.marca_tinta_anterior}>
-                          {this.state.marca_tinta_anterior}
-                        </IonSelectOption>
-                        <IonSelectOption>
-                          {this.state.marca_anterior}
-                        </IonSelectOption>
-                      </div>:null
-                    }
-
+                    
                     {this.state.marcas.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.marca}>
@@ -936,16 +864,10 @@ mostrar_empleados() {
                 }
 
                 </div>
-                {this.id!==undefined?
                   <IonItem>
                   <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
                     <IonSelect name="printer.estado_operativo" value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} >                    
-                    {this.id!==undefined?
-                      <IonSelectOption value = {this.state.estado_anterior}>
-                      {this.state.estado_anterior}
-                      </IonSelectOption>:
-                      null
-                    }
+                    
                     {estadosImpresoras.map((object, i) => {
                       return (
                         <IonSelectOption key={object.id} value={object.id}>
@@ -954,22 +876,11 @@ mostrar_empleados() {
                       );
                     })}
                   </IonSelect>
-                  </IonItem>:
-                  <IonItem>
-                  <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
-                  <IonSelect name="printer.estado_operativo" onIonChange={this.onChangeInput} >
-                    {estadosImpresoras.map((object, i) => {
-                      return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id}
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
-                </IonItem>
-                }
+                  </IonItem>
+                
 
-                {
+
+                  {
                   this.id===undefined?
                   <IonItem>
                     <IonLabel position="stacked">Dirección IP</IonLabel>
@@ -1016,6 +927,8 @@ mostrar_empleados() {
             </IonItem>
       
                 }
+
+      
                 <IonLoading
                   isOpen={this.state.eliminando}
                   message={'Eliminando registro. Espere por favor...'}
