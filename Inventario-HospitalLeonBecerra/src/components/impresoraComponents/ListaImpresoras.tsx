@@ -2,7 +2,7 @@ import {
   IonItem,  IonLabel, IonButton, IonIcon,IonAvatar, IonList, IonPopover, IonAlert, IonLoading, IonTitle, IonRippleEffect
  } from '@ionic/react';
  import { trash, create } from 'ionicons/icons';
- import { Link, Redirect } from 'react-router-dom';
+ //import { Link, Redirect } from 'react-router-dom';
  import AxiosImpresora from '../../services/AxiosImpresora';
 
 
