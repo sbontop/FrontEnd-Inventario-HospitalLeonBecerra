@@ -1,12 +1,9 @@
 import {
-  IonItem, IonLabel, IonAvatar, IonIcon, IonList, IonPopover, IonModal, IonTitle, IonButton, IonAlert, IonLoading, IonText, /* IonRouterLink, */ IonToolbar,
-  IonButtons,
-  IonNote,
-  IonContent
+  IonItem, IonLabel, IonAvatar, IonIcon, IonList, IonModal, IonTitle, IonButton, IonAlert, IonLoading, IonText, IonToolbar,
+  IonButtons, IonNote, IonContent
 } from '@ionic/react';
-import { trash, menu, eye, create, close, mailOpen, person, business, locate, calendar, speedometer } from 'ionicons/icons';
-import React from 'react';
- import { Redirect } from 'react-router-dom';  
+import { trash, create, close, mailOpen, person, business, locate, calendar, speedometer } from 'ionicons/icons';
+import React from 'react';  
 import Axios from '../../services/Axios.services';
 
 class ListaCorreos extends React.Component<any, any>  {
@@ -14,112 +11,52 @@ class ListaCorreos extends React.Component<any, any>  {
     super(props);
     this.state = {
       ventanaDetalle: false,
-      ventanaOptions: false,
-      changePage: false,
       mensaje: "",
       alerta: false,
       showAlertConfirm: false,
-      showLoading: false,
-      mounted: true
+      showLoading: false
     }
   }
 
-  componentDidMount() {
-    this.setState({
-      mounted: true
-    })
-  }
-
-  componentWillUnmount() {
-    this.setState({
-      mounted: false
-    })
-  }
-
   handle_eliminar() {
-    if(this.state.mounted){
-
-    
     this.setState({
       showLoading: true,
       showAlertConfirm: false
     })
-  }
-    Axios.eliminar_correo(this.props.id_correo).then(res => {
-      if(this.state.mounted){
-
-     
+    Axios.eliminar_correo(this.props.id_correo).then(res => {    
       this.setState({
         showLoading: false,
         mensaje: "Registro eliminado satisfactoriamente",
         alerta: true
       })
-    
       this.props.handle.cargar_correos(true);
-    }
     }).catch(error => {
-      if(this.state.mounted){
-
-      
       console.log(error)
-      this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });
-      }
-    });
+      this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+    }); 
+  }  
   
-  }
-
   render() {
-     if (this.state.changePage) {
-       let path_ = "/formularioCorreo/edit/" + this.props.id_correo;
-       return <Redirect to={path_} />
-     }  
     return (
       <div>
-        <IonItem onClick={() => {if (this.state.mounted) this.setState({ ventanaOptions: true })}}>
-          <IonLabel>
-            <IonText color={this.props.estado === "I" ? `danger` : `dark`}><h2><b>Usuario: {this.props.nombres} {this.props.apellidos}</b></h2></IonText>
+        <IonItem>
+          <IonLabel onClick={() => this.setState({ ventanaDetalle: true })}>
+            <IonText color={this.props.estado === "I" ? `danger` : `dark`}><h2><b>USUARIO: {this.props.nombres} {this.props.apellidos}</b></h2></IonText>
             <h3>Departamento: {this.props.departamento}</h3>
             <small>{this.props.correo}</small>
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
-          <IonIcon slot="end" icon={menu} ></IonIcon>
+         <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="warning"  icon={create} ></IonIcon> </IonButton> 
+         <IonButton  size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
         </IonItem>
-
-        <IonPopover
-          isOpen={this.state.ventanaOptions}
-         /*  onDidDismiss={e =>{ if (this.state.mounted) this.setState({ ventanaOptions: false })}} */>
-          <IonTitle className="ion-margin-top" color="warn">Opciones</IonTitle>
-          <IonList>
-            <IonItem onClick={() =>{ if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true })}}>
-              <IonLabel>
-                Ver Detalles
-              </IonLabel>
-              <IonIcon icon={eye}></IonIcon>
-            </IonItem>
-            <IonItem  onClick={() =>  {if (this.state.mounted) this.setState({ventanaOptions: false, changePage: true })} }>
-              <IonLabel>
-              Editar Informacion
-                {/* <IonRouterLink color="dark" href={`/formularioCorreo/edit/${this.props.id_correo}`} >Editar Informacion</IonRouterLink> */}
-              </IonLabel>
-              <IonIcon icon={create}></IonIcon>
-            </IonItem>
-            <IonItem onClick={() => {if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true })}}>
-              <IonLabel>
-                Eliminar Correo
-              </IonLabel>
-              <IonIcon icon={trash}></IonIcon>
-            </IonItem>
-          </IonList>
-        </IonPopover>
-
 
         <IonModal
           isOpen={this.state.ventanaDetalle}
-          onDidDismiss={e => {if (this.state.mounted) this.setState({ ventanaDetalle: false })}}>
+          onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
           <IonToolbar color="primary">
-            <IonTitle className="ion-margin-top">Detalle del correo</IonTitle>
+            <IonTitle>Detalle del correo</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={() => {if (this.state.mounted) this.setState({ ventanaDetalle: false })}}><IonIcon icon={close}></IonIcon></IonButton>
+              <IonButton onClick={() =>this.setState({ ventanaDetalle: false })}><IonIcon icon={close}></IonIcon></IonButton>
             </IonButtons>
           </IonToolbar>
           <IonContent>
@@ -173,20 +110,20 @@ class ListaCorreos extends React.Component<any, any>  {
               role: 'cancel',
               cssClass: 'secondary',
               handler: () => {
-                if (this.state.mounted) this.setState({ showAlertConfirm: false });
+                this.setState({ showAlertConfirm: false });
               }
             },
             {
               text: 'Si',
               handler: () => {
-                if (this.state.mounted)  this.handle_eliminar()
+                 this.handle_eliminar()
               }
             }
           ]}
         />
         <IonAlert
           isOpen={this.state.alerta}
-          onDidDismiss={() => {  if (this.state.mounted) this.setState({ alerta: false }) }}
+          onDidDismiss={() => this.setState({ alerta: false }) }
           header={this.state.mensaje}
           buttons={['Aceptar']}
         />
