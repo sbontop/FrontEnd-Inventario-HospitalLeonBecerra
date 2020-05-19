@@ -88,6 +88,7 @@ const App: React.FC = () => (
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
           <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
           <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
+          <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>
