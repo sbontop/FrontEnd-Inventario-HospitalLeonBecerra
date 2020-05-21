@@ -80,7 +80,8 @@ const App: React.FC = () => (
           <Route path="/form-desktop-2/edit-2/:id/:ip" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
           <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
           <Route path="/homerouter" component={HomeRouter} exact={true} />
-          <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
+          <Route path="/formulariorouter" component={FormularioRouter} exact={true} />          
+          <Route path="/formulariorouter/edit/:id" component={FormularioRouter} exact={true} />
           <Route path="/homeip" component={HomeIp} exact={true} />
           <Route path="/formularioip" component={FormularioIp} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
