@@ -20,6 +20,7 @@ import ListaImpresoras from '../../components/impresoraComponents/ListaImpresora
 }*/
 
 interface IState {
+  size: any,
   opcion_buscar_codigo: any;
   opcion_buscar_filtro: any;
   opcion_buscar_general: any;
@@ -40,24 +41,17 @@ interface IState {
   mostrando_datos:any;
   popOver: any;
   filtro_marca: any;
-  filtro_marca_anterior: any,
   filtro_fecha: any;
-  filtro_fecha_anterior: any;
   codigo:any;
   id_equipo_eliminar:any;
   busqueda_codigo :any;
 }
 
-type Item = {
-  src: string;
-  text: string;
-};
-
-
 class HomeImpresora extends Component<{lista:any}, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
+        size:10,
         confirmacion: false,
         redirectTo: false,
         cargando:false,
@@ -68,9 +62,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         mostrando_datos:false,
         popOver:false,
         filtro_marca: "Todos",
-        filtro_marca_anterior: "",
         filtro_fecha: new Date().toISOString().substring(0, 10),
-        filtro_fecha_anterior: "",
         codigo: "",
         eliminar:false,
         eliminando:false,
@@ -80,7 +72,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         lista:{},
         busqueda_codigo: "",
         page_number_busqueda_codigo: 0,
-        page_number_buscar_filtro: 0,
+        page_number_buscar_filtro: 1,
         opcion_buscar_codigo : false,
         opcion_buscar_filtro: false,
         opcion_buscar_general: false
@@ -90,9 +82,8 @@ class HomeImpresora extends Component<{lista:any}, IState> {
 
   ionViewWillEnter() {
     this.getMarcas();
-    this.getImpresoras();
+    this.getImpresoras(10);
   }
-
   
   ionViewWillLeave() {
     this.setState({
@@ -129,16 +120,50 @@ class HomeImpresora extends Component<{lista:any}, IState> {
   }
 
   eliminar = () =>{
+    let info:any;
+    if (this.state.opcion_buscar_general){
+      console.log('opcion_buscar_general');
+      info = {"tipo":"general","size":(this.state.pageNumber)*10};
+      this.setState({
+        page_number_busqueda_codigo : 0,
+        page_number_buscar_filtro:1,
+        busqueda_codigo: "",
+        opcion_buscar_codigo:false,
+        opcion_buscar_filtro:false,
+        codigo: ""
+      })
+    }else if(this.state.opcion_buscar_codigo){
+      console.log('opcion_buscar_codigo');
+      info = {"tipo":"codigo","codigo":this.state.busqueda_codigo,"size":(this.state.page_number_busqueda_codigo)*10};
+      this.setState({
+        page_number_buscar_filtro:1,
+        pageNumber:1,
+        opcion_buscar_general: false,
+        opcion_buscar_filtro:false,
+      })
+    }else if(this.state.opcion_buscar_filtro){
+      console.log('opcion_buscar_filtro');
+      info = {"tipo":"filtro","fecha":this.state.filtro_fecha,"marca":this.state.filtro_marca,"size":(this.state.opcion_buscar_filtro)*10};
+      this.setState({
+        page_number_busqueda_codigo:0,
+        pageNumber:1,
+        opcion_buscar_general: false,
+        opcion_buscar_codigo:false,
+      })
+    }
     this.setState({
       eliminar:false,
       eliminando:true
     });
-    AxiosImpresora.eliminar_impresora(this.state.id_equipo_eliminar).then((res:any) => {
+    AxiosImpresora.eliminar_impresora(this.state.id_equipo_eliminar,info).then((res:any) => {
       this.setState({
         impresoras: res.data.data,
         eliminando:false,
-        confirmacion:true,
+        confirmacion:true
       });
+      this.setState({
+        disable_Infinite_Scroll : res.data.total === this.state.impresoras.length
+      })
     }).catch((err:any) => {
       this.setState({
         //cargando:false,
@@ -159,7 +184,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
     }
     this.setState({
       codigo : this.state.busqueda_codigo,
-      page_number_buscar_filtro: 0
+      page_number_buscar_filtro: 1
     })
     if (this.state.busqueda_codigo!==""){
       this.setState({
@@ -168,9 +193,9 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         opcion_buscar_codigo: true,
       })
     }
-
     if (this.state.busqueda_codigo!==""){
-      AxiosImpresora.mostrar_datos_impresora_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo).then((res:any) => {  
+
+      AxiosImpresora.mostrar_datos_impresora_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo,this.state.page_number_busqueda_codigo*10).then((res:any) => {  
           if (this.state.page_number_busqueda_codigo ===1){
             this.setState({
               mostrando_datos:false,
@@ -181,8 +206,6 @@ class HomeImpresora extends Component<{lista:any}, IState> {
               impresoras:[...this.state.impresoras, ...res.data.data],
             })
           }
-          console.log('Find: ',res.data.data);
-
           this.setState({
             disable_Infinite_Scroll : res.data.total === this.state.impresoras.length,
             codigo : this.state.busqueda_codigo
@@ -196,14 +219,11 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         });
     }   
   }
-  
 
-getImpresoras=()=>{
-
+getImpresoras=(size:any)=>{
   this.setState({
     page_number_busqueda_codigo : 0,
-    page_number_buscar_filtro:0,
-    pageNumber:1,
+    page_number_buscar_filtro:1,
     disable_Infinite_Scroll:false,
     busqueda_codigo: "",
     opcion_buscar_general: true,
@@ -215,23 +235,16 @@ getImpresoras=()=>{
     opcion_buscar_codigo: false,
     opcion_buscar_filtro: false,
   });
-
   setTimeout(() => {
-    AxiosImpresora.mostrar_datos_impresoras_paginado(this.state.pageNumber).then((res:any) => {
-      console.log('Opcion1');
+    AxiosImpresora.mostrar_datos_impresoras_paginado(this.state.size,this.state.pageNumber).then((res:any) => {
       this.setState({
         impresoras:res.data.data,
         lista:res.data.data,
         mostrando_datos:false,
-        //hay_datos:true        
       }); 
-  
       this.setState({
         disable_Infinite_Scroll: res.data.total === this.state.impresoras.length
       })
-
-      //console.log(res.data.data);
-
     }).catch((err:any) => {
       console.log('Option2');
       this.setState({
@@ -242,44 +255,38 @@ getImpresoras=()=>{
       });
     });
   }, 1000);
-
-  
 }
 
 getImpresorasNext=(e:any)=>{
-
   this.setState({
     pageNumber: this.state.pageNumber + 1,
   })
-
   setTimeout(() => {
     if(this.state.opcion_buscar_codigo){
       console.log('Buscar code');
-      console.log('Value: ',this.state.codigo);
-      console.log('Second: ',this.state.busqueda_codigo);
       this.getConsultar();
     }else if (this.state.opcion_buscar_filtro){
       console.log('Buscar filter ');
+      this.setState({
+        page_number_buscar_filtro : this.state.page_number_buscar_filtro + 1,
+      })
       this.setState({aplicar:false, codigo: ""});
-      this.aplicar_filtros(true);
+      this.aplicar_filtros(true,this.state.page_number_buscar_filtro);
     }else if (this.state.opcion_buscar_general){
       this.setState({codigo: ""});
       console.log('Buscar default     ');
-      AxiosImpresora.mostrar_datos_impresoras_paginado(this.state.pageNumber).then((res:any) => {
+      AxiosImpresora.mostrar_datos_impresoras_paginado(10,this.state.pageNumber).then((res:any) => {
         this.setState({
           impresoras:[...this.state.impresoras, ...res.data.data]
         }); 
-
         this.setState({
           disable_Infinite_Scroll: res.data.total === this.state.impresoras.length
         })
-
       }).catch((err:any) => {
         this.setState({
           cargando:false,
           error_servidor:true,
           page_number_busqueda_codigo : 0,
-
         });
       });
     }
@@ -287,49 +294,23 @@ getImpresorasNext=(e:any)=>{
   }, 1000);  
 }
 
-  getImpresorasActualizadas=()=>{
-    AxiosImpresora.mostrar_datos_impresoras().then((res:any) => {
-      this.setState({
-        impresoras:res.data,
-      }); 
-    }).catch((err:any) => {
-      this.setState({
-        error_servidor:true,
-      });
-    });
-  }
-
-  valores = (e:any)=>{
-
-  }
-
   doLoad = () => {
-
     setTimeout(() => {
-
-      //this.getImpresoras();
-      //this.getImpresorasNext();
-      //event.detail.complete();
-      //this.setState({
-      //  refrescar:false
-      //});
     }, 1000);    
-
   }
 
   doRefresh=(event: CustomEvent<RefresherEventDetail>)=> {
     this.setState({
       pageNumber: 1,
-      page_number_buscar_filtro: 0,
+      page_number_buscar_filtro: 1,
       page_number_busqueda_codigo: 0,
       disable_Infinite_Scroll: false,
     });
-
     setTimeout(() => {
       if (this.state.opcion_buscar_codigo){
         this.getConsultar();
       }else if (this.state.opcion_buscar_filtro){
-        this.aplicar_filtros(true);
+        this.aplicar_filtros(false,1);
         this.setState({
           busqueda_codigo: "",
           codigo: ""
@@ -339,11 +320,10 @@ getImpresorasNext=(e:any)=>{
           busqueda_codigo: "",
           codigo: ""
         });
-        this.getImpresoras();
+        this.getImpresoras(10);
       }
       event.detail.complete();
     }, 1000);
-  
   }
 
   op=()=>{
@@ -351,7 +331,7 @@ getImpresorasNext=(e:any)=>{
   }
   
   accion = () =>{
-    this.getImpresoras();    
+    this.getImpresoras(10);    
   }
   change_option_filter = () => {
     this.setState((state)=>{
@@ -359,50 +339,38 @@ getImpresorasNext=(e:any)=>{
     });
   }
 
-  aplicar_filtros = (load: boolean) => {
-    console.log('Aplicar filter ');
-
-    console.log('State of option filter: ',this.state.opcion_buscar_filtro);
+  aplicar_filtros = (load: boolean, page?:any) => {
     this.setState({
-      page_number_buscar_filtro : this.state.page_number_buscar_filtro + 1,
       page_number_busqueda_codigo:0,
       codigo:"",
       busqueda_codigo:""
     })
-
-    console.log('State of option filter after: ',this.state.opcion_buscar_filtro);
-
-    AxiosImpresora.filtrar_impresoras_paginado(this.state.page_number_buscar_filtro, this.state.filtro_marca, this.state.filtro_fecha).then((res:any) => {
-          console.log('Respuest: ',res.data);
-          console.log('Respuest: ',res.data.data);
-          if (this.state.page_number_buscar_filtro ===1){
-            console.log('Uno');
-            this.setState({
-              mostrando_datos:false,
-              impresoras : res.data.data,
-            });
-          }else{
-            console.log('Dos');
-            this.setState({
-              impresoras:[...this.state.impresoras, ...res.data.data],
-              mostrando_datos:false,
-
-            })
-          }
-      
+      AxiosImpresora.filtrar_impresoras_paginado(page, this.state.filtro_marca, this.state.filtro_fecha,10).then((res:any) => {
+        console.log('Respuest: ',res.data);
+        console.log('Respuest: ',res.data.data);
+        if (page ===1){
+          console.log('Uno f');
           this.setState({
-            disable_Infinite_Scroll : res.data.total === this.state.impresoras.length,
-          })
-    
-        }).catch((err:any) => {
-          this.setState({
-            cargando:false,
-            mostrando_datos: false,
-            error_servidor:true,
+            mostrando_datos:false,
+            impresoras : res.data.data,
           });
+        }else{
+          console.log('Dos f');
+          this.setState({
+            impresoras:[...this.state.impresoras, ...res.data.data],
+            mostrando_datos:false,
+          })
+        }
+        this.setState({
+          disable_Infinite_Scroll : res.data.total === this.state.impresoras.length,
+        })
+      }).catch((err:any) => {
+        this.setState({
+          cargando:false,
+          mostrando_datos: false,
+          error_servidor:true,
         });
-
-
+      });
   }
 
   change_marca = (e:any) => {
@@ -410,15 +378,12 @@ getImpresorasNext=(e:any)=>{
       filtro_marca: e.target.value,
       //page_number_buscar_filtro: 0
     });
-
     if (this.state.aplicar){
       this.setState({
-        page_number_buscar_filtro: 0
+        page_number_buscar_filtro: 1
       })
     }
-
     console.log('M:  ',this.state.filtro_marca);
-
   }
 
   change_fecha = (e:any) => {
@@ -426,19 +391,20 @@ getImpresorasNext=(e:any)=>{
       filtro_fecha: e.target.value.substring(0, 10),
       //page_number_buscar_filtro: 0
     });
-
     if (this.state.aplicar){
       this.setState({
-        page_number_buscar_filtro: 0
+        page_number_buscar_filtro: 1
       })
     }
-
     console.log('F:  ',this.state.filtro_fecha);
-
   }
   
-  render(){//Start
-    
+  handler =() =>{
+    this.getImpresoras(10);
+    this.setState({pageNumber:1});
+  }
+
+  render(){//Start    
     return (
     <div>     
     <IonPage>
@@ -459,7 +425,6 @@ getImpresorasNext=(e:any)=>{
             onDidDismiss={e => this.setState({ popOver: false })}>
             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
             <IonList>
-            
               <IonItem>
               <IonLabel>Marca</IonLabel>
                 <IonSelect name="printer.marca" onIonChange={this.change_marca } >
@@ -483,33 +448,23 @@ getImpresorasNext=(e:any)=>{
             </IonList>
             <div className="ion-text-center ion-margin">
               <IonButton onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
-              <IonButton onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 0, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
-              this.aplicar_filtros(true) }              }  }>Aplicar</IonButton>
+              <IonButton   onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
+              this.aplicar_filtros(false,1)}}}>Aplicar</IonButton>
             </div >
           </IonPopover>
         </IonToolbar>
       </IonHeader>
-
                 <IonItem lines = "none">
                 <IonSearchbar value = {this.state.codigo} placeholder={"Buscar por código"} 
               onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} 
-              /*onIonChange={(e:any)=>{this.setState({
-                codigo:e.target.value,
-                
-                      })
-                  }
-              }*/
               onIonCancel={this.getConsultar} 
               cancelButtonIcon="md-search" 
               showCancelButton="focus"
             >              
                 </IonSearchbar>   
-                <IonButton size="large" shape="round" color="danger" class="bp2" hidden={(!this.state.opcion_buscar_codigo && !this.state.opcion_buscar_filtro)?true:false} fill="clear" onClick={this.getImpresoras}><IonIcon icon={home}></IonIcon></IonButton>
+                <IonButton size="large" shape="round" color="danger" class="bp2" hidden={(!this.state.opcion_buscar_codigo && !this.state.opcion_buscar_filtro)?true:false} fill="clear" onClick={this.handler}><IonIcon icon={home}></IonIcon></IonButton>
                 </IonItem>
-  
-
 <IonContent>
-
 <IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
     <IonRefresherContent
       pullingIcon="arrow-dropdown"
@@ -558,7 +513,6 @@ getImpresorasNext=(e:any)=>{
           )
         })
         }
-
         <IonLoading
         isOpen={this.state.mostrando_datos}
         message={'Cargando datos. Espere por favor...'}
@@ -608,10 +562,7 @@ getImpresorasNext=(e:any)=>{
           },
         ]}
       />
-      
-      <IonInfiniteScroll disabled={this.state.disable_Infinite_Scroll} threshold="100px"
-                        
-                        
+      <IonInfiniteScroll disabled={this.state.disable_Infinite_Scroll} threshold="100px"                        
                         onIonInfinite={ (e:any) => { this.getImpresorasNext(e)  }
                           //if (this.state.mounted) this.loadRefresh(e, this.state.page_index + 1);                          
                           //this.doLoad
@@ -625,7 +576,6 @@ getImpresorasNext=(e:any)=>{
                             loadingText = {!this.state.disable_Infinite_Scroll?'Cargando más registros':'No hay más registros que mostrar'}>
                         </IonInfiniteScrollContent>
                     </IonInfiniteScroll>
-          
           {(this.state.disable_Infinite_Scroll && this.state.impresoras.length!==0) ?
       <div className="ion-margin">
         <IonItem lines="none">
@@ -641,28 +591,22 @@ getImpresorasNext=(e:any)=>{
         isOpen={this.state.error_servidor}
         subHeader={'Error en el servidor'}
         message={'Intente de nuevo o más trade'}
-        buttons={[
-          
-          {
+        buttons={[{
             cssClass: 'success',
             text: 'OK',
             handler: () => {
               console.log('ERROR 46');
               this.setState({
                 error_servidor:false
-                
               });
             }
           }
         ]}
       />
-
     </IonContent>
     </IonPage>
     </div>);
   }//END
-      
 }
-
 
 export default withIonLifeCycle(HomeImpresora);

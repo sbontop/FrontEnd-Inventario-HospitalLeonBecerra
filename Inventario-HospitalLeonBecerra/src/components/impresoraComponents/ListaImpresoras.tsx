@@ -1,9 +1,8 @@
 import {
-  IonItem,  IonLabel, IonButton, IonIcon,IonAvatar, IonList, IonPopover, IonAlert, IonLoading, IonTitle, IonRippleEffect
+  IonItem,  IonLabel, IonButton, IonIcon,IonAvatar, IonList, IonModal, IonToolbar, IonNote, IonButtons, IonContent, IonAlert, IonLoading, IonTitle, IonRippleEffect
  } from '@ionic/react';
- import { trash, create } from 'ionicons/icons';
+ import { trash, create, close, mailOpen,  albums, paper, list, key, speedometer, colorFilter, cube, aperture, disc, listBox, informationCircle, bulb, person, print} from 'ionicons/icons';
  //import { Link, Redirect } from 'react-router-dom';
- import AxiosImpresora from '../../services/AxiosImpresora';
 
 
  import React from 'react';
@@ -60,31 +59,8 @@ import {
         this.props.onRemove();
 }
 
-  eliminar = () =>{
-
-    this.setState({
-      guardar:false,
-      cargando:true
-    });
-
-    AxiosImpresora.eliminar_impresora(this.props.id_equipo).then((res:any) => {
-      console.log("RESPUESTA:",res.data);
-      this.setState({
-        cargando:false,
-        confirmacion:true,
-      });
 
 
-      //console.log("DATA:",this.state.impresoras);
-
-    }).catch((err:any) => {
-
-      this.setState({
-        //cargando:false,
-        //error_servidor:true,
-      });
-    });
-  }
 
  render(){
    return ( 
@@ -120,113 +96,108 @@ import {
                   :null
                 }
                 <p>Marca: {this.props.marca}</p>
-                {/*<IonRippleEffect></IonRippleEffect>*/}
-                
-                {/*
-                <p>IMPRESORA: {this.props.codigo}</p>
-                <p><small>Estado: {this.props.estado_operativo}</small></p>
-                <p><small>Marca: {this.props.marca}</small></p>
-                <IonRippleEffect></IonRippleEffect> 
-                */}
-
               </IonLabel>
 
               <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/icon_printer.png"} alt="imagen" /></IonAvatar>
-              {/*<IonButton class="btn1" fill="clear"> X </IonButton>*/}
-             
-              {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}></IonIcon></IonButton>*/}
-              {/*<Link to={"/edit/"} className="btn btn-primary">Edit</Link>*/}
-              {/*<IonButton size="large" color="warning" class="bp" routerLink={"/FormImpresora/edit/"+this.props.obj.id_equipo} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>*/}
-              {/* <IonButton size="large" color="warning" class="bp" routerLink={"/formimpresora/edit/"+this.props.id_impresora} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
-              <IonButton size="large" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton> */}
               <IonButton size="default" color="warning" class="bp" routerLink={"/formimpresora/edit/"+this.props.id_impresora} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
               <IonButton size="default" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton>
               {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}><Redirect to={"/FormImpresora/edit/"+this.props.id_equipo} /></IonIcon></IonButton>*/}
             </IonItem>
-            <IonPopover cssClass="vista"
-        isOpen={this.state.ventanaDetalle}
-        onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
-          <IonTitle className="ion-margin-top ion-text-center">Detalle del equipo</IonTitle>
+
+<IonModal
+          isOpen={this.state.ventanaDetalle}
+          onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
+          <IonToolbar color="primary">
+            <IonTitle>Detalle impresora</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={() =>this.setState({ ventanaDetalle: false })}><IonIcon icon={close}></IonIcon></IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonContent>
             <IonList>
               <IonItem>
-                <IonLabel>Id: {this.props.id_impresora}</IonLabel>
+                <IonIcon slot="start" icon={paper}></IonIcon>
+                <IonLabel>Número de serie</IonLabel>
+                <IonNote slot="end">{this.props.numero_serie}</IonNote>
               </IonItem>
               <IonItem>
-                <IonLabel>Número de serie: {this.props.numero_serie}</IonLabel>
+                <IonIcon slot="start" icon={print}></IonIcon>
+                <IonLabel>Tipo</IonLabel>
+                <IonNote slot="end">{this.props.tipo}</IonNote>
               </IonItem>
               <IonItem>
-                <IonLabel>Tipo: {this.props.tipo}</IonLabel>
+                <IonIcon slot="start" icon={albums}></IonIcon>
+                <IonLabel>Marca</IonLabel>
+                <IonNote slot="end">{this.props.marca}</IonNote>
               </IonItem>
               <IonItem>
-                <IonLabel>Marca: {this.props.marca}</IonLabel>
+                <IonIcon slot="start" icon={key}></IonIcon>
+                <IonLabel>Código</IonLabel>
+                <IonNote slot="end">{this.props.codigo}</IonNote>
               </IonItem>
+
               <IonItem>
-                <IonLabel>Código: {this.props.codigo}</IonLabel>
+                <IonIcon slot="start" icon={speedometer}></IonIcon>
+                <IonLabel>Estado</IonLabel>
+                <IonNote slot="end">
+                    {
+                  (() => {
+                    switch (this.props.estado_operativo) {
+                      case 'D':   return 'Disponible';
+                      case 'ER': return  'En revisión';
+                      case 'O':  return  'Operativa';
+                      case 'R':  return  'Reparado';
+                      case 'B':  return  'De baja';
+                    }
+                  })()}
+                </IonNote>
               </IonItem>
+
               <IonItem>
-              {
-                  this.props.estado_operativo==='D'?
-                    <IonLabel>Estado: Disponible</IonLabel>
-                  :null
-                }
-                {
-                  this.props.estado_operativo==='B'?
-                    <IonLabel>Estado: De baja</IonLabel>
-                  :null
-                }
-                {
-                  this.props.estado_operativo==='R'?
-                    <IonLabel>Estado: Reparado</IonLabel>
-                  :null
-                }
-                {
-                  this.props.estado_operativo==='ER'?
-                    <IonLabel>Estado: En revisión</IonLabel>
-                  :null
-                }
-                {
-                  this.props.estado_operativo==='O'?
-                    <IonLabel>Estado: Operativa</IonLabel>
-                  :null
-                }
+                <IonIcon slot="start" icon={list}></IonIcon>
+                <IonLabel>Modelo</IonLabel>
+                <IonNote slot="end">{this.props.modelo}</IonNote>
               </IonItem>
-              <IonItem>
-                <IonLabel>Modelo: {this.props.modelo}</IonLabel>
-              </IonItem>
+            
+              
               <div>
                 {
-                this.props.tipo==="Impresora"? 
+                this.props.tipo==="Impresora" || this.props.tipo==="Multifuncional"? 
                 <div>
                 <IonItem>
-                  <IonLabel>Tinta: {this.props.tinta}</IonLabel>
+                  <IonIcon slot="start" icon={colorFilter}></IonIcon>
+                  <IonLabel>Tinta</IonLabel>
+                  <IonNote slot="end">{this.props.tinta}</IonNote>
                 </IonItem>
+
                 <IonItem>
-                <IonLabel>Cartucho: {this.props.cartucho}</IonLabel>
+                  <IonIcon slot="start" icon={cube}></IonIcon>
+                  <IonLabel>Cartucho</IonLabel>
+                  <IonNote slot="end">{this.props.cartucho}</IonNote>
                 </IonItem>
                 </div>
                 : null
                }
                {
                 this.props.tipo==="Multifuncional"? 
-                <div>
+
                 <IonItem>
-                  <IonLabel>Tinta: {this.props.tinta}</IonLabel>
+                  <IonIcon slot="start" icon={aperture}></IonIcon>
+                  <IonLabel>Toner</IonLabel>
+                  <IonNote slot="end">{this.props.toner}</IonNote>
                 </IonItem>
-                <IonItem>
-                <IonLabel>Cartucho: {this.props.cartucho}</IonLabel>
-                </IonItem>
-                <IonItem>
-                <IonLabel>Toner: {this.props.toner}</IonLabel>
-                </IonItem>
-                </div>
+
+                          
                 : null
                }
                {
                 this.props.tipo==="Matricial"? 
                 <div>
                 <IonItem>
-                  <IonLabel>Cinta: {this.props.cinta}</IonLabel>
-                </IonItem>
+                  <IonIcon slot="start" icon={disc}></IonIcon>
+                  <IonLabel>Cinta</IonLabel>
+                  <IonNote slot="end">{this.props.cinta}</IonNote>
+                </IonItem>                
                 </div>
                 : null
                 
@@ -234,8 +205,11 @@ import {
                {
                 this.props.tipo==="Brazalete"? 
                 <div>
+                
                 <IonItem>
-                  <IonLabel>Rollo: {this.props.rollo}</IonLabel>
+                  <IonIcon slot="start" icon={mailOpen}></IonIcon>
+                  <IonLabel>Rollo</IonLabel>
+                  <IonNote slot="end">{this.props.rollo}</IonNote>
                 </IonItem>
                 </div>
                 : null
@@ -243,8 +217,11 @@ import {
                {
                 this.props.tipo==="Escáner"? 
                 <div>
+
                 <IonItem>
-                  <IonLabel>Rodillo: {this.props.rodillo}</IonLabel>
+                  <IonIcon slot="start" icon={listBox}></IonIcon>
+                  <IonLabel>Rodillo</IonLabel>
+                  <IonNote slot="end">{this.props.rodillo}</IonNote>
                 </IonItem>
                 
                 </div>
@@ -255,25 +232,35 @@ import {
               <div>
             {
                 this.props.descripcion!==null && this.props.descripcion!=='' && this.props.descripcion!==' '? 
-                  <IonItem>
-                    <IonLabel>Descripción: {this.props.descripcion}</IonLabel>
-                  </IonItem>
+
+                <IonItem>
+                  <IonIcon slot="start" icon={informationCircle}></IonIcon>
+                  <IonLabel>Descripción</IonLabel>
+                  <IonNote slot="end">{this.props.descripcion}</IonNote>
+                </IonItem>                  
                 : 
                 <IonItem>
-                  <IonLabel>Descripción: N/A </IonLabel>
+                  <IonIcon slot="start" icon={informationCircle}></IonIcon>
+                  <IonLabel>Descripción</IonLabel>
+                  <IonNote slot="end">N/A</IonNote>
                 </IonItem>
                }
             </div>
             <div>
             {
                 (this.props.direccion_ip!==null && this.props.direccion_ip!=='' && this.props.direccion_ip!==' ')? 
+              
               <IonItem>
-              <IonLabel>Dirección IP: {this.props.direccion_ip}</IonLabel>
+                <IonIcon slot="start" icon={bulb}></IonIcon>
+                <IonLabel>Dirección IP</IonLabel>
+                <IonNote slot="end">{this.props.direccion_ip}</IonNote>
               </IonItem>
                 : 
               <IonItem>
-              <IonLabel>Dirección IP: N/A</IonLabel>
-              </IonItem>   
+                <IonIcon slot="start" icon={bulb}></IonIcon>
+                <IonLabel>Dirección IP</IonLabel>
+                <IonNote slot="end">N/A</IonNote>
+              </IonItem>
                }
             </div>
 
@@ -281,26 +268,32 @@ import {
             {
                 this.props.nombre!==null? 
                 <div>
-              <IonItem>
-              <IonLabel>Asignado: {this.props.nombre + ' ' + this.props.apellido}</IonLabel>
 
-              </IonItem>
+                <IonItem>
+                  <IonIcon slot="start" icon={person}></IonIcon>
+                  <IonLabel>Asignado</IonLabel>
+                  <IonNote slot="end">{this.props.nombre + ' ' + this.props.apellido}</IonNote>
+                </IonItem>              
+
                 </div>
                 : 
-                
+        
                 <div>
-              <IonItem>
-              <IonLabel>Asignado: N/A</IonLabel>
 
-              </IonItem>
+                <IonItem>
+                  <IonIcon slot="start" icon={person}></IonIcon>
+                  <IonLabel>Asignado</IonLabel>
+                  <IonNote slot="end">N/A</IonNote>
+                </IonItem>
+
                 </div>
                }
             </div>
             </IonList>
-            <div className="ion-text-center ion-margin">
-            <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>Cerrar</IonButton>
-            </div>
-      </IonPopover>
+            
+            </IonContent>
+        </IonModal>
+
 
       <IonAlert
         isOpen={this.state.guardar}

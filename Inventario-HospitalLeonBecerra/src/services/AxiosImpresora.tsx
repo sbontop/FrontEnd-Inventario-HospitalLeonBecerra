@@ -29,8 +29,8 @@ export default class AxiosImpresora {
     return AxiosCorreo.instanceAxios.get(`/buscar_empleado/${empleado}`);
   }*/
 
-  static mostrar_datos_impresoras_paginado = (pageNumber:any) => {
-    return AxiosImpresora.instanceAxios.get(`/impresoras_paginado?page=${pageNumber}`);
+  static mostrar_datos_impresoras_paginado = (size:any, pageNumber:any) => {
+    return AxiosImpresora.instanceAxios.get(`/impresoras_paginado/${size}?page=${pageNumber}`);
   }
 
   static mostrar_dato_impresora_by_id_paginado = (pageNumber:any,body:any) => {
@@ -41,8 +41,8 @@ export default class AxiosImpresora {
     return AxiosImpresora.instanceAxios.get(`/obtener_impresora_por_id/${id_equipo}`);
   }
 
-  static eliminar_impresora = (id_equipo:any) => {
-    return AxiosImpresora.instanceAxios.put(`/eliminar_impresora/${id_equipo}`);
+  static eliminar_impresora = (id_equipo:any,body?:any) => {
+    return AxiosImpresora.instanceAxios.put(`/eliminar_impresora/${id_equipo}`,body);
   }
 
   static existe_codigo_numero_serie =(codigo:any,numero_serie:any) => {
@@ -62,16 +62,16 @@ export default class AxiosImpresora {
     return AxiosImpresora.instanceAxios.get(`/impresoras_codigo/${codigo}`);
   }
 
-  static mostrar_datos_impresora_by_id_paginado = (codigo:any,pageNumber:any) => {
-    return AxiosImpresora.instanceAxios.get(`/impresoras_codigo_paginado/${codigo}?page=${pageNumber}`);
+  static mostrar_datos_impresora_by_id_paginado = (codigo:any,pageNumber:any,size:any) => {
+    return AxiosImpresora.instanceAxios.get(`/impresoras_codigo_paginado/${codigo}/${size}?page=${pageNumber}`);
   }
 
   static filtrar_impresoras = (marca?:any,fecha?:any) => {
     return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras/${marca}/${fecha}`);
   }
 
-  static filtrar_impresoras_paginado = (pageNumber?:any,marca?:any,fecha?:any) => {
-    return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras_paginado/${marca}/${fecha}?page=${pageNumber}`);
+  static filtrar_impresoras_paginado = (pageNumber?:any,marca?:any,fecha?:any,size?:any) => {
+    return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras_paginado/${marca}/${fecha}/${size}?page=${pageNumber}`);
   }
 
 

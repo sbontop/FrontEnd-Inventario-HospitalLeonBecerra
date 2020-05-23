@@ -42,14 +42,11 @@ interface IState {
 
 const tiposImpresoras = [{id: 'Multifuncional'},{id: 'Matricial'},{id: 'Brazalete'},{id: 'Impresora'},{id: 'Escáner'}];
 let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
-//const departamentosCustodia = [{id: 'Coordinación'},{id: 'Dirección'},{id: 'Proveeduría'},{id: 'Activos fijos'},{id: 'Administración'},{id: 'Admisión',}];
-//const tipo_tinta = [{id: 'Epson'},{id: 'HP'},{id: 'Canon'},{id: 'Brother'},{id: 'Samsung'},{id: 'Xerox'},{id: 'Dell'}];
 
 class FormImpresora extends Component<{} , IState> {
   private id:any;
   constructor(props: any) {
     super(props);
-    //this.onChangeInput = this.onChangeInput.bind(this);
     this.state = {
         data:{},
         confirmacion_eliminar:false,
@@ -384,18 +381,7 @@ mostrar_empleados() {
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
           (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
           (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined )){
-            console.log('Condición96');
-            //let text:String=json.rodillo+''.replace(/^\s+|\s+$/g, '');
-            //let text:String=(json.rodillo+'').trim();
-            //console.log('Espacios: ',json.rodillo+''.replace(/^\s+|\s+$/g, ""));
-            //console.log('Espacios 2:',(json.rodillo+'').trim().length);
-            //console.log('Espacios 4: ',text+'z');  
-            // lista_nombres_campos_impresora_defecto
-            console.log('L:',lista_valores_imgresados);
-            console.log('Clave: ',lista_campos_ingresados);
-            console.log('Valor: ',lista_valores_imgresados);
-            console.log('CamposCompletos: ',lista_campos_completos_impresora_defecto);
-            //let lista_campos_faltantes: String[]=[];
+            
             for(let i in lista_campos_completos_impresora_defecto){
               campo = lista_campos_completos_impresora_defecto[i]; //marca
               campo_nombre_completo = lista_nombres_campos_impresora_defecto[i];
@@ -405,7 +391,6 @@ mostrar_empleados() {
                                    // no está ingresado ese campo
                   texto = texto+" "+campo_nombre_completo+",";
               }
-              //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
               console.log('Valor vacio: ',valor_vacio);
             }
             if(texto.slice(-1)===','){
@@ -536,6 +521,7 @@ mostrar_empleados() {
 
     if(this.id===undefined){
       console.log('Creando impresora');
+      console.log('json_datos_editados: ',json_datos_editados);
     AxiosImpresora.crear_impresora_nueva(json_datos_editados).then(res => {
       if (res.data.log === 1){
         if (this.state.cargando===true){
