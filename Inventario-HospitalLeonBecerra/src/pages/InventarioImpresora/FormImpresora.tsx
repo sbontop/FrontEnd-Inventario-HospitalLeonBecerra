@@ -27,11 +27,6 @@ interface IState {
   error_servidor:any;
   marcas:any;
   childVisible:any;
-  matricial:any;
-  brazalete:any;
-  multifuncional:any;
-  impresora:any;
-  escaner:any;
   estado_anterior:any;
   existe_repetido:any;
   lista_direcciones_ip:any;
@@ -62,11 +57,6 @@ class FormImpresora extends Component<{} , IState> {
         error_servidor:false,
         marcas:[],
         childVisible:false,
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:false,
         existe_repetido: false,
         lista_direcciones_ip:[],
         lista_empleados: [],
@@ -109,7 +99,6 @@ class FormImpresora extends Component<{} , IState> {
           }
         })()
       })
-
       let data_id = res.data[0];
       data_id.estado_operativo = this.state.estado_anterior;
       this.setState({
@@ -344,7 +333,7 @@ mostrar_empleados() {
           }else{
           this.setState({guardar:true})
         }
-      }else if(this.state.data_impresora_by_id.tipo==="Escaner"){
+      }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
             (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || 
             (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || (json.hasOwnProperty('rodillo')!==true || (json.rodillo+'').trim()==='') || 
@@ -419,49 +408,7 @@ mostrar_empleados() {
     }
   }
 
-  onClick=()=> {
-    if(this.state.data_impresora_by_id.tipo==="Matricial"){
-      this.setState({
-        matricial:true,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:false
-      });
-    }else if(this.state.data_impresora_by_id.tipo==="Brazalete"){
-      this.setState({
-        matricial:false,
-        brazalete:true,
-        multifuncional:false,
-        impresora:false,
-        escaner:false
-      });
-    }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
-      this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:true,
-        impresora:false,
-        escaner:false
-      });
-    }else if(this.state.data_impresora_by_id.tipo==="Impresora"){
-      this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:true,
-        escaner:false
-      });
-    }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
-      this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:true
-      });
-    }
-  }
+
 
   accion = () =>{
     this.setState({eliminar:true});
@@ -727,7 +674,7 @@ mostrar_empleados() {
                 <IonLabel position="stacked">Tipo <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect disabled = {this.id!==undefined?true:false} name="printer.tipo"
                             value = {this.state.data_impresora_by_id.tipo} 
-                            onIonChange={(e:any)=>{this.onChangeInput(e);this.onClick()}}>
+                            onIonChange={(e:any)=>{this.onChangeInput(e)}}>
                     {tiposImpresoras.map((object, i) => {
                       return (
                         <IonSelectOption key={object.id} value={object.id}>
@@ -771,19 +718,19 @@ mostrar_empleados() {
                     Parent - click me to show/hide my child
             </div>*/}
                 {
-                    this.state.matricial? <IonItem>
+                    this.state.data_impresora_by_id.tipo==="Matricial"? <IonItem>
                     <IonLabel position="stacked">Cinta <IonText color="danger">*</IonText></IonLabel>
                     <IonInput required value={this.state.data_impresora_by_id.cinta  } onIonChange={this.onChangeInput} name="printer.cinta" type="text" ></IonInput>
                   </IonItem>: null  
                 } 
                 {
-                  this.state.brazalete? <IonItem>
+                  this.state.data_impresora_by_id.tipo==="Brazalete"? <IonItem>
                   <IonLabel position="stacked">Rollo-Brazalete<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required value= {this.state.data_impresora_by_id.rollo} onIonChange={this.onChangeInput}  name="printer.rollo" type="text" ></IonInput>
                   </IonItem>: null
                 }
                 {
-                  this.state.multifuncional?
+                  this.state.data_impresora_by_id.tipo==="Multifuncional"?
                   <div>
                                  <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
@@ -808,13 +755,13 @@ mostrar_empleados() {
                   </div>: null
                 }
                 {
-                  this.state.escaner? <IonItem>
+                  this.state.data_impresora_by_id.tipo==="Escáner"? <IonItem>
                   <IonLabel position="stacked">Rodillo<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} value = {this.state.data_impresora_by_id.rodillo} name="printer.rodillo" type="text" ></IonInput>
                   </IonItem>: null
                 }
                 {
-                  this.state.impresora? 
+                  this.state.data_impresora_by_id.tipo==="Impresora"? 
                   <div>                  
                 <IonItem>
                   <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
@@ -921,7 +868,6 @@ mostrar_empleados() {
                         })}
                     </IonSelect>
                 </IonItem>
-
                  <IonItem>
                   <IonLabel position="stacked">Descripción</IonLabel>
                   <IonTextarea value = {this.state.data_impresora_by_id.descripcion} onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
