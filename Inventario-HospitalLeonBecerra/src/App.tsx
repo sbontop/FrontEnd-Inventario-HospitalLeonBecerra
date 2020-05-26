@@ -17,10 +17,10 @@ import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import { home, desktop, list } from 'ionicons/icons';
+import { home, desktop, list, pricetag } from 'ionicons/icons';
 import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
-
+import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -60,6 +60,11 @@ const appPages: AppPage[] = [
     title: 'Registro de equipos',
     url: '/tiposequiposinventario',
     icon: desktop
+  },
+  {
+    title: 'Registro de Marcas',
+    url: '/homemarcas',
+    icon: pricetag
   }
 ];
 
@@ -97,6 +102,8 @@ const App: React.FC = () => (
           <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
           <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
           <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
+
+          <Route path="/homemarcas" component={HomeMarcas} exact={true} />
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>
