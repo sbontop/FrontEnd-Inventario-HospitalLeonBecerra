@@ -181,8 +181,7 @@ const HomeIp: React.FC = () => {
                         <ListIps
                             key={`${ip.id_ip}`}
                             id_ip={ip.id_ip}
-                            nombre_estado_equipo={ip.nombre_estado_equipo}
-                            abreviatura_estado_equipo={ip.abreviatura_estado_equipo}
+                            estado={ip.estado}
                             fecha_asignacion={ip.fecha_asignacion}
                             direccion_ip={ip.direccion_ip}
                             hostname={ip.hostname}

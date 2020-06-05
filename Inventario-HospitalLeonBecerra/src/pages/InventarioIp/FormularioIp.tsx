@@ -71,13 +71,13 @@ const FormularioIp: React.FC = () => {
                         <IonItem>
                             <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
                             <IonSelect onIonChange={(e) => setEstado(e.detail.value)}>
-                                <IonSelectOption value="1" key="1">En Uso</IonSelectOption>
-                                <IonSelectOption value="2" key="2">Libre</IonSelectOption>
-                                <IonSelectOption value="3" key="3">Operativo</IonSelectOption>
-                                <IonSelectOption value="4" key="4">En Revision</IonSelectOption>
-                                <IonSelectOption value="5" key="5">Reparado</IonSelectOption>
-                                <IonSelectOption value="6" key="6">de Baja</IonSelectOption>
-                                <IonSelectOption value="7" key="7">Disponible</IonSelectOption>
+                                <IonSelectOption value="EU" key="EU">EU</IonSelectOption>
+                                <IonSelectOption value="L" key="L">L</IonSelectOption>
+                                <IonSelectOption value="O" key="O">O</IonSelectOption>
+                                <IonSelectOption value="ER" key="ER">ER</IonSelectOption>
+                                <IonSelectOption value="R" key="R">R</IonSelectOption>
+                                <IonSelectOption value="B" key="B">B</IonSelectOption>
+                                <IonSelectOption value="D" key="D">D</IonSelectOption>
                             </IonSelect>
                         </IonItem>
                         <IonItem>
