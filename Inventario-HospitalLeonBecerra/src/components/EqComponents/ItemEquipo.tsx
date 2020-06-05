@@ -6,7 +6,7 @@ import { menu, eye, trash, create } from 'ionicons/icons';
 import React from 'react';
 import AxiosPC from '../../services/AxiosPC';
 
-export default class ItemEquipo extends React.Component<{ info: any, tipo:any, principal: any }, any> {
+export default class ItemEquipo extends React.Component<{ info: any, tipo: any, principal: any }, any> {
   //principal: any
   constructor(props: any) {
     super(props);
@@ -17,7 +17,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
       showAlertConfirm: false,
       showAlertSuccess: false,
       mounted: true,
-      changePage:false
+      changePage: false
     }
   }
 
@@ -40,9 +40,8 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
         showLoading: true,
         showAlertConfirm: false
       })
-      AxiosPC.deleteEquipo(this.props.info.id_equipo,this.props.tipo).then((response: any) => {
-        if(this.state.mounted)
-        {
+      AxiosPC.deleteEquipo(this.props.info.id_equipo, this.props.tipo).then((response: any) => {
+        if (this.state.mounted) {
           this.setState({
             showLoading: false,
             showAlertSuccess: true
@@ -51,15 +50,15 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
           this.props.principal.getEquipos(true);
           console.log(response);
         }
-        
+
       }, err => {
-        if(this.state.mounted){
+        if (this.state.mounted) {
           this.setState({
             showLoading: false
           })
           console.log(err);
         }
-        
+
       })
     }
 
@@ -67,11 +66,14 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
 
   render() {
     if (this.state.changePage) {
-            return (this.props.tipo === 'laptop' ? <Redirect to={"/form-laptop/edit/"+this.props.info.id_equipo} /> : <Redirect to={"/form-desktop/edit/"+this.props.info.id_equipo} />);
+      let path_ =(this.props.info.ip === null?"/form-"+this.props.tipo+"/edit/" + this.props.info.id_equipo:"/form-"+this.props.tipo+"-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
+     // let path_desk = (this.props.info.ip === null?"/form-desktop/edit/" + this.props.info.id_equipo:"/form-desktop-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
+      //return (this.props.tipo === 'laptop' ? <Redirect to={path_} /> : <Redirect to={"/form-desktop/edit/" + this.props.info.id_equipo} />);
+      return <Redirect to={path_} /> 
     }
     return (
       <div>
-        <IonItem onClick={() =>{  if(this.state.mounted)this.setState({ ventanaOptions: true })}} >
+        <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: true }) }} >
           <IonAvatar slot="start">
             <img src={process.env.PUBLIC_URL + "/assets/img/" + this.props.tipo + ".png"} alt="" />
           </IonAvatar>
@@ -101,13 +103,13 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
               role: 'cancel',
               cssClass: 'secondary',
               handler: () => {
-                if(this.state.mounted)this.setState({ showAlertConfirm: false });
+                if (this.state.mounted) this.setState({ showAlertConfirm: false });
               }
             },
             {
               text: 'Si',
               handler: () => {
-                if(this.state.mounted) this.deleteEquipo()
+                if (this.state.mounted) this.deleteEquipo()
               }
             }
           ]}
@@ -123,37 +125,39 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
             {
               text: 'Ok',
               handler: () => {
-                if(this.state.mounted){this.setState({
-                  showAlertSuccess: false
-                })}
+                if (this.state.mounted) {
+                  this.setState({
+                    showAlertSuccess: false
+                  })
+                }
               }
             }
           ]}
         />
         <IonPopover
           isOpen={this.state.ventanaOptions}
-          onDidDismiss={e =>{if(this.state.mounted) this.setState({ ventanaOptions: false })}}>
+          onDidDismiss={e => { if (this.state.mounted) this.setState({ ventanaOptions: false }) }}>
           <IonTitle className="ion-margin-top" color="warn">{"Opciones: " + this.props.info.codigo}</IonTitle>
           <IonList>
-            <IonItem onClick={() => { if(this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }}>
+            <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }}>
               <IonLabel>
                 Ver Detalles
               </IonLabel>
               <IonIcon icon={eye}></IonIcon>
             </IonItem>
-            <IonItem onClick={() => { 
-              if(this.state.mounted)
-              
-              this.setState({ changePage: true })
+            <IonItem onClick={() => {
+              if (this.state.mounted)
+
+                this.setState({ changePage: true })
               //this.props.principal.setState({ editarEquipo: true }) 
-              
-              }}>
+
+            }}>
               <IonLabel>
                 Editar Informacion
               </IonLabel>
               <IonIcon icon={create}></IonIcon>
             </IonItem>
-            <IonItem onClick={() => { if(this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }}>
+            <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }}>
               <IonLabel>
                 Eliminar Equipo
               </IonLabel>
@@ -163,7 +167,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
         </IonPopover>
         <IonPopover
           isOpen={this.state.ventanaDetalle}
-          onDidDismiss={e =>{  if(this.state.mounted)this.setState({ ventanaDetalle: false })}}>
+          onDidDismiss={e => { if (this.state.mounted) this.setState({ ventanaDetalle: false }) }}>
           <IonTitle className="ion-margin-top" color="warn">Detalle del equipo</IonTitle>
           <IonList>
             <IonItem>
@@ -186,7 +190,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo:any, p
             </IonItem>
           </IonList>
           <div className="ion-text-center ion-margin">
-            <IonButton onClick={() => { if(this.state.mounted)this.setState({ ventanaDetalle: false })}}>Cerrar</IonButton>
+            <IonButton onClick={() => { if (this.state.mounted) this.setState({ ventanaDetalle: false }) }}>Cerrar</IonButton>
           </div>
         </IonPopover>
       </div>

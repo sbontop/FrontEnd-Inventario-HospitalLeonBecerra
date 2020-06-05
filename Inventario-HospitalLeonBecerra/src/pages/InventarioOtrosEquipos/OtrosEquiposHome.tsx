@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
 import { IonContent, IonToolbar, IonButton, IonRefresher, IonRefresherContent, IonPopover, IonList, IonItem, IonAlert, IonLabel, IonSelect, IonSelectOption, IonDatetime, IonTitle, IonHeader,IonSearchbar,IonPage, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonLoading, IonIcon /*IonRippleEffect,   IonItemDivider*/} from '@ionic/react';
-import AxiosImpresora from '../../services/AxiosImpresora';
+import AxiosOtrosEquipos from '../../services/AxiosOtrosEquipos';
 import { RefresherEventDetail } from '@ionic/core';
 import { options,add/*,clipboard*/, home } from 'ionicons/icons';
 import { withIonLifeCycle } from '@ionic/react';
@@ -9,14 +9,14 @@ import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 
 
 
-import ListaImpresoras from '../../components/impresoraComponents/ListaImpresoras';
+import ListaOtrosEquipos from '../../components/otrosEquiposComponents/ListaOtrosEquipos';
 
 //declare const Modernizr:any;
 
 /*declare global {
   interface Window {
     Modernizr:any     
-  }
+  } 
 }*/
 
 interface IState {
@@ -36,18 +36,20 @@ interface IState {
   cargando:any;
   eliminando:any;
   error_servidor:any;
-  marcas_impresoras:any;
-  impresoras:any;
+  marcas_equipos:any;
+  equipos:any;
   mostrando_datos:any;
   popOver: any;
   filtro_marca: any;
+  filtro_marca_anterior: any,
   filtro_fecha: any;
+  filtro_fecha_anterior: any;
   codigo:any;
   id_equipo_eliminar:any;
   busqueda_codigo :any;
 }
 
-class HomeImpresora extends Component<{lista:any}, IState> {
+class OtrosEquiposHome extends Component<{lista:any}, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -57,12 +59,14 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         cargando:false,
         error_servidor:false,
         aplicar: false,
-        marcas_impresoras:[],
-        impresoras:[],
+        marcas_equipos:[],
+        equipos:[],
         mostrando_datos:false,
         popOver:false,
         filtro_marca: "Todos",
+        filtro_marca_anterior: "",
         filtro_fecha: new Date().toISOString().substring(0, 10),
+        filtro_fecha_anterior: "",
         codigo: "",
         eliminar:false,
         eliminando:false,
@@ -82,12 +86,13 @@ class HomeImpresora extends Component<{lista:any}, IState> {
 
   ionViewWillEnter() {
     this.getMarcas();
-    this.getImpresoras(10);
+    this.getOtrosEquipos(10);
   }
+
   
   ionViewWillLeave() {
     this.setState({
-      impresoras:[],
+      equipos:[],
       pageNumber: 1,
       disable_Infinite_Scroll:false
     });
@@ -97,11 +102,12 @@ class HomeImpresora extends Component<{lista:any}, IState> {
     this.setState({eliminar:true})
   }
 
-  getMarcas=()=>{
-    AxiosImpresora.mostrar_marcas().then((res:any) => {
+    getMarcas=()=>{
+    AxiosOtrosEquipos.mostrar_marcas().then((res:any) => {
       let marcas = res.data;
+      console.log("res.data: ",res.data);
       this.setState({
-        marcas_impresoras:marcas
+        marcas_equipos:marcas
       }); 
     }).catch((err:any) => {
       this.setState({
@@ -110,7 +116,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         error_servidor:true,
       });
     });
-  }
+  }  
 
   _remove(position:any){
     this.setState({
@@ -119,7 +125,8 @@ class HomeImpresora extends Component<{lista:any}, IState> {
     this.verificar();
   }
 
-  eliminar = () =>{
+   eliminar = () =>{
+
     let info:any;
     if (this.state.opcion_buscar_general){
       console.log('opcion_buscar_general');
@@ -148,22 +155,25 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         page_number_busqueda_codigo:0,
         pageNumber:1,
         opcion_buscar_general: false,
-        opcion_buscar_codigo:false,
+        opcion_buscar_codigo:false, 
       })
     }
+    
     this.setState({
       eliminar:false,
       eliminando:true
     });
-    AxiosImpresora.eliminar_impresora(this.state.id_equipo_eliminar,info).then((res:any) => {
+    AxiosOtrosEquipos.eliminar_otros_equipos(this.state.id_equipo_eliminar, info).then((res:any) => {
       this.setState({
-        impresoras: res.data.data,
+        equipos: res.data.data,
         eliminando:false,
-        confirmacion:true
+        confirmacion:true,
       });
+
       this.setState({
-        disable_Infinite_Scroll : res.data.total === this.state.impresoras.length
-      })
+        disable_Infinite_Scroll : res.data.total === this.state.equipos.length,
+      });
+
     }).catch((err:any) => {
       this.setState({
         //cargando:false,
@@ -171,13 +181,15 @@ class HomeImpresora extends Component<{lista:any}, IState> {
       });
     });
   }
+ 
+
 
   getConsultar=()=>{    
     if (this.state.codigo!==this.state.busqueda_codigo && this.state.codigo!==""){
       this.setState({
         mostrando_datos:true,
         page_number_busqueda_codigo : 0,
-        impresoras : [],
+        equipos : [],
         busqueda_codigo : this.state.codigo,
         opcion_buscar_filtro: false
       })
@@ -194,20 +206,23 @@ class HomeImpresora extends Component<{lista:any}, IState> {
       })
     }
     if (this.state.busqueda_codigo!==""){
+      AxiosOtrosEquipos.mostrar_datos_equipo_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo,this.state.size).then((res:any) => {  
 
-      AxiosImpresora.mostrar_datos_impresora_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo,this.state.page_number_busqueda_codigo*10).then((res:any) => {  
           if (this.state.page_number_busqueda_codigo ===1){
+
             this.setState({
               mostrando_datos:false,
-              impresoras : res.data.data,
+              equipos : res.data.data,
             });
           }else{
             this.setState({
-              impresoras:[...this.state.impresoras, ...res.data.data],
+              equipos:[...this.state.equipos, ...res.data.data],
             })
           }
+          console.log('Find: ',res.data.data);
+          console.log('Resp: ',res.data);
           this.setState({
-            disable_Infinite_Scroll : res.data.total === this.state.impresoras.length,
+            disable_Infinite_Scroll : res.data.total === this.state.equipos.length,
             codigo : this.state.busqueda_codigo
           })
         }).catch((err:any) => {
@@ -219,8 +234,9 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         });
     }   
   }
+   
 
-getImpresoras=(size:any)=>{
+getOtrosEquipos=(size:any)=>{
   this.setState({
     page_number_busqueda_codigo : 0,
     page_number_buscar_filtro:1,
@@ -235,16 +251,19 @@ getImpresoras=(size:any)=>{
     opcion_buscar_codigo: false,
     opcion_buscar_filtro: false,
   });
+
   setTimeout(() => {
-    AxiosImpresora.mostrar_datos_impresoras_paginado(this.state.size,this.state.pageNumber).then((res:any) => {
+    AxiosOtrosEquipos.mostrar_equipos_paginado(this.state.size, this.state.pageNumber).then((res:any) => {
+      console.log('Opcion1');
       this.setState({
-        impresoras:res.data.data,
-        lista:res.data.data,
+        equipos:res.data.data,
         mostrando_datos:false,
       }); 
+  
       this.setState({
-        disable_Infinite_Scroll: res.data.total === this.state.impresoras.length
+        disable_Infinite_Scroll: res.data.total === this.state.equipos.length
       })
+
     }).catch((err:any) => {
       console.log('Option2');
       this.setState({
@@ -254,10 +273,10 @@ getImpresoras=(size:any)=>{
         page_number_busqueda_codigo : 0,
       });
     });
-  }, 1000);
+  }, 1000);  
 }
 
-getImpresorasNext=(e:any)=>{
+ getEquiposNext=(e:any)=>{
   this.setState({
     pageNumber: this.state.pageNumber + 1,
   })
@@ -275,18 +294,20 @@ getImpresorasNext=(e:any)=>{
     }else if (this.state.opcion_buscar_general){
       this.setState({codigo: ""});
       console.log('Buscar default     ');
-      AxiosImpresora.mostrar_datos_impresoras_paginado(10,this.state.pageNumber).then((res:any) => {
+      AxiosOtrosEquipos.mostrar_equipos_paginado(this.state.size, this.state.pageNumber).then((res:any) => {
         this.setState({
-          impresoras:[...this.state.impresoras, ...res.data.data]
+          equipos:[...this.state.equipos, ...res.data.data]
         }); 
+
         this.setState({
-          disable_Infinite_Scroll: res.data.total === this.state.impresoras.length
+          disable_Infinite_Scroll: res.data.total === this.state.equipos.length
         })
       }).catch((err:any) => {
         this.setState({
           cargando:false,
           error_servidor:true,
           page_number_busqueda_codigo : 0,
+
         });
       });
     }
@@ -299,13 +320,15 @@ getImpresorasNext=(e:any)=>{
     }, 1000);    
   }
 
-  doRefresh=(event: CustomEvent<RefresherEventDetail>)=> {
+
+   doRefresh=(event: CustomEvent<RefresherEventDetail>)=> {
     this.setState({
       pageNumber: 1,
       page_number_buscar_filtro: 1,
       page_number_busqueda_codigo: 0,
       disable_Infinite_Scroll: false,
     });
+
     setTimeout(() => {
       if (this.state.opcion_buscar_codigo){
         this.getConsultar();
@@ -320,64 +343,67 @@ getImpresorasNext=(e:any)=>{
           busqueda_codigo: "",
           codigo: ""
         });
-        this.getImpresoras(10);
+        this.getOtrosEquipos(10);
       }
       event.detail.complete();
     }, 1000);
-  }
-
-  op=()=>{
-    this.aplicar_filtros(true);
-  }
   
-  accion = () =>{
-    this.getImpresoras(10);    
   }
+ 
+   op=()=>{
+    this.aplicar_filtros(true);
+  } 
+  
+/*   accion = () =>{
+    this.getImpresoras();    
+  } */
+
   change_option_filter = () => {
     this.setState((state)=>{
       return {opcion_buscar_filtro : true}
     });
   }
 
-  aplicar_filtros = (load: boolean, page?:any) => {
+   aplicar_filtros = (load: boolean, page?:any) => {
     this.setState({
       page_number_busqueda_codigo:0,
       codigo:"",
       busqueda_codigo:""
     })
-      AxiosImpresora.filtrar_impresoras_paginado(page, this.state.filtro_marca, this.state.filtro_fecha,10).then((res:any) => {
-        console.log('Respuest: ',res.data);
-        console.log('Respuest: ',res.data.data);
-        if (page ===1){
-          console.log('Uno f');
-          this.setState({
-            mostrando_datos:false,
-            impresoras : res.data.data,
-          });
-        }else{
-          console.log('Dos f');
-          this.setState({
-            impresoras:[...this.state.impresoras, ...res.data.data],
-            mostrando_datos:false,
-          })
-        }
-        this.setState({
-          disable_Infinite_Scroll : res.data.total === this.state.impresoras.length,
-        })
-      }).catch((err:any) => {
-        this.setState({
-          cargando:false,
-          mostrando_datos: false,
-          error_servidor:true,
-        });
-      });
-  }
 
+    AxiosOtrosEquipos.filtrar_equipos_paginado(page, this.state.filtro_marca, this.state.filtro_fecha,10).then((res:any) => {
+          if (page ===1){
+            console.log('Uno');
+            this.setState({
+              mostrando_datos:false,
+              equipos : res.data.data,
+            });
+          }else{
+            console.log('Dos');
+            this.setState({
+              equipos:[...this.state.equipos, ...res.data.data],
+              mostrando_datos:false,
+
+            })
+          }
+          this.setState({
+            disable_Infinite_Scroll : res.data.total === this.state.equipos.length,
+          })
+    
+        }).catch((err:any) => {
+          this.setState({
+            cargando:false,
+            mostrando_datos: false,
+            error_servidor:true,
+          });
+        });
+  }
+ 
   change_marca = (e:any) => {
     this.setState({
       filtro_marca: e.target.value,
-      //page_number_buscar_filtro: 0
     });
+
     if (this.state.aplicar){
       this.setState({
         page_number_buscar_filtro: 1
@@ -388,9 +414,9 @@ getImpresorasNext=(e:any)=>{
 
   change_fecha = (e:any) => {
     this.setState({
-      filtro_fecha: e.target.value.substring(0, 10),
-      //page_number_buscar_filtro: 0
+      filtro_fecha: e.target.value.substring(0, 10)
     });
+
     if (this.state.aplicar){
       this.setState({
         page_number_buscar_filtro: 1
@@ -400,11 +426,11 @@ getImpresorasNext=(e:any)=>{
   }
   
   handler =() =>{
-    this.getImpresoras(10);
+    this.getOtrosEquipos(10);
     this.setState({pageNumber:1});
   }
 
-  render(){//Start    
+  render(){//Start
     return (
     <div>     
     <IonPage>
@@ -414,9 +440,9 @@ getImpresorasNext=(e:any)=>{
           <IonButtons slot="start">
             <IonBackButton defaultHref="home" />
           </IonButtons>
-          <IonTitle >Impresoras</IonTitle>
+          <IonTitle >Otros Equipos</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/FormImpresora"><IonIcon icon={add}></IonIcon></IonButton>
+            <IonButton routerLink="/FormOtrosEquipos"><IonIcon icon={add}></IonIcon></IonButton>
             <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
             {/*<IonButton onClick={this.accion} ><IonIcon icon={clipboard}></IonIcon></IonButton>*/}
           </IonButtons>
@@ -425,11 +451,12 @@ getImpresorasNext=(e:any)=>{
             onDidDismiss={e => this.setState({ popOver: false })}>
             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
             <IonList>
+            
               <IonItem>
               <IonLabel>Marca</IonLabel>
                 <IonSelect name="printer.marca" onIonChange={this.change_marca } >
                   <IonSelectOption selected = {this.state.filtro_marca==="Todos"?true:false} value = {"Todos"}>Todos</IonSelectOption>
-                {this.state.marcas_impresoras.map((object:any, i:any) => {
+                {this.state.marcas_equipos.map((object:any, i:any) => {
                   return (
                     <IonSelectOption key={object.marca} value={object.marca}>
                       {object.marca}
@@ -448,15 +475,22 @@ getImpresorasNext=(e:any)=>{
             </IonList>
             <div className="ion-text-center ion-margin">
               <IonButton onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
-              <IonButton   onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
-              this.aplicar_filtros(false,1)}}}>Aplicar</IonButton>
+              <IonButton onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
+              this.aplicar_filtros(false,1) }              }  }>Aplicar</IonButton>
             </div >
           </IonPopover>
         </IonToolbar>
       </IonHeader>
+
                 <IonItem lines = "none">
                 <IonSearchbar value = {this.state.codigo} placeholder={"Buscar por código"} 
               onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} 
+              /*onIonChange={(e:any)=>{this.setState({
+                codigo:e.target.value,
+                
+                      })
+                  }
+              }*/
               onIonCancel={this.getConsultar} 
               cancelButtonIcon="md-search" 
               showCancelButton="focus"
@@ -464,16 +498,19 @@ getImpresorasNext=(e:any)=>{
                 </IonSearchbar>   
                 <IonButton size="large" shape="round" color="danger" class="bp2" hidden={(!this.state.opcion_buscar_codigo && !this.state.opcion_buscar_filtro)?true:false} fill="clear" onClick={this.handler}><IonIcon icon={home}></IonIcon></IonButton>
                 </IonItem>
+  
+
 <IonContent>
-<IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
+
+ <IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
     <IonRefresherContent
       pullingIcon="arrow-dropdown"
       pullingText="Pull to refresh"
       refreshingSpinner="circles"
       refreshingText="Actualizando...">
     </IonRefresherContent>
-  </IonRefresher>
-  {this.state.impresoras.length === 0 && this.state.mostrando_datos===false?
+  </IonRefresher> 
+  {this.state.equipos.length === 0 && this.state.mostrando_datos===false?
 <div key="sin datos">
                    <IonLabel className="ion-margin">
                     <p className="ion-text-center ion-margin">No hay datos que mostrar</p>
@@ -483,36 +520,36 @@ getImpresorasNext=(e:any)=>{
                 </IonLabel>
   </div>:null
   }
-    {this.state.impresoras.map((dato: any) => {
+    {this.state.equipos.map((dato: any, i:any) => {
           return (
             //`${r.id_router}`
             //dato.id_impresora
-            <ListaImpresoras key={dato.id_equipo} //key={`${dato.id_impresora}` } 
-            id_impresora={dato.id_impresora}
-            numero_serie={dato.numero_serie}
-            tipo={dato.tipo}
-            toner={dato.toner}
-            cinta={dato.cinta}
-            rollo={dato.rollo}
-            rodillo={dato.rodillo}
-            marca={dato.marca}
-            codigo={dato.codigo} 
+            <ListaOtrosEquipos key={dato.id_equipo} //key={i} //key={`${dato.id_impresora}` } 
+            id_equipo={dato.id_equipo}
+            fecha_registro={dato.fecha_registro}
             estado_operativo={dato.estado_operativo} 
+            codigo={dato.codigo} 
+            tipo_equipo={dato.tipo_equipo}
             modelo={dato.modelo}
-            tinta={dato.tinta}
-            cartucho={dato.cartucho}
+            descripcion={dato.descripcion}
+            numero_serie={dato.numero_serie}
+            id_marca={dato.id_marca}
+            encargado_registro={dato.encargado_registro}
+            componente_principal={dato.componente_principal}
             ip={dato.ip}
             asignado={dato.asignado}
-            descripcion={dato.descripcion}
-            nombre ={dato.nombre}
+            marca={dato.marca}
+            empleado={dato.empleado}
             apellido ={dato.apellido}
+            encargado={dato.encargado}
+            principal={dato.principal}
             direccion_ip ={dato.direccion_ip}
-            id_equipo = {dato.id_equipo}
             onRemove = {() =>this._remove(dato.id_equipo)}
              />
           )
         })
         }
+
         <IonLoading
         isOpen={this.state.mostrando_datos}
         message={'Cargando datos. Espere por favor...'}
@@ -562,10 +599,11 @@ getImpresorasNext=(e:any)=>{
           },
         ]}
       />
-      <IonInfiniteScroll disabled={this.state.disable_Infinite_Scroll} threshold="100px"                        
-                        onIonInfinite={ (e:any) => { this.getImpresorasNext(e)  }
-                          //if (this.state.mounted) this.loadRefresh(e, this.state.page_index + 1);                          
-                          //this.doLoad
+      
+    <IonInfiniteScroll disabled={this.state.disable_Infinite_Scroll} threshold="100px"
+                        
+                        
+                        onIonInfinite={ (e:any) => { this.getEquiposNext(e)  }
                         }
                         
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
@@ -576,7 +614,8 @@ getImpresorasNext=(e:any)=>{
                             loadingText = {!this.state.disable_Infinite_Scroll?'Cargando más registros':'No hay más registros que mostrar'}>
                         </IonInfiniteScrollContent>
                     </IonInfiniteScroll>
-          {(this.state.disable_Infinite_Scroll && this.state.impresoras.length!==0) ?
+           
+          {(this.state.disable_Infinite_Scroll && this.state.equipos.length!==0) ?
       <div className="ion-margin">
         <IonItem lines="none">
           <br></br>
@@ -591,22 +630,28 @@ getImpresorasNext=(e:any)=>{
         isOpen={this.state.error_servidor}
         subHeader={'Error en el servidor'}
         message={'Intente de nuevo o más trade'}
-        buttons={[{
+        buttons={[
+          
+          {
             cssClass: 'success',
             text: 'OK',
             handler: () => {
               console.log('ERROR 46');
               this.setState({
                 error_servidor:false
+                
               });
             }
           }
         ]}
       />
+
     </IonContent>
     </IonPage>
     </div>);
   }//END
+      
 }
 
-export default withIonLifeCycle(HomeImpresora);
+
+export default withIonLifeCycle(OtrosEquiposHome);

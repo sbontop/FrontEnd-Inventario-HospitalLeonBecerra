@@ -1,260 +1,359 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
-import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading} from '@ionic/react';
-import { Redirect } from 'react-router';
+import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading, IonIcon} from '@ionic/react';
+import { Redirect, /*RouteProps*/ } from 'react-router';
+//import { RouteComponentProps } from 'react-router-dom';
+import { withIonLifeCycle } from '@ionic/react';
+import {trash} from 'ionicons/icons'
+
 import AxiosImpresora from '../../services/AxiosImpresora';
 
-//import ToggleBox from "./ToggleBox";
-
-
 interface IState {
-  expanded: any;
-  setExpanded: any;
+  ip_anterior:any,
+  id_ip_anterior:any,
+  confirmacion_eliminar:any,
+  seleccion:any,
+  eliminar:any;
+  eliminando:any;
   data:any;
+  data_impresora_by_id:any;
   confirmacion:any;
   guardar:any;
   redirectTo:any;
-  incompleto:any;
-  auxi:any;
+  incompleto:any; 
   redireccionar:any;
   cargando:any;
   campos_incompletos:any;
   error_servidor:any;
-  marcas_impresoras:any;
-  see:any;
+  marcas:any;
   childVisible:any;
-  tipo_seleccion:any;
-  matricial:any;
-  brazalete:any;
-  multifuncional:any;
-  impresora:any;
-  escaner:any
-
+  estado_anterior:any;
+  existe_repetido:any;
+  lista_direcciones_ip:any;
+  lista_empleados:any;
+  id_impresora_editar: any;
+  value:any
 }
 
+const tiposImpresoras = [{id: 'Multifuncional'},{id: 'Matricial'},{id: 'Brazalete'},{id: 'Impresora'},{id: 'Escáner'}];
+let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
 
-
-type Item = {
-  src: string;
-  text: string;
-};
-
-var mat1=false;
-
-const tiposImpresoras = [{id: 'Multifuncional'},
-  {
-    id: 'Matricial'
-  },
-  {
-    id: 'Brazalete'
-  },
-  {
-   id: 'Impresora'
-  },
-  {
-    id: 'Escaner',
-  }
-];
-
-const estadosImpresoras = [{id: 'Operativa'},
-  {
-    id: 'En revisión'
-  },
-  {
-    id: 'Reparado'
-  },
-  {
-    id: 'De baja',
-  },
-  {
-    id: 'Disponible',
-  }
-];
-
-const departamentosCustodia = [{id: 'Coordinación'},
-  {
-    id: 'Dirección'
-  },
-  {
-    id: 'Proveeduría'
-  },
-  {
-    id: 'Activos fijos'
-  },
-  {
-    id: 'Administración'
-  },
-  {
-    id: 'Admisión',
-  }
-];
-
-const tipo_tinta = [{id: 'Epson'},
-  {
-    id: 'HP'
-  },
-  {
-    id: 'Canon'
-  },
-  {
-    id: 'Brother'
-  },
-  {
-    id: 'Samsung'
-  },
-  {
-    id: 'Xerox'
-  },
-  {
-    id: 'Dell'
-  }
-  
-];
-
-//const puntos = [{id: 'Hogar Ines Chambers'},
-//  {
-//    id: 'Hospital León Becerra',
-//  },
-//];
-
-//const axios = require('axios').default;
-
-
-
-
-export default class FormImpresora extends Component<{}, IState> {
+class FormImpresora extends Component<{} , IState> {
+  private id:any;
   constructor(props: any) {
     super(props);
     this.state = {
-        expanded: Number,
-        setExpanded: false,
         data:{},
+        confirmacion_eliminar:false,
+        data_impresora_by_id:[],
         confirmacion: false,
         redirectTo: false,
         guardar:false,
         incompleto:false,
-        auxi: Number,
         redireccionar: false,
+        eliminando: false,
         cargando:false,
         campos_incompletos:"",
         error_servidor:false,
-        marcas_impresoras:[],
-        see:false,
+        marcas:[],
         childVisible:false,
-        tipo_seleccion:"",
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:false
+        existe_repetido: false,
+        lista_direcciones_ip:[],
+        lista_empleados: [],
+        id_impresora_editar:"",
+        value:"",
+        ip_anterior:"",
+        id_ip_anterior:"",
+        estado_anterior:"",
+        seleccion: false,
+        eliminar:false
+    }
+
+  }
+
+  ionViewWillEnter() {
+    estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
+    this.mostrar_marcas();
+    this.mostrar_direcciones_ip_libres();
+    this.mostrar_empleados();
+    this.fn();  
+    if (this.id !== undefined){
+      this.obtenerImpresoraById();
     }
   }
 
-  
-  componentDidMount = () => {
-    AxiosImpresora.mostrar_marcas_impresoras().then((res:any) => {
-      //let marcas = [];
-      //marcas.push(res.data);
-      console.log("RESPUESTA:",res.data);
-      console.log("RESPUESTA 4:",departamentosCustodia);
-
+  private urlParameters: Array<any> = [];
+  obtenerImpresoraById = () =>{
+    this.setState({
+      cargando: true
+    });
+    AxiosImpresora.mostrar_dato_impresora_by_id(this.id).then((res:any) => {
       this.setState({
-        marcas_impresoras:res.data
-      }); 
-
-      console.log("DATA:",this.state.marcas_impresoras);
-
-    }).catch((err:any) => {
-      //console.log(err);
+        estado_anterior: (() => {
+          switch (res.data[0].estado_operativo) {
+            case 'D':   return 'Disponible';
+            case 'ER': return  'En revisión';
+            case 'O':  return  'Operativa';
+            case 'R':  return  'Reparado';
+            case 'B':  return  'De baja';
+          }
+        })()
+      })
+      let data_id = res.data[0];
+      data_id.estado_operativo = this.state.estado_anterior;
       this.setState({
+        data_impresora_by_id: data_id,
+        data:{'printer': res.data[0]},
         cargando:false,
+        value: res.data[0].numero_serie,
+        ip_anterior: res.data[0].ip,
+        id_ip_anterior: res.data[0].id_ip,
+      });
+
+      console.log("data_impresora_by_id: ",this.state.data_impresora_by_id);
+    }).catch((err:any) => {
+      this.setState({
+        //cargando:false,
         error_servidor:true,
       });
     });
   }
 
-  
-
-
-  onChangeInput = (e:any) =>{
-    const { name, value } = e.target;
-    let val = name.split(".");
-    this.setState({
-        data:{
-            ...this.state.data,
-            [val[0]]:{
-                ...this.state.data[val[0]],
-                [val[1]]: value
-            }
-        }
-      
-    });
-   this.setState({
-//     tipo_seleccion:this.state.data
-   }) 
+  fn =()=>{
+    if (document.URL.indexOf("edit") > 0) {
+      let splitURL = document.URL.split("/");
+      this.id= splitURL[splitURL.length-1];
+      this.setState({
+        id_impresora_editar:splitURL[splitURL.length-1]
+      })
+    }
   }
 
-  verificar=()=>{
-    console.log("Información printer:",this.state.data.printer);
-    console.log("TYPE OF PRINTER",this.state.tipo_seleccion);
-    console.log("SAVE:",this.state.data.printer);
-    //console.log("SAVE:",this.state.data.printer.tipo);
+  onChange = (e:any) => {
+    this.setState({
+      value : e.target.value
+    })
+  }
 
-    //let valor =false;
-    let cantidad=0;    
-
-    let json=this.state.data.printer;
-    
-    if(json.hasOwnProperty('descripcion')){
-      //valor=true;
-      cantidad=Object.keys(json).length-1;
-    }else{
-      //valor=true;
-      cantidad=Object.keys(json).length;
+  onChangeInput = (e:any) =>{
+    //let m = this.state.data_impresora_by_id.id_marca;
+    //console.log('Out: ',this.state.data_impresora_by_id.id_marca);
+    const { name, value } = e.target;
+    let val = name.split(".");
+    if (val[1] === 'ip' && value === this.state.ip_anterior){
+      this.setState({
+        seleccion:true
+      })
+    }else if (val[1] === 'ip' && value !== this.state.ip_anterior){
+      this.setState({
+        seleccion:false
+      })
     }
+    this.setState({
+        data_impresora_by_id:{
+            ...this.state.data_impresora_by_id,
+                ...this.state.data_impresora_by_id[val[0]],
+                [val[1]]: value
+        }
+    });
+  }
 
+  mostrar_direcciones_ip_libres() {
+    AxiosImpresora.mostrar_direcciones_ip_libres().then((res: any) => {
+        this.setState({
+          lista_direcciones_ip : res.data
+        });
+        console.log('Lista: ',this.state.lista_direcciones_ip);
+        //console.log("DATA:", res.data);
+    }).catch((err: any) => {
+        console.log(err);
+    });
+}
+
+mostrar_marcas() {
+  AxiosImpresora.mostrar_marcas().then((res:any) => {
+    this.setState({
+      marcas:res.data,
+    }); 
+    console.log("this.state.marcas: ",this.state.marcas);
+  }).catch((err:any) => {
+    this.setState({
+      cargando:false,
+      error_servidor:true,
+    });
+    console.log('Error 1');
+  });
+}
+
+mostrar_empleados() {
+  AxiosImpresora.mostrar_empleados().then((res: any) => {
+      this.setState({
+        lista_empleados : res.data
+      });
+      //console.log("DATA:", res.data);
+  }).catch((err: any) => {
+      console.log(err);
+  });
+}
+
+  verificar=()=>{
+    let json = this.state.data_impresora_by_id;
+    console.log(json);
     //Si no tiene normal
-    
-
-    console.log("Sin eliminar: ", json);
-    //delete json['descripcion'];
-    console.log("Eliminado : ",json);
-    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Encargado del registro","Observación"];
-    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","encargado_registro","descripcion"];
-
-    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Usuario","Tinta","Cartucho","BSPI-Punto","Observación"];
-    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","usuario","tinta","cartucho","bspi","descripcion"];
-
-    //let lista_nombres_campos:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Departamento en custodia","Tinta","Cartucho","BSPI-Punto"];    
-    //let lista_campos_completos:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","departamento","tinta","cartucho","bspi"];
-
+    let lista_nombres_campos_impresora_defecto:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo"];    
     let lista_nombres_campos_impresora:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho",];    
     let lista_nombres_campos_brazalete:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Rollo"];    
     let lista_nombres_campos_multifuncional:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho","Toner"];    
     let lista_nombres_campos_matricial:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Cinta"];    
     let lista_nombres_campos_escaner:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Rodillo"];    
 
-    let lista_campos_completos_impresora:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","tinta","cartucho"];
-    let lista_campos_completos_brazalete:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","rollo"];
-    let lista_campos_completos_multifuncional:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","tinta","cartucho","toner"];
-    let lista_campos_completos_matricial:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","cinta"];
-    let lista_campos_completos_escaner:any=["numero_serie","tipo","marca","codigo","estado_operativo","modelo","rodillo"];
-
+    let lista_campos_completos_impresora_defecto:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo"];
+    let lista_campos_completos_impresora:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","tinta","cartucho"];
+    let lista_campos_completos_brazalete:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","rollo"];
+    let lista_campos_completos_multifuncional:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","tinta","cartucho","toner"];
+    let lista_campos_completos_matricial:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","cinta"];
+    let lista_campos_completos_escaner:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","rodillo"];
 
     if(json!==undefined){
-      if(this.state.data.printer.tipo==="Impresora"){
-
-        if(cantidad!==lista_campos_completos_impresora.length){
-        
-          let lista_campos_ingresados: any=Object.keys(json);
-          let lista_campos_faltantes: String[]=[];
-          let texto:String="";
-          for(let campo_registro in lista_campos_completos_impresora){
-            if(!lista_campos_ingresados.includes(lista_campos_completos_impresora[campo_registro])){
-              lista_campos_faltantes.push(lista_nombres_campos_impresora[campo_registro]);     
-                texto=texto+" "+lista_nombres_campos_impresora[campo_registro]+",";
+      let lista_campos_ingresados: any=Object.keys(json);
+      let lista_valores_imgresados: any=Object.values(json);
+      let texto:String="";
+      let valor_indice:number;
+      let campo:String="";
+      let campo_nombre_completo:String="";
+      let valor_vacio: String="";
+      if(this.state.data_impresora_by_id.tipo==="Impresora"){
+        //console.log('Condición 1');
+          // 8!==8 cantidad: 8         9-1!==8 cantidad: 9
+          if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' ||  json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+          (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || 
+          (json.hasOwnProperty('tinta')!==true || (json.tinta+'').trim()==='') || (json.hasOwnProperty('cartucho')!==true || (json.cartucho+'').trim()==='')){
+            console.log('Condición96');
+            for(let i in lista_campos_completos_impresora){
+              campo = lista_campos_completos_impresora[i]; //marca
+              campo_nombre_completo = lista_nombres_campos_impresora[i];
+              valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+              valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();  
+              if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice]===undefined){ //Si el valor índice es menor que cero
+                                   // no está ingresado ese campo
+                  texto = texto+" "+campo_nombre_completo+",";
+              }
             }
-          }  
+            if(texto.slice(-1)===','){
+              texto=texto.slice(0,-1);
+            }
+            this.setState({
+              campos_incompletos:texto,
+              incompleto:true
+            })
+          }else{
+          this.setState({guardar:true})
+        }
+      }else if(this.state.data_impresora_by_id.tipo==="Matricial"){
+        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+          (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo === undefined) || 
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo === undefined) || 
+          (json.hasOwnProperty('cinta')!==true || (json.cinta+'').trim()==='')){
+            console.log('Condición96');
+            for(let i in lista_campos_completos_matricial){
+              campo = lista_campos_completos_matricial[i]; //marca
+              campo_nombre_completo = lista_nombres_campos_matricial[i];
+              valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+              valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
+              if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice]===undefined){ //Si el valor índice es menor que cero
+                                   // no está ingresado ese campo
+                  texto = texto+" "+campo_nombre_completo+",";
+              }
+            }
+            if(texto.slice(-1)===','){
+              texto=texto.slice(0,-1);
+            }
+            this.setState({
+              campos_incompletos:texto,
+              incompleto:true
+            })
+          }else{
+          this.setState({guardar:true})
+        }
+      }else if(this.state.data_impresora_by_id.tipo==="Brazalete"){
+        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+          (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || 
+          (json.hasOwnProperty('rollo')!==true || (json.rollo+'').trim()==='')){
+            console.log('Condición96');
+            for(let i in lista_campos_completos_brazalete){
+              campo = lista_campos_completos_brazalete[i]; //marca
+              campo_nombre_completo = lista_nombres_campos_brazalete[i];
+              valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+              valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
+  
+              if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice]===undefined){ //Si el valor índice es menor que cero
+                                   // no está ingresado ese campo
+                  texto = texto+" "+campo_nombre_completo+",";
+              }
+              //valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
+              //console.log('Valor vacio: ',valor_vacio);
+            }  
+            if(texto.slice(-1)===','){
+              texto=texto.slice(0,-1);
+            }
+            this.setState({
+              campos_incompletos:texto,
+              incompleto:true
+            })  
+          }else{
+          this.setState({guardar:true})
+        }
+      }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
+        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined ) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+          (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || 
+          (json.hasOwnProperty('tinta')!==true || (json.tinta+'').trim()==='') || (json.hasOwnProperty('cartucho')!==true || (json.cartucho+'').trim()==='') ||
+          (json.hasOwnProperty('toner')!==true || (json.toner+'').trim()==='')){
+            console.log('Condición96');
+            for(let i in lista_campos_completos_multifuncional){
+              campo = lista_campos_completos_multifuncional[i]; //marca
+              campo_nombre_completo = lista_nombres_campos_multifuncional[i];
+              valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+              valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
+  
+              if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice] === undefined){ //Si el valor índice es menor que cero
+                                   // no está ingresado ese campo
+                  texto = texto+" "+campo_nombre_completo+",";
+              }
+            }
+            if(texto.slice(-1)===','){
+              texto=texto.slice(0,-1);
+            }
+            this.setState({
+              campos_incompletos:texto,
+              incompleto:true
+            }) 
+          }else{
+          this.setState({guardar:true})
+        }
+      }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
+        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+            (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || 
+            (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || (json.hasOwnProperty('rodillo')!==true || (json.rodillo+'').trim()==='') || 
+            (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='')){
+          console.log('Condición96');
+          console.log('L:',lista_valores_imgresados);
+          console.log('Clave: ',lista_campos_ingresados);
+          console.log('Valor: ',lista_valores_imgresados);
+          console.log('CamposCompletos: ',lista_campos_completos_escaner);
+          for(let i in lista_campos_completos_escaner){
+            campo = lista_campos_completos_escaner[i]; //marca
+            campo_nombre_completo = lista_nombres_campos_escaner[i];
+            valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+            valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
+            if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice]===undefined){ //Si el valor índice es menor que cero
+                                 // no está ingresado ese campo
+                texto = texto+" "+campo_nombre_completo+",";
+            }
+            console.log('Valor vacio: ',valor_vacio);
+          }
           if(texto.slice(-1)===','){
             texto=texto.slice(0,-1);
           }
@@ -262,118 +361,39 @@ export default class FormImpresora extends Component<{}, IState> {
             campos_incompletos:texto,
             incompleto:true
           })
-        
-        }else if(cantidad===lista_campos_completos_impresora.length){
+        }else{
           this.setState({guardar:true})
+          //console.log('Función: ', this.state.data.printer.numero_serie);
         }
-
-      }else if(this.state.data.printer.tipo==="Matricial"){
-
-        if(cantidad!==lista_campos_completos_matricial.length){
-        
-          let lista_campos_ingresados: any=Object.keys(json);
-          let lista_campos_faltantes: String[]=[];
-          let texto:String="";
-          for(let campo_registro in lista_campos_completos_matricial){
-            if(!lista_campos_ingresados.includes(lista_campos_completos_matricial[campo_registro])){
-              lista_campos_faltantes.push(lista_nombres_campos_matricial[campo_registro]);     
-                texto=texto+" "+lista_nombres_campos_matricial[campo_registro]+",";
+      }else{        
+        console.log('Revisar');
+        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+          (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined )){
+            
+            for(let i in lista_campos_completos_impresora_defecto){
+              campo = lista_campos_completos_impresora_defecto[i]; //marca
+              campo_nombre_completo = lista_nombres_campos_impresora_defecto[i];
+              valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
+              valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();  
+              if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice] === undefined){ //Si el valor índice es menor que cero
+                                   // no está ingresado ese campo
+                  texto = texto+" "+campo_nombre_completo+",";
+              }
+              console.log('Valor vacio: ',valor_vacio);
             }
-          }  
-          if(texto.slice(-1)===','){
-            texto=texto.slice(0,-1);
-            console.log("Matricialllll");
-          }
-          console.log("Cantidad:",cantidad);
-          this.setState({
-            campos_incompletos:texto,
-            incompleto:true
-          })
-        
-        }else if(cantidad===lista_campos_completos_matricial.length){
-          this.setState({guardar:true})
-        }
-
-      }else if(this.state.data.printer.tipo==="Brazalete"){
-
-        if(cantidad!==lista_campos_completos_brazalete.length){
-        
-          let lista_campos_ingresados: any=Object.keys(json);
-          let lista_campos_faltantes: String[]=[];
-          let texto:String="";
-          for(let campo_registro in lista_campos_completos_brazalete){
-            if(!lista_campos_ingresados.includes(lista_campos_completos_brazalete[campo_registro])){
-              lista_campos_faltantes.push(lista_nombres_campos_brazalete[campo_registro]);     
-                texto=texto+" "+lista_nombres_campos_brazalete[campo_registro]+",";
+            if(texto.slice(-1)===','){
+              texto=texto.slice(0,-1);
             }
-          }  
-          if(texto.slice(-1)===','){
-            texto=texto.slice(0,-1);
-          }
-          this.setState({
-            campos_incompletos:texto,
-            incompleto:true
-          })
-        
-        }else if(cantidad===lista_campos_completos_brazalete.length){
+            this.setState({
+              campos_incompletos:texto,
+              incompleto:true
+            })
+          }else{
           this.setState({guardar:true})
         }
-
-      }else if(this.state.data.printer.tipo==="Multifuncional"){
-
-        if(cantidad!==lista_campos_completos_multifuncional.length){
-        
-          let lista_campos_ingresados: any=Object.keys(json);
-          let lista_campos_faltantes: String[]=[];
-          let texto:String="";
-          for(let campo_registro in lista_campos_completos_multifuncional){
-            if(!lista_campos_ingresados.includes(lista_campos_completos_multifuncional[campo_registro])){
-              lista_campos_faltantes.push(lista_nombres_campos_multifuncional[campo_registro]);     
-                texto=texto+" "+lista_nombres_campos_multifuncional[campo_registro]+",";
-            }
-          }  
-          if(texto.slice(-1)===','){
-            texto=texto.slice(0,-1);
-          }
-          this.setState({
-            campos_incompletos:texto,
-            incompleto:true
-          })
-        
-        }else if(cantidad===lista_campos_completos_multifuncional.length){
-          this.setState({guardar:true})
-        }
-
-      }else if(this.state.data.printer.tipo==="Escaner"){
-
-        if(cantidad!==lista_campos_completos_escaner.length){
-        
-          let lista_campos_ingresados: any=Object.keys(json);
-          let lista_campos_faltantes: String[]=[];
-          let texto:String="";
-          for(let campo_registro in lista_campos_completos_escaner){
-            if(!lista_campos_ingresados.includes(lista_campos_completos_escaner[campo_registro])){
-              lista_campos_faltantes.push(lista_nombres_campos_escaner[campo_registro]);     
-                texto=texto+" "+lista_nombres_campos_escaner[campo_registro]+",";
-            }
-          }  
-          if(texto.slice(-1)===','){
-            texto=texto.slice(0,-1);
-          }
-          this.setState({
-            campos_incompletos:texto,
-            incompleto:true
-          })
-        
-        }else if(cantidad===lista_campos_completos_escaner.length){
-          this.setState({guardar:true})
-        }
-
       }
-      
-
     }else{
-      
       let texto:String="";
       for (let indice in lista_nombres_campos_impresora){
         texto=texto+" "+lista_nombres_campos_impresora[indice]+",";
@@ -381,160 +401,126 @@ export default class FormImpresora extends Component<{}, IState> {
       if(texto.slice(-1)===','){
         texto=texto.slice(0,-1);
       }
-
       this.setState({
         campos_incompletos:texto,
         incompleto:true
       })
-      
     }
   }
 
 
-  onClick=()=> {
-    console.log("INGRESOOOOOO");
-    console.log("TIPO DE SELECCIÓN:",this.state.tipo_seleccion);
-    //console.log("TIPO DE SELECCIÓN:",this.state.data.printer.tipo);
-    //mat1=this.state.data.printer.tipo;
-    //mat1=true;
-    console.log("Var: ",mat1);
-    if(this.state.data.printer.tipo==="Matricial"){
-      console.log("En el if");
-      this.setState({
-        matricial:true,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:false
-      });
 
-    }else if(this.state.data.printer.tipo==="Brazalete"){
+  accion = () =>{
+    this.setState({eliminar:true});
+  }
+
+  eliminar = () =>{
+    this.setState({
+      eliminar:false,
+      eliminando:true
+    });
+    AxiosImpresora.eliminar_impresora(this.state.data_impresora_by_id.id_equipo).then((res:any) => {
+      //console.log("RESPUESTA:",res.data);
       this.setState({
-        matricial:false,
-        brazalete:true,
-        multifuncional:false,
-        impresora:false,
-        escaner:false
+        eliminando:false,
+        confirmacion_eliminar:true,
       });
-    }else if(this.state.data.printer.tipo==="Multifuncional"){
+    }).catch((err:any) => {
       this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:true,
-        impresora:false,
-        escaner:false
+        //cargando:false,
+        error_servidor:true,
       });
-    }else if(this.state.data.printer.tipo==="Impresora"){
-      this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:true,
-        escaner:false
-      });
-    }else if(this.state.data.printer.tipo==="Escaner"){
-      this.setState({
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
-        escaner:true
-      });
+    });
+  }
+
+  clone( obj:any ) {
+    if ( obj === null || typeof obj  !== 'object' ) {
+        return obj;
     }
-
-
-    
-  }
-
-  cambiar_estado=()=>{
-    
-  }
+    var temp = obj.constructor();
+    for ( var key in obj ) {
+        temp[ key ] = this.clone( obj[ key ] );
+    }
+    return temp;
+}
 
   enviar=()=> {
     this.setState({
       guardar:false,
       cargando:true
     });
-
-
-
-    let json=this.state.data.printer;
+    let json = this.state.data_impresora_by_id;
     console.log("JSON ACTUALIZADO:",json);
-    console.log("Longitud:",Object.keys(json).length);
+    let json_datos_editados = this.clone(json);
+    console.log('Before: ',json_datos_editados);
+    console.log('After: ',json_datos_editados);
+    if (json.estado_operativo === 'Disponible'){
+      json_datos_editados.estado_operativo = 'D';
+    }else if (json.estado_operativo === 'De baja'){
+      json_datos_editados.estado_operativo = 'B';
+    }else if (json.estado_operativo === 'Reparado'){
+      json_datos_editados.estado_operativo = 'R';
+    }else if (json.estado_operativo === 'En revisión'){
+      json_datos_editados.estado_operativo = 'ER';
+    }else if (json.estado_operativo === 'Operativa'){
+      json_datos_editados.estado_operativo = 'O';
+    }
 
-    AxiosImpresora.crear_impresora(json).then(res => {
-      this.setState({
-        cargando:false,
-        confirmacion:true,
-      });
+    if(this.id===undefined){
+      console.log('Creando impresora');
+      console.log('json_datos_editados: ',json_datos_editados);
+    AxiosImpresora.crear_impresora_nueva(json_datos_editados).then(res => {
+      if (res.data.log === 1){
+        if (this.state.cargando===true){
+          this.setState({
+            confirmacion:false
+          });          
+        }
+        this.setState({
+          cargando:false,
+          confirmacion:true,
+        });
+      }else if (res.data.log === -1){
+        console.log('Condicion -1');
+        this.setState({
+          cargando:false,
+          existe_repetido:true,
+        });
+      }
+      //console.log('Impresora: ',res.data.length);
+      //console.log('Impresora: ',res.data.log);
     }).catch(err => {
       //console.log(err);
       this.setState({
         cargando:false,
         error_servidor:true,
       });
+      console.log('Error 2');
     });
 
-    /*
-    axios.post('http://localhost:8000/api/impresora', json)
-    .then((response: any) =>{
-      console.log("JSON:",response);
-
-      this.setState({
-        cargando:false,
-        confirmacion:true,
-      });
-      
-    },(err:any) => {
+  }else if(this.id!==undefined){
+    console.log('Editando impresora');
+    json_datos_editados.key = json.id_impresora;
+    console.log('Actualizar: ',json_datos_editados);
+    AxiosImpresora.editar_impresora(json_datos_editados).then(res => {  
+        this.setState({
+          cargando:false,
+          confirmacion:true,
+        });
+    }).catch(err => {
       this.setState({
         cargando:false,
         error_servidor:true,
       });
-
-  });*/
-
-  }  
-
-  /*
-  sendData = () => {
-
-    let json=this.state.data.printer;
-    let am={"a":1};
-    
-    for(let j in am){
-      console.log(j);
-      console.log(typeof(j));
-    }
-
-    console.log(am);
-
-    for(let i in json){
-      console.log(i); // a, b, c
-      console.log(typeof(i));
-      //njson.String(i)=json[i];
-    }
-    console.log(json);
-    axios.post('http://localhost:8000/api/impresora', json)
-    .then(function (response:any) {
-      console.log("JSON DE INFORMACION:",response);
-    })
-    .catch(function (error:any) {
-      console.log("ERROR2:",error);
+      console.log('Error 2');
     });
-  }*/
-  
+  }
+  }  
 
   render(){
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
-      //return (<Redirect to="/Consulta" />);
-      return (<Redirect to="/consulta" />);
-      
-
-
+      return (<Redirect to="/Consulta" />);      
     }
-    
-    
-
     return (      
       <IonPage>     
       <IonToolbar color="danger">
@@ -542,8 +528,33 @@ export default class FormImpresora extends Component<{}, IState> {
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
         <IonTitle >Registro Impresoras</IonTitle>
+        <IonButtons slot="end">
+        <IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>
+        </IonButtons>
       </IonToolbar>
       <IonContent fullscreen>
+      <IonAlert
+        isOpen={this.state.eliminar}
+        header={'Confirmación'}
+        message={'¿Está seguro de eliminar este registro?'}
+        buttons={[{text: 'Cancel',role: 'cancel',cssClass: 'danger',handler: (blah:any) => {this.setState({eliminar:false});}},{cssClass: 'success',text: 'Aceptar',handler: () => {console.log('Aceptar');this.eliminar();}}]}
+      />
+
+      <IonAlert
+            isOpen={this.state.existe_repetido}
+            header={'Información repetida'}
+            message={'El código ya existe en la base de datos'}
+            buttons={[              
+              {
+                cssClass: 'success',
+                text: 'Aceptar',
+                handler: () => {
+                  console.log('Aceptar');
+                  this.setState({ existe_repetido: false});
+                }
+              },
+            ]}
+          />
 
           <IonAlert
             isOpen={this.state.confirmacion}
@@ -555,17 +566,32 @@ export default class FormImpresora extends Component<{}, IState> {
                 text: 'Aceptar',
                 handler: () => {
                   console.log('Aceptar');
-                  this.setState({ confirmacion: false, redireccionar:true, });
+                  this.setState({ confirmacion: false, redireccionar:true });
                 }
               },
             ]}
           />
 
+      <IonAlert
+        isOpen={this.state.confirmacion_eliminar}
+        header={'Registro eliminado'}
+        message={'El registro ha sido eliminado satisfactoriamente'}
+        buttons={[              
+          {
+            cssClass: 'success',
+            text: 'Aceptar',
+            handler: () => {
+              console.log('Aceptar');
+              this.setState({ confirmacion_eliminar: false,redireccionar:true});
+            }
+          },
+        ]}
+      />
 
       <IonAlert
         isOpen={this.state.guardar}
         header={'Confirmación'}
-        message={'¿Está seguro de agregar este nuevo registro?'}
+        message={this.id!==undefined?'¿Desea guardar los nuevos cambios?':'¿Está seguro de agregar este nuevo registro?'}
         buttons={[         
           {
             text: 'Cancel',
@@ -587,33 +613,27 @@ export default class FormImpresora extends Component<{}, IState> {
           }        
         ]}
       />
-
       <IonAlert
         isOpen={this.state.error_servidor}
         subHeader={'Error en el servidor'}
         message={'Intente de nuevo o más trade'}
         buttons={[
-          
           {
             cssClass: 'success',
             text: 'OK',
             handler: () => {
-              console.log('ERROR');
+              console.log('ERROR 46');
               this.setState({
-                error_servidor:false
-                
+                error_servidor:false          
               });
             }
           }
         ]}
       />
-
       <IonLoading
           isOpen={this.state.cargando}
-          message={'Registrando Información. Espere por favor...'}
-
+          message={this.id!==undefined?'Cargando datos. Espere por favor...':'Registrando Información. Espere por favor...'}
       />
-
       <IonAlert
         isOpen={this.state.incompleto}
         subHeader={'Faltan ingresar este/os campo/s:'}
@@ -627,7 +647,6 @@ export default class FormImpresora extends Component<{}, IState> {
                 campos_incompletos:"",
                 incompleto:false                
               });
-
             }
           },
         ]}
@@ -641,48 +660,82 @@ export default class FormImpresora extends Component<{}, IState> {
             </IonCol>
             <IonCol>            
               <IonList>
-                <IonItem>
-                  <IonLabel position="stacked">Número de serie <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required type="text" name="printer.numero_serie" onIonChange={this.onChangeInput} ></IonInput>
-                </IonItem>               
+              <IonItem>
+                <IonLabel position="stacked">Número de serie <IonText color="danger">*</IonText></IonLabel>
+
+                  <IonInput required disabled = {this.id!==undefined?true:false} type="text" name="printer.numero_serie" value = {this.state.data_impresora_by_id.numero_serie} onIonChange={this.onChangeInput} ></IonInput>
+                </IonItem>              
               </IonList>
             </IonCol>
-          </IonRow>
-  
+          </IonRow>  
           <IonRow>
             <IonCol>
-              <IonItem>
-                  <IonLabel position="stacked">Tipo <IonText color="danger">*</IonText></IonLabel>
-                <IonSelect name="printer.tipo" 
-                //onIonChange={this.onChangeInput}
-                onIonChange={(e:any)=>{this.onChangeInput(e);this.onClick()}}
-                /*onIonChange={(e:any)=>{this.setState({
-                  tipo_seleccion:e.target.value,
-                  
-                        })
-                    }
-                }*/
-                /*onIonChange={(e:any)=>{this.setState({
-                  tipo_seleccion:e.target.value,
-                  
-                        });this.onChangeInput
-                    }
-                }*/>
-                  {tiposImpresoras.map((object, i) => {
-                    return (
-                      <IonSelectOption key={object.id} value={object.id}>
-                        {object.id} 
-                      </IonSelectOption>
-                    );
-                  })}
-                </IonSelect>
-              </IonItem>
+            <IonItem>
+                <IonLabel position="stacked">Tipo <IonText color="danger">*</IonText></IonLabel>
+                  <IonSelect disabled = {this.id!==undefined?true:false} name="printer.tipo"
+                            value = {this.state.data_impresora_by_id.tipo} 
+                            onIonChange={(e:any)=>{this.onChangeInput(e)}}>
+                    {tiposImpresoras.map((object, i) => {
+                      return (
+                        <IonSelectOption key={object.id} value={object.id}>
+                          {object.id} 
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+                </IonItem>
               <IonList lines="full" class="ion-no-margin ion-no-padding">
-                <IonItem>
+    
+                    
+              <IonItem>
                   <IonLabel position="stacked">Marca <IonText color="danger">*</IonText></IonLabel>
-                  
-                  <IonSelect name="printer.marca" onIonChange={this.onChangeInput} >
-                    {this.state.marcas_impresoras.map((object:any, i:any) => {
+                  <IonSelect name="printer.id_marca" value = {this.state.data_impresora_by_id.id_marca} onIonChange={this.onChangeInput} >
+
+                  {this.state.marcas.map((object:any, i:any) => {
+                      return (
+                        <IonSelectOption key={object.id_marca} value={object.id_marca}>
+                          {object.marca} 
+                        </IonSelectOption>
+                      );
+                    })}
+                    </IonSelect>
+
+
+                </IonItem>
+
+                <IonItem>
+                  <IonLabel position="stacked">Código <IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required disabled = {this.id!==undefined?true:false} value = {this.state.data_impresora_by_id.codigo} onIonChange={this.onChangeInput} name="printer.codigo" type="text" ></IonInput>
+                </IonItem>
+                
+                <IonItem>
+                  <IonLabel position="stacked">Modelo <IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required onIonChange={this.onChangeInput} value = {this.state.data_impresora_by_id.modelo} name="printer.modelo" type="text" ></IonInput>
+                </IonItem>
+                
+                <div>
+                {/*  <div onClick={() => this.onClick()}>
+                    Parent - click me to show/hide my child
+            </div>*/}
+                {
+                    this.state.data_impresora_by_id.tipo==="Matricial"? <IonItem>
+                    <IonLabel position="stacked">Cinta <IonText color="danger">*</IonText></IonLabel>
+                    <IonInput required value={this.state.data_impresora_by_id.cinta  } onIonChange={this.onChangeInput} name="printer.cinta" type="text" ></IonInput>
+                  </IonItem>: null  
+                } 
+                {
+                  this.state.data_impresora_by_id.tipo==="Brazalete"? <IonItem>
+                  <IonLabel position="stacked">Rollo-Brazalete<IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required value= {this.state.data_impresora_by_id.rollo} onIonChange={this.onChangeInput}  name="printer.rollo" type="text" ></IonInput>
+                  </IonItem>: null
+                }
+                {
+                  this.state.data_impresora_by_id.tipo==="Multifuncional"?
+                  <div>
+                                 <IonItem>
+                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+                  <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
+                    {this.state.marcas.map((object:any, i:any) => {
                       return (
                         <IonSelectOption key={object.marca} value={object.marca}>
                           {object.marca}
@@ -690,17 +743,53 @@ export default class FormImpresora extends Component<{}, IState> {
                       );
                     })}
                   </IonSelect>
+                </IonItem>
+                  <IonItem>
+                  <IonLabel position="stacked">Cartucho<IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required value= {this.state.data_impresora_by_id.cartucho} onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                  <IonLabel position="stacked">Toner<IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required value = {this.state.data_impresora_by_id.toner} onIonChange={this.onChangeInput} name="printer.toner" type="text" ></IonInput>
+                  </IonItem>
+                  </div>: null
+                }
+                {
+                  this.state.data_impresora_by_id.tipo==="Escáner"? <IonItem>
+                  <IonLabel position="stacked">Rodillo<IonText color="danger">*</IonText></IonLabel>
+                  <IonInput required onIonChange={this.onChangeInput} value = {this.state.data_impresora_by_id.rodillo} name="printer.rodillo" type="text" ></IonInput>
+                  </IonItem>: null
+                }
+                {
+                  this.state.data_impresora_by_id.tipo==="Impresora"? 
+                  <div>                  
+                <IonItem>
+                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+                  
+                  <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
+                    
+                    {this.state.marcas.map((object:any, i:any) => {
+                      return (
+                        <IonSelectOption key={object.marca} value={object.marca}>
+                          {object.marca}
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+                </IonItem>
 
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="stacked">Código <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.codigo" type="text" ></IonInput>
-                </IonItem>
-                
-                
-                <IonItem>
+                  <IonItem>
+                    <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
+                    <IonInput required value= {this.state.data_impresora_by_id.cartucho} onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
+                  </IonItem>
+                  </div>: null
+                }
+
+                </div>
+                  <IonItem>
                   <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
-                  <IonSelect name="printer.estado_operativo" onIonChange={this.onChangeInput} >
+                    <IonSelect name="printer.estado_operativo" value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} >                    
+                    
                     {estadosImpresoras.map((object, i) => {
                       return (
                         <IonSelectOption key={object.id} value={object.id}>
@@ -709,209 +798,86 @@ export default class FormImpresora extends Component<{}, IState> {
                       );
                     })}
                   </IonSelect>
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="stacked">Modelo <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.modelo" type="text" ></IonInput>
-                </IonItem>
-                {/*
-                <IonItem>
-                  <IonLabel position="stacked">Departamento en custodia <IonText color="danger">*</IonText></IonLabel>
-                  <IonSelect name="printer.departamento" onIonChange={this.onChangeInput}>
-                    {departamentosCustodia.map((object, i) => {
-                      return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id} 
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
-                </IonItem>
-                *}
-                {/*
-                <IonItem>
-                  <IonLabel position="stacked">Usuario <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.usuario" type="text" ></IonInput>
-                </IonItem>
-                */}
-                {/*
-                <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.tinta" type="text" ></IonInput>
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                </IonItem>
-                */}
+                  </IonItem>
                 
-                {/*
-                <div>
-                  <div onClick={() => this.onClick()}>
-                    Parent - click me to show/hide my child
-                  </div>
+
+
                   {
-                    this.state.childVisible? <Child />: null
-                  }
-                </div>
-                */}
-
-                {/*
-                <div>
-                  <div onClick={() => this.onClick()}>
-                    Parent - click me to show/hide my child
-                  </div>
-
-                {
-                    this.state.childVisible? <Child />: null
-                }
-
-                  
-                </div>
-                */}
-                {/*
-                <div>
-                  <div onClick={() => this.onClick()}>
-                    Parent - click me to show/hide my child
-                  </div>
-                {
-                    this.state.matricial? <Varios />: null
-                } 
-                </div>
-              */}
-                {/*
-                <IonItem>
-
-                {
-                    this.state.childVisible? <Child />: null
-                }
-
-                </IonItem>
-              */}
-
-                <div>
-                {/*  <div onClick={() => this.onClick()}>
-                    Parent - click me to show/hide my child
-            </div>*/}
-                {
-                    this.state.matricial? <IonItem>
-                    <IonLabel position="stacked">Cinta <IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required onIonChange={this.onChangeInput} name="printer.cinta" type="text" ></IonInput>
-                  </IonItem>: null
-                  
-                } 
-                {
-                  this.state.brazalete? <IonItem>
-                  <IonLabel position="stacked">Rollo-Brazalete<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.rollo" type="text" ></IonInput>
-                  </IonItem>: null
-                }
-                {/*Tinta, cartucho, toner*/}
-                {
-                  this.state.multifuncional?
-                  <div>
-                  {/*
+                  this.id===undefined?
                   <IonItem>
-                  <IonLabel position="stacked">Tinta<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.tinta" type="text" ></IonInput>
-                  </IonItem>
-                  */}
+                    <IonLabel position="stacked">Dirección IP</IonLabel>
+                    <IonSelect name="printer.ip" onIonChange={this.onChangeInput}>
+                        <IonSelectOption value={null}>
+                            Ninguno
+                                </IonSelectOption>
+                        {this.state.lista_direcciones_ip.map((object: any, i: any) => {
+                            return (
+                                <IonSelectOption key={object.id_ip} value={object.id_ip}>
+                                    {object.direccion_ip}
+                                </IonSelectOption>
+                            );
+                        })}
+                    </IonSelect>
+                </IonItem>:
 
                 <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                  
-                  <IonSelect name="printer.tinta" onIonChange={this.onChangeInput} >
-                    {tipo_tinta.map((object:any, i:any) => {
-                      return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id}
+                <IonLabel position="stacked">Dirección IP</IonLabel>
+                <IonSelect name="printer.ip" value = {this.state.data_impresora_by_id.ip} onIonChange={this.onChangeInput}>
+                      {
+                        this.state.ip_anterior === null?
+                        <IonSelectOption value ={null}>
+                          Ninguno
+                        </IonSelectOption>:
+                        <div>
+                          <IonSelectOption value={null}>
+                            Ninguno
+                          </IonSelectOption>
+                          <IonSelectOption value={this.state.ip_anterior}>
+                         {this.state.ip_anterior}
                         </IonSelectOption>
-                      );
+                        </div>
+                      }
+                      
+                    {this.state.lista_direcciones_ip.map((object: any, i: any) => {
+                        return (
+                            <IonSelectOption key={object.id_ip} value={object.direccion_ip}>
+                                {object.direccion_ip}
+                            </IonSelectOption>
+                        );
                     })}
-                  </IonSelect>
-
-                </IonItem>
-                  
-
-                  <IonItem>
-                  <IonLabel position="stacked">Cartucho<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                  </IonItem>
-                  <IonItem>
-                  <IonLabel position="stacked">Toner<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.toner" type="text" ></IonInput>
-                  </IonItem>
-                  </div>
-                  : null
-                }
-                {
-                  this.state.escaner? <IonItem>
-                  <IonLabel position="stacked">Rodillo<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required onIonChange={this.onChangeInput} name="printer.rodillo" type="text" ></IonInput>
-                  </IonItem>: null
-                }
-                {
-                  this.state.impresora? 
-                  <div>
-                  {/*<IonItem>
-                    <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required onIonChange={this.onChangeInput} name="printer.tinta" type="text" ></IonInput>
-                  </IonItem>
-                  */}
-                  <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                  
-                  <IonSelect name="printer.tinta" onIonChange={this.onChangeInput} >
-                    {tipo_tinta.map((object:any, i:any) => {
-                      return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id}
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
-
-                </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                  </IonItem>
-                  </div>: null
+                </IonSelect>
+            </IonItem>
+      
                 }
 
-                </div>
-                {/*
+      
+                <IonLoading
+                  isOpen={this.state.eliminando}
+                  message={'Eliminando registro. Espere por favor...'}
+                />
                 <IonItem>
-                  <IonLabel position="stacked">BSPI-Punto <IonText color="danger">*</IonText></IonLabel>
-                  <IonSelect name="printer.bspi" onIonChange={this.onChangeInput}>
-                    {puntos.map((object, i) => {
-                      return (
-                        <IonSelectOption key={object.id} value={object.id}>
-                          {object.id} 
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
+                    <IonLabel position="stacked">Asignar equipo a empleado</IonLabel>
+                    <IonSelect name="printer.asignado" value = {this.state.data_impresora_by_id.asignado} onIonChange={this.onChangeInput}>
+                    <IonSelectOption value={null}>Ninguno</IonSelectOption>
+                        {this.state.lista_empleados.map((object: any, i: any) => {
+                            return (
+                                <IonSelectOption key={object.id} value={object.id}>
+                                    {object.nombre + " " + object.apellido}
+                                </IonSelectOption>
+                            );
+                        })}
+                    </IonSelect>
                 </IonItem>
-                  */}
-                {/*
-                <IonItem>
-                  <IonLabel position="stacked">Encargado del registro <IonText color="danger">*</IonText></IonLabel>
-                  <IonInput onIonChange={this.onChangeInput} name="printer.encargado_registro" required type="text" ></IonInput>
-                </IonItem>
-               
-                */}
-                
                  <IonItem>
                   <IonLabel position="stacked">Descripción</IonLabel>
-                  <IonTextarea onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
+                  <IonTextarea value = {this.state.data_impresora_by_id.descripcion} onIonChange={this.onChangeInput} name="printer.descripcion"></IonTextarea>
                 </IonItem>
             </IonList>
             </IonCol>
           </IonRow>
           <IonRow class="ion-text-center">
             <IonCol>
-              <IonButton onClick={this.verificar} color="success" class="ion-no-margin">Guardar</IonButton>
+                      <IonButton onClick={this.verificar} color="success" class="ion-no-margin">{this.id!==undefined?'Guardar cambios':'Guardar'}</IonButton>
             </IonCol>
             <IonCol>
               <IonButton onClick={(e:any)=>{this.setState({guardar: true, redireccionar:true})}} color="danger" class="ion-no-margin">Cancelar</IonButton>          
@@ -919,15 +885,10 @@ export default class FormImpresora extends Component<{}, IState> {
           </IonRow>  
         </IonGrid>
         </form>
-
       </IonContent>
       </IonPage>
     );
-
-    
-
-  }
-  
-      
+  }        
 }
 
+export default withIonLifeCycle(FormImpresora);

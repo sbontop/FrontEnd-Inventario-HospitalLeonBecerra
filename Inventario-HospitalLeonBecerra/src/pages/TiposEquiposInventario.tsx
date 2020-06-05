@@ -55,6 +55,15 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                                 <h2>Router</h2>
                             </IonLabel> 
                         </IonItem>
+                        <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/consultaOtrosEquiposHome')}}>
+                            <IonRippleEffect></IonRippleEffect>
+                            <IonThumbnail slot="start">
+                                <img src={process.env.PUBLIC_URL + "/assets/img/appstore4.png"} alt="" />
+                            </IonThumbnail>
+                            <IonLabel>
+                                <h2>Otros equipos</h2>
+                            </IonLabel> 
+                        </IonItem>
                     </IonList>
                 </IonContent>
             </IonPage>

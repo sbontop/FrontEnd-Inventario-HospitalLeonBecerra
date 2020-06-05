@@ -1,73 +1,133 @@
 import {
-  IonItem, IonLabel, IonAvatar, IonIcon, IonList, IonPopover, IonTitle, IonButton
+  IonItem, IonLabel, IonAvatar, IonIcon, IonList, IonModal, IonTitle, IonButton, IonAlert, IonLoading, IonText, IonToolbar,
+  IonButtons, IonNote, IonContent
 } from '@ionic/react';
-import { trash } from 'ionicons/icons';
-import React from 'react';
+import { trash, create, close, mailOpen, person, business, locate, calendar, speedometer } from 'ionicons/icons';
+import React from 'react';  
+import Axios from '../../services/Axios.services';
 
-interface ICorreo {
-  nombres: string;
-  apellidos: string;
-  departamento: string;
-  correo: string;
-  estado: string;
-  fecha_asignacion: string;
-  bspi_punto: string;
-}
-
-class ListaCorreos extends React.Component<ICorreo, any>  {
-  constructor(props: ICorreo) {
+class ListaCorreos extends React.Component<any, any>  {
+  constructor(props: any) {
     super(props);
     this.state = {
-      ventanaDetalle: false
+      ventanaDetalle: false,
+      mensaje: "",
+      alerta: false,
+      showAlertConfirm: false,
+      showLoading: false
     }
   }
 
+  handle_eliminar() {
+    this.setState({
+      showLoading: true,
+      showAlertConfirm: false
+    })
+    Axios.eliminar_correo(this.props.id_correo).then(res => {    
+      this.setState({
+        showLoading: false,
+        mensaje: "Registro eliminado satisfactoriamente",
+        alerta: true
+      })
+      this.props.handle.cargar_correos(true);
+    }).catch(error => {
+      console.log(error)
+      this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+    }); 
+  }  
+  
   render() {
     return (
-      <IonList >
-        <IonItem onClick={() => this.setState({ ventanaDetalle: true })}>
-          <IonLabel>
-            <h2><b>Usuario: {this.props.nombres} {this.props.apellidos}</b></h2>
+      <div>
+        <IonItem>
+          <IonLabel onClick={() => this.setState({ ventanaDetalle: true })}>
+            <IonText color={this.props.estado === "I" ? `danger` : `dark`}><h2><b>USUARIO: {this.props.nombres} {this.props.apellidos}</b></h2></IonText>
             <h3>Departamento: {this.props.departamento}</h3>
             <small>{this.props.correo}</small>
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
-          <IonIcon slot="end" icon={trash} ></IonIcon>
+         <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="warning"  icon={create} ></IonIcon> </IonButton> 
+         <IonButton  size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
         </IonItem>
 
-        <IonPopover
+        <IonModal
           isOpen={this.state.ventanaDetalle}
           onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
-          <IonTitle className="ion-margin-top">Detalle</IonTitle>
-          <IonList>
-          <IonItem>
-              <small>{this.props.correo}</small>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Nombres: {this.props.nombres}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Apellidos: {this.props.apellidos}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Departamento: {this.props.departamento}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Punto: {this.props.bspi_punto}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Estado: {this.props.estado}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Asignado: {this.props.fecha_asignacion}</IonLabel>
-            </IonItem>
-          </IonList>
-          <div className="ion-text-center ion-margin">
-            <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>Cerrar</IonButton>
-          </div>
-        </IonPopover>
+          <IonToolbar color="primary">
+            <IonTitle>Detalle del correo</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={() =>this.setState({ ventanaDetalle: false })}><IonIcon icon={close}></IonIcon></IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonContent>
+            <IonList>
+              <IonItem>
+                <IonIcon slot="start" icon={mailOpen}></IonIcon>
+                <IonLabel>Correo</IonLabel>
+                <IonNote slot="end">{this.props.correo}</IonNote>
+              </IonItem>
+              <IonItem>
+                <IonIcon slot="start" icon={person}></IonIcon>
+                <IonLabel>Empleado</IonLabel>
+                <IonNote slot="end">{this.props.nombres} {this.props.apellidos}</IonNote>
+              </IonItem>
+              <IonItem>
+                <IonIcon slot="start" icon={business}></IonIcon>
+                <IonLabel>Departamento</IonLabel>
+                <IonNote slot="end">{this.props.departamento}</IonNote>
+              </IonItem>
+              <IonItem>
+                <IonIcon slot="start" icon={locate}></IonIcon>
+                <IonLabel>Punto </IonLabel>
+                <IonNote slot="end">{this.props.bspi_punto}</IonNote>
+              </IonItem>
+              <IonItem>
+                <IonIcon slot="start" icon={speedometer}></IonIcon>
+                <IonLabel>Estado </IonLabel>
+                <IonNote slot="end">{this.props.estado === "EU" ? "En uso" : "Inactivo"}</IonNote>
+              </IonItem>
+              <IonItem>
+                <IonIcon slot="start" icon={calendar}></IonIcon>
+                <IonLabel>Asignado</IonLabel>
+                <IonNote slot="end"> {this.props.fecha_asignacion}</IonNote>
+              </IonItem>
+            </IonList>
+          </IonContent>
+        </IonModal>
 
-      </IonList>
+        <IonLoading
+          isOpen={this.state.showLoading}
+          message={'Eliminando correo. Espere por favor...'}
+        />
+
+        <IonAlert
+          isOpen={this.state.showAlertConfirm}
+          header={"Eliminar Correo"}
+          message={'¿Esta seguro de eliminar este correo?'}
+          buttons={[
+            {
+              text: 'No',
+              role: 'cancel',
+              cssClass: 'secondary',
+              handler: () => {
+                this.setState({ showAlertConfirm: false });
+              }
+            },
+            {
+              text: 'Si',
+              handler: () => {
+                 this.handle_eliminar()
+              }
+            }
+          ]}
+        />
+        <IonAlert
+          isOpen={this.state.alerta}
+          onDidDismiss={() => this.setState({ alerta: false }) }
+          header={this.state.mensaje}
+          buttons={['Aceptar']}
+        />
+      </div >
     );
   }
 }
