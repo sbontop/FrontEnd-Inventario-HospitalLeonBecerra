@@ -8,7 +8,6 @@ import {
 
 interface IpInterface {
   id_ip: number,
-  estado: string,
   fecha_asignacion: string,
   direccion_ip: string,
   hostname: string,
@@ -18,6 +17,8 @@ interface IpInterface {
   maquinas_adicionales: string,
   nombre_usuario: string,
   encargado_registro: string,
+  nombre_estado_equipo: string,
+  abreviatura_estado_equipo: string,
 }
 
 interface estados {
@@ -38,7 +39,7 @@ class ListIps extends React.Component<IpInterface, estados, {history:any}>  {
         <IonItem className = "ion-activatable">
           <IonLabel key={this.props.id_ip} onClick={() => this.setState({ ventanaDetalle: true })}>
             <h2><b>{this.props.direccion_ip}</b></h2>
-            <h3>Estado: {this.props.estado}</h3>
+            <h3>Estado: {this.props.nombre_estado_equipo}</h3>
             <p>Usuario: {this.props.nombre_usuario}</p>
             <IonRippleEffect></IonRippleEffect> 
           </IonLabel>
@@ -63,7 +64,7 @@ class ListIps extends React.Component<IpInterface, estados, {history:any}>  {
                   <IonLabel>Direccion IP: {this.props.direccion_ip}</IonLabel>
                 </IonItem>
                 <IonItem>
-                  <IonLabel>Estado: {this.props.estado}</IonLabel>
+                  <IonLabel>Estado: {`${this.props.abreviatura_estado_equipo} (${this.props.nombre_estado_equipo})`}</IonLabel>
                 </IonItem>
                 <IonItem>
                   <IonLabel>Usuario: {this.props.nombre_usuario}</IonLabel>

@@ -11,6 +11,8 @@ import TiposEquiposInventario from './pages/TiposEquiposInventario';
 import HomeRouter from './pages/InventarioRouter/HomeRouter';
 import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import HomeIp from './pages/InventarioIp/HomeIp';
+import InfinitiveScroll from './pages/InventarioIp/InfinitiveScroll';
+import InfinitiveScrollFiltered from './pages/InventarioIp/InfinitiveScrollFiltered';
 import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
@@ -82,6 +84,8 @@ const App: React.FC = () => (
           <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
           <Route path="/homeip" component={HomeIp} exact={true} />
           <Route path="/formularioip" component={FormularioIp} exact={true} />
+          <Route path="/infinitive-scroll" component={InfinitiveScroll} exact={true} />
+          <Route path="/infinitive-scroll-filtered" component={InfinitiveScrollFiltered} exact={true} />
           <Route path="/Equipos" component={Equipos} exact={true} />
           <Route path="/Home" component={Home} exact={true} />
           <Route path="/" render={() => <Redirect to="/home" />} exact={true} />

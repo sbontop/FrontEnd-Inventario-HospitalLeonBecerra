@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import AxiosIp from '../../services/AxiosIp';
 import { Redirect } from 'react-router';
 
+// IMPORTANTE: La IP no se debe guardar en equipo, 
+// lo que se debe guardar es la relacion de ip con routers
 const FormularioIp: React.FC = () => {
     const [estado, setEstado] = useState();
     const [direccion_ip, setDireccion_ip] = useState();
@@ -35,26 +37,11 @@ const FormularioIp: React.FC = () => {
             // usuario_registro: 'admin',
         }
 
-        let registro_equipo_obj = {
-            // campos de tabla equipo
-            fecha_registro: new Date().toISOString().substr(0, 10),
-            estado_operativo: estado,
-            codigo: '',
-            tipo_equipo: 'IP',
-            modelo: '',
-            descripcion: '',
-            numero_serie: '',
-            encargado_registro: 'admin',
-            componente_principal: "",
-            ip: -1, //aun no existe el id_ip porque primero se debe de crear ip, y luego equipo con la referencia de id_ip
-        }
-
-        console.log({registro_ip_obj, registro_equipo_obj})
-
-        AxiosIp.crear_equipo_ip({registro_ip_obj, registro_equipo_obj}).then(res => {
+        AxiosIp.crear_ip(registro_ip_obj).then(res => {
             console.log(res);
             setGuardar(true);
         }).catch(err => {
+            console.log(err);
             setError(true);
         });
     }
@@ -65,7 +52,7 @@ const FormularioIp: React.FC = () => {
     }
 
     if (redireccionar) {
-        return (<Redirect to="/homeip" />);
+        return (<Redirect  to="/homeip" />);
     }
 
     return (
@@ -83,17 +70,16 @@ const FormularioIp: React.FC = () => {
                     <IonList>
                         <IonItem>
                             <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
-                            <IonSelect onIonChange={(e) => setEstado((e.target as HTMLInputElement).value)}>
-                                <IonSelectOption value="En uso">En Uso</IonSelectOption>
-                                <IonSelectOption value="Disponible">Disponible</IonSelectOption>
-                                <IonSelectOption value="Asignado">Asignado</IonSelectOption>
-                                <IonSelectOption value="En Revisión">En Revisión</IonSelectOption>
+                            <IonSelect onIonChange={(e) => setEstado(e.detail.value)}>
+                                <IonSelectOption value="1" key="1">En Uso</IonSelectOption>
+                                <IonSelectOption value="2" key="2">Libre</IonSelectOption>
+                                <IonSelectOption value="3" key="3">Operativo</IonSelectOption>
+                                <IonSelectOption value="4" key="4">En Revision</IonSelectOption>
+                                <IonSelectOption value="5" key="5">Reparado</IonSelectOption>
+                                <IonSelectOption value="6" key="6">de Baja</IonSelectOption>
+                                <IonSelectOption value="7" key="7">Disponible</IonSelectOption>
                             </IonSelect>
                         </IonItem>
-                        {/* <IonItem>
-                <IonLabel position="floating">Fecha Asignación<IonText color="danger">*</IonText></IonLabel>
-                <IonInput required type="date" name="fecha_asignacion" value={fecha_asignacion} onIonChange={(e) => setFechaAsignacion((e.target as HTMLInputElement).value)} />
-              </IonItem> */}
                         <IonItem>
                             <IonLabel position="floating">Dirección IP<IonText color="danger">*</IonText></IonLabel>
                             <IonInput required type="text" name="direccion_ip" value={direccion_ip} onIonChange={(e) => setDireccion_ip((e.target as HTMLInputElement).value)} />
@@ -112,7 +98,7 @@ const FormularioIp: React.FC = () => {
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">Observacion<IonText color="danger">*</IonText></IonLabel>
-                            <IonInput required type="text" name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)} />
+                            <IonInput type="text" name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)} />
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">Maquinas Adicionales<IonText color="danger">*</IonText></IonLabel>
