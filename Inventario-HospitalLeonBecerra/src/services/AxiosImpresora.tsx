@@ -70,8 +70,8 @@ export default class AxiosImpresora {
     return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras/${marca}/${fecha}`);
   }
 
-  static filtrar_impresoras_paginado = (pageNumber?:any,marca?:any,fecha?:any,size?:any) => {
-    return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras_paginado/${marca}/${fecha}/${size}?page=${pageNumber}`);
+  static filtrar_impresoras_paginado = (pageNumber?:any,marca?:any,fecha?:any,estado?:any,size?:any) => {
+    return AxiosImpresora.instanceAxios.get(`/filtrar_impresoras_paginado/${marca}/${fecha}/${estado}/${size}?page=${pageNumber}`);
   }
 
 

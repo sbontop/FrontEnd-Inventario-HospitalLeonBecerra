@@ -6,21 +6,12 @@ import { RefresherEventDetail } from '@ionic/core';
 import { options,add/*,clipboard*/, home } from 'ionicons/icons';
 import { withIonLifeCycle } from '@ionic/react';
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
-
-
-
 import ListaImpresoras from '../../components/impresoraComponents/ListaImpresoras';
-
-//declare const Modernizr:any;
-
-/*declare global {
-  interface Window {
-    Modernizr:any     
-  }
-}*/
+import SelectOptionEstado from '../../components/SelectOptionEstado';
 
 interface IState {
   size: any,
+  estado:any,
   opcion_buscar_codigo: any;
   opcion_buscar_filtro: any;
   opcion_buscar_general: any;
@@ -54,6 +45,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         size:10,
         confirmacion: false,
         redirectTo: false,
+        estado:'Disponible',
         cargando:false,
         error_servidor:false,
         aplicar: false,
@@ -76,7 +68,6 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         opcion_buscar_codigo : false,
         opcion_buscar_filtro: false,
         opcion_buscar_general: false
-
     }
   }
 
@@ -95,6 +86,11 @@ class HomeImpresora extends Component<{lista:any}, IState> {
 
   verificar =() =>{
     this.setState({eliminar:true})
+  }
+
+  clearReload() {
+    this.setState({ popOver: false});
+    this.getImpresoras(10);
   }
 
   getMarcas=()=>{
@@ -194,7 +190,6 @@ class HomeImpresora extends Component<{lista:any}, IState> {
       })
     }
     if (this.state.busqueda_codigo!==""){
-
       AxiosImpresora.mostrar_datos_impresora_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo,this.state.page_number_busqueda_codigo*10).then((res:any) => {  
           if (this.state.page_number_busqueda_codigo ===1){
             this.setState({
@@ -294,10 +289,6 @@ getImpresorasNext=(e:any)=>{
   }, 1000);  
 }
 
-  doLoad = () => {
-    setTimeout(() => {
-    }, 1000);    
-  }
 
   doRefresh=(event: CustomEvent<RefresherEventDetail>)=> {
     this.setState({
@@ -325,10 +316,6 @@ getImpresorasNext=(e:any)=>{
       event.detail.complete();
     }, 1000);
   }
-
-  op=()=>{
-    this.aplicar_filtros(true);
-  }
   
   accion = () =>{
     this.getImpresoras(10);    
@@ -345,7 +332,8 @@ getImpresorasNext=(e:any)=>{
       codigo:"",
       busqueda_codigo:""
     })
-      AxiosImpresora.filtrar_impresoras_paginado(page, this.state.filtro_marca, this.state.filtro_fecha,10).then((res:any) => {
+
+  AxiosImpresora.filtrar_impresoras_paginado(page, this.state.filtro_marca, this.state.filtro_fecha, this.state.estado,10).then((res:any) => {
         console.log('Respuest: ',res.data);
         console.log('Respuest: ',res.data.data);
         if (page ===1){
@@ -373,23 +361,27 @@ getImpresorasNext=(e:any)=>{
       });
   }
 
+  cambiar_estado = (e:any) => {
+    this.setState({
+      estado: e.target.value
+    });
+  }
+
   change_marca = (e:any) => {
     this.setState({
       filtro_marca: e.target.value,
-      //page_number_buscar_filtro: 0
     });
     if (this.state.aplicar){
       this.setState({
         page_number_buscar_filtro: 1
       })
     }
-    console.log('M:  ',this.state.filtro_marca);
+    //console.log('M:  ',this.state.filtro_marca);
   }
 
   change_fecha = (e:any) => {
     this.setState({
       filtro_fecha: e.target.value.substring(0, 10),
-      //page_number_buscar_filtro: 0
     });
     if (this.state.aplicar){
       this.setState({
@@ -438,8 +430,20 @@ getImpresorasNext=(e:any)=>{
                 })}
               </IonSelect>
               </IonItem>
+
               <IonItem>
-                <IonLabel>Fecha de <br /> asignación</IonLabel>
+                <IonLabel>Estado operativo</IonLabel>
+                  <IonSelect onIonChange={this.cambiar_estado }>
+
+                  <SelectOptionEstado/>
+
+                  
+                </IonSelect>   
+              </IonItem>
+                
+
+              <IonItem>
+                <IonLabel>Fecha registro</IonLabel>
                 <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha"
                   value={this.state.filtro_fecha} onIonChange={this.change_fecha}
                   placeholder="Fecha" displayFormat="DD/MM/YYYY"
@@ -447,10 +451,15 @@ getImpresorasNext=(e:any)=>{
               </IonItem>
             </IonList>
             <div className="ion-text-center ion-margin">
-              <IonButton onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
-              <IonButton   onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
+
+              <IonButton expand="block" onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
               this.aplicar_filtros(false,1)}}}>Aplicar</IonButton>
+              <IonButton expand="block" onClick={() =>  this.clearReload()} >Limpiar</IonButton>
+              <IonButton expand="block" onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
+              
             </div >
+      
+      
           </IonPopover>
         </IonToolbar>
       </IonHeader>
@@ -563,11 +572,7 @@ getImpresorasNext=(e:any)=>{
         ]}
       />
       <IonInfiniteScroll disabled={this.state.disable_Infinite_Scroll} threshold="100px"                        
-                        onIonInfinite={ (e:any) => { this.getImpresorasNext(e)  }
-                          //if (this.state.mounted) this.loadRefresh(e, this.state.page_index + 1);                          
-                          //this.doLoad
-                        }
-                        
+                        onIonInfinite={ (e:any) => { this.getImpresorasNext(e)  }}
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
                         <IonInfiniteScrollContent
                             //loadingSpinner="bubbles"
