@@ -20,8 +20,8 @@ export default class AxiosOtrosEquipos {
     return AxiosOtrosEquipos.instanceAxios.get(`/equipo_codigo_paginado/${codigo}/${size}?page=${pageNumber}`);
   }
 
-  static filtrar_equipos_paginado = (pageNumber?:any,marca?:any,fecha?:any,size?:any) => {
-    return AxiosOtrosEquipos.instanceAxios.get(`/filtrar_equipos_paginado/${marca}/${fecha}/${size}?page=${pageNumber}`);
+  static filtrar_equipos_paginado = (pageNumber?:any,marca?:any,fecha?:any,estado?:any,size?:any) => {
+    return AxiosOtrosEquipos.instanceAxios.get(`/filtrar_equipos_paginado/${marca}/${fecha}/${estado}/${size}?page=${pageNumber}`);
   }
 
   static eliminar_otros_equipos = (id_equipo:any,body?:any) => {

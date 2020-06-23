@@ -832,8 +832,7 @@ mostrar_empleados() {
                          {this.state.ip_anterior}
                         </IonSelectOption>
                         </div>
-                      }
-                      
+                      }   
                     {this.state.lista_direcciones_ip.map((object: any, i: any) => {
                         return (
                             <IonSelectOption key={object.id_ip} value={object.direccion_ip}>
