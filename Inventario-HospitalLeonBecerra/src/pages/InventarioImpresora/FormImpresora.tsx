@@ -783,7 +783,7 @@ mostrar_empleados() {
                 </div>
                   <IonItem>
                   <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
-                    <IonSelect value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} >                    
+                    <IonSelect value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} name="printer.estado_operativo" >                    
                     
                     {estadosImpresoras.map((object, i) => {
                       return (
@@ -795,6 +795,7 @@ mostrar_empleados() {
                   </IonSelect>
                   </IonItem>
                 
+                  
 
 
                   {
