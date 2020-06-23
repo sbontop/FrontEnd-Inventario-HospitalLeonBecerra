@@ -1,79 +1,191 @@
 import React from 'react';
-import { trash } from 'ionicons/icons';
-import {IonItem,  IonLabel, IonRippleEffect, IonPopover, IonTitle, IonAvatar, IonList, IonIcon, IonButton} from '@ionic/react';
+import { IonItem,  IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote, IonAlert, IonLoading} from '@ionic/react';
+import { trash, create, key, locate, pricetag, medical, business, person, speedometer, informationCircle, barcode, reorder, globe, logIn, card, keypad, calendar } from 'ionicons/icons';
+import AxiosRouter from '../../services/AxiosRouter';
 
-interface RouterInterface {
-  id_router: number,
-  nombre: string,
-  pass: string,
-  puerta_enlace: string,
-  usuario: string,
-  clave: string,
-  id_equipo: number
-}
-
-interface estados {
-  ventanaDetalle: boolean
-}
-
-class ListRouters extends React.Component<RouterInterface, estados, {history:any}>  {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      ventanaDetalle: false
+class ListRouters extends React.Component<any, any>  {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            ventanaDetalle: false,
+            alerta: false,
+            mensaje: "",
+            showAlertConfirm: false,
+            showLoading: false
+        }
     }
-  }
 
-  render(){
-    return (
-      <IonList>
-        <IonItem className = "ion-activatable">
-          <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
-            <h2><b>Nombre: {this.props.nombre}</b></h2>
-            <h3>Puerta enlace: {this.props.puerta_enlace}</h3>
-            <p>Usuario: {this.props.usuario}</p>
-            <IonRippleEffect></IonRippleEffect> 
-          </IonLabel>
-          <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
-          {/* <IonButton onClick={() => console.log("Acción editar")} color="secondary" >
-            <div><img src="./assets/icon/edit.png"  alt="" /></div>
-          </IonButton> */}
-          {/* <IonButton onClick={() => console.log("Acción eliminar")} color="primary"> */}
-          <IonIcon icon={trash}></IonIcon>
-          {/* </IonButton> */}
-        </IonItem>
+    handle_eliminar() {
+        this.setState({
+            showLoading: true,
+            showAlertConfirm: false
+        })
+        AxiosRouter.eliminar_router(this.props.id_equipo).then(res => {    
+            this.setState({
+                showLoading: false,
+                mensaje: "Registro eliminado satisfactoriamente",
+                alerta: true
+            })
+           this.props.handle.cargar_routers(true);
+        }).catch(error => {
+            console.log(error)
+            this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+        }); 
+    } 
+      
+    render(){
+        return (
+            <IonList>
+                <IonItem className = "ion-activatable">
+                    <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
+                        <h2><b>Código: {this.props.id_router}</b></h2>
+                        <h3>Estado: 
+                            { this.props.estado === 'D' ? " Disponible" : null }
+                            { this.props.estado === 'B' ? " De baja" : null }
+                            { this.props.estado === 'R' ? " Reparado" : null }
+                            { this.props.estado === 'ER' ? " En revisión" : null }
+                            { this.props.estado === 'O' ? " Operativo" : null }
+                        </h3>
+                        <p>Marca: {this.props.marca}</p>
+                        <IonRippleEffect></IonRippleEffect> 
+                    </IonLabel>
+                    <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
+                    <IonButton size="default" fill="clear" onClick={() => console.log("Acción editar")} routerLink={"/formulariorouter/edit/"+this.props.id_equipo} color="warning" >
+                        <IonIcon color="warning" icon={create}></IonIcon>
+                    </IonButton>
+                    <IonButton size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary">
+                        <IonIcon color="primary" icon={trash}></IonIcon>
+                    </IonButton>
+                </IonItem>
         
-        <IonPopover
-          isOpen={this.state.ventanaDetalle}
-          onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
-            <IonTitle className="ion-margin-top">Detalle del equipo</IonTitle>
-              <IonList>
-                <IonItem>
-                  <IonLabel>Id: {this.props.id_router}</IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Nombre: {this.props.nombre}</IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Pass: {this.props.pass}</IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Puerta enlace: {this.props.puerta_enlace}</IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Usuario: {this.props.usuario}</IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Clave: {this.props.clave}</IonLabel>       
-                </IonItem>
-              </IonList>
-              <div className="ion-text-center ion-margin">
-              <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>Cerrar</IonButton>
-              </div>
-        </IonPopover>
-      </IonList> 
-    );
-  }
+                <IonContent>      
+                    <IonModal
+                        isOpen={this.state.ventanaDetalle}
+                        onDidDismiss={e => this.setState({ ventanaDetalle: false })}> 
+                        <IonToolbar color="primary">
+                            <IonTitle>Detalle de router</IonTitle>
+                            <IonButtons slot="end">
+                                <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>
+                                    <IonIcon name="close" slot="icon-only"></IonIcon>
+                                </IonButton>
+                            </IonButtons>
+                        </IonToolbar>
+                        <IonContent>
+                            <IonList>
+                                <IonListHeader>Información general</IonListHeader>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={key}> </IonIcon>
+                                    Código <IonNote color="dark" slot="end">{this.props.id_router}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={locate}> </IonIcon>
+                                    Punto <IonNote slot="end">{this.props.punto} </IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={business}> </IonIcon>
+                                    Departamento <IonNote  color="dark" slot="end">{this.props.departamento}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={person}> </IonIcon>
+                                    Empleado a cargo <IonNote color="dark" slot="end">{this.props.empleado}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={pricetag}> </IonIcon>
+                                    Marca <IonNote color="dark" slot="end">{this.props.marca}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={informationCircle} > </IonIcon>
+                                    Modelo <IonNote color="dark" slot="end">{this.props.modelo}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={barcode} > </IonIcon>
+                                    Número de serie <IonNote color="dark" slot="end">{this.props.numero_serie}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={speedometer}> </IonIcon>
+                                    Estado 
+                                    <IonNote color="dark" slot="end">
+                                        { this.props.estado === 'D' ? "Disponible" : null }
+                                        { this.props.estado === 'B' ? "De baja" : null }
+                                        { this.props.estado === 'R' ? "Reparado" : null }
+                                        { this.props.estado === 'ER' ? "En revisión" : null }
+                                        { this.props.estado === 'O' ? "Operativo" : null }
+                                    </IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={calendar} > </IonIcon>
+                                    Fecha de registro <IonNote color="dark" slot="end">{this.props.fecha_registro}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={reorder}> </IonIcon>
+                                    Descripción <IonNote color="dark" slot="end">{this.props.descripcion}</IonNote>
+                                </IonItem>                
+                                
+                                <IonListHeader>Datos de dirección IP</IonListHeader>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={globe}> </IonIcon>
+                                    Direción IP <IonNote slot="end">{this.props.ip}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={logIn}> </IonIcon>
+                                    Puerta enlace <IonNote slot="end">{this.props.puerta_enlace}</IonNote>
+                                </IonItem>
+                            
+                                <IonListHeader>Datos de configuración</IonListHeader>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={card}> </IonIcon>
+                                    Nombre <IonNote slot="end">{this.props.nombre}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={medical}> </IonIcon>
+                                    Pass <IonNote slot="end">{this.props.pass}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={person}> </IonIcon>
+                                    Usuario <IonNote slot="end">{this.props.usuario}</IonNote>
+                                </IonItem>
+                                <IonItem>
+                                    <IonIcon slot="start" icon={keypad}> </IonIcon>
+                                    Clave <IonNote slot="end"> {this.props.clave}</IonNote>       
+                                </IonItem>
+                            </IonList> 
+                        </IonContent>
+                    </IonModal>
+                    <IonLoading
+                    isOpen={this.state.showLoading}
+                    message={'Eliminando router. Espere por favor...'}
+                    />
+                    <IonAlert
+                    isOpen={this.state.showAlertConfirm}
+                    header={"Eliminar Router"}
+                    message={'¿Esta seguro de eliminar este router?'}
+                    buttons={[
+                        {
+                        text: 'No',
+                        role: 'cancel',
+                        cssClass: 'secondary',
+                            handler: () => {
+                                this.setState({ showAlertConfirm: false });
+                            }
+                        },
+                        {
+                        text: 'Si',
+                            handler: () => {
+                                this.handle_eliminar()
+                            }
+                        }
+                    ]}
+                    />
+                    <IonAlert
+                    isOpen={this.state.alerta}
+                    onDidDismiss={() => { this.setState({ alerta: false }) }}
+                    header={this.state.mensaje}
+                    buttons={['Aceptar']}
+                    />
+                </IonContent>
+            </IonList> 
+        );
+    }
 }
 
 export default ListRouters;

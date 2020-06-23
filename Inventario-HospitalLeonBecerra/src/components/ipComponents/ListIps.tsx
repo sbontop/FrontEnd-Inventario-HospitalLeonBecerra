@@ -8,9 +8,9 @@ import {
 
 interface IpInterface {
   id_ip: number,
-  estado: string,
   fecha_asignacion: string,
   direccion_ip: string,
+  estado: string
   hostname: string,
   subred: string,
   fortigate: string,
@@ -63,7 +63,7 @@ class ListIps extends React.Component<IpInterface, estados, {history:any}>  {
                   <IonLabel>Direccion IP: {this.props.direccion_ip}</IonLabel>
                 </IonItem>
                 <IonItem>
-                  <IonLabel>Estado: {this.props.estado}</IonLabel>
+                  <IonLabel>Estado: {`${this.props.estado}`}</IonLabel>
                 </IonItem>
                 <IonItem>
                   <IonLabel>Usuario: {this.props.nombre_usuario}</IonLabel>

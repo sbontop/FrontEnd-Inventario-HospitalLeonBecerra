@@ -37,6 +37,28 @@ export default class OpcionesInventario extends Component <{history:any}, any>{
                     </IonLabel>
                     
                 </IonItem>
+                <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/infinitive-scroll')}}>
+                    <IonRippleEffect />
+                    <IonThumbnail slot="start">
+                        <img src={process.env.PUBLIC_URL+"/assets/img/website.png"} alt="" />
+                    </IonThumbnail>
+                    <IonLabel>
+                        <h2>Infinitive Scroll</h2>
+                    </IonLabel>
+        
+                </IonItem>
+
+                <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/infinitive-scroll-filtered')}}>
+                    <IonRippleEffect />
+                    <IonThumbnail slot="start">
+                        <img src={process.env.PUBLIC_URL+"/assets/img/website.png"} alt="" />
+                    </IonThumbnail>
+                    <IonLabel>
+                        <h2>Infinitive Scroll Filtered</h2>
+                    </IonLabel>
+        
+                </IonItem>
+                
             </IonList>
 
             /* Feliz Noche Buena :D */

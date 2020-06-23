@@ -2,16 +2,21 @@ import axios from 'axios';
 
 export default class AxiosIp {
   static instanceAxios = axios.create({
-    baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
-    //baseURL: 'http://localhost:8000/api',
+    // baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
+    baseURL: 'http://localhost:8000/api',
   });
 
   static listado_ips = () => {
     return AxiosIp.instanceAxios.get(`/listar_ips`);
   }
 
-  static crear_equipo_ip = (equipo_ip: any) => {
-    return AxiosIp.instanceAxios.post(`/crear_equipo_ip`, equipo_ip);
+  static listado_ips_prueba = () => {
+    return AxiosIp.instanceAxios.get(`/listar_ips_prueba`);
+  }
+
+  static crear_ip = (ip: any) => {
+    console.log(ip);
+    return AxiosIp.instanceAxios.post(`/crear_ip`, ip);
   }
 
   static filtrar_ip = (direccion_ip: any) => {

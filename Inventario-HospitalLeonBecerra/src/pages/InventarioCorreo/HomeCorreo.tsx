@@ -1,12 +1,11 @@
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons, IonButton, IonContent, IonPopover, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime,
-  IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar
+  IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonPopover, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime,
+  IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import React from 'react';
-import { options, add } from 'ionicons/icons';
+import { options, add, arrowBack } from 'ionicons/icons';
 import ListaCorreos from '../../components/correoComponents/ListaCorreos';
 import AxiosCorreo from '../../services/Axios.services';
-import { RefresherEventDetail } from '@ionic/core';
 import SelectOptionDepartamento from '../../components/correoComponents/SelectOptionDepartamento';
 import Respuesta from '../../components/Respuesta';
 
@@ -16,61 +15,88 @@ class HomeCorreo extends React.Component<any, any> {
     super(props);
     this.state = {
       popOver: false,
-      filtro_dpto: "Todos",
-      filtro_fecha: "",
       datos: [] as any,
       showLoading: false,
-      filtro_empleado: ""
+      disable_load: false,
+      parametros: { page_size: 10, page_index: 0, estado:"" }
     }
   }
 
+  asignar_parametros = (name: any, value: any) => {
+    this.setState({ parametros: { ...this.state.parametros, [name]: value } });
+  }
+
+  clearReload() {
+      this.setState({ parametros: { page_size: 10, page_index: 0, estado:"" }, popOver: false });
+      this.cargar_correos(true);
+  }
 
   componentDidMount = () => {
-    this.cargar_correos();
+    this.setState({ showLoading: true })
+    this.cargar_correos(true);
   }
 
-
-  cargar_correos() {
-    this.setState({ showLoading: true });
-    AxiosCorreo.mostrar_correos().then(res => {
-      this.setState({ datos: res.data, showLoading: false });
+  cargar_correos(newLoad: boolean) {
+    let parametros: any = {};
+    parametros = this.state.parametros;
+    /* I have used this conditional because sometimes the state "page_index" didn't change its value. For example:
+    If you scroll until the end (when no more data to charge) and later you use a filter, the result is no data to
+    display. If you print the state you can see that... x'd.
+    I don't know if I the only one with this problem or maybe I did something wrong xD
+    */
+    if (newLoad) {
+      parametros.page_index = 0;
+    }
+    console.log("Parametros dentro de cargar correos")
+    console.log(parametros)
+    AxiosCorreo.filtrar_correos(parametros).then(res => {
+      this.setState({ datos: newLoad ? res.data.resp : [...this.state.datos, ...res.data.resp]});
+      this.setState({ showLoading: false, disable_load: this.state.datos.length === res.data.itemSize }); 
     }).catch(err => {
+      this.setState({ showLoading: false });
       console.log(err);
     });
   }
+  
 
 
-  doRefresh = (event: CustomEvent<RefresherEventDetail>) => {
-    setTimeout(() => {
-      this.cargar_correos();
-      event.detail.complete();
-    }, 2000);
-  }
+  doRefresh = (e: any, newPageIndex: number) => {
+      console.log("parametros dentro doRefresh")
+      this.asignar_parametros("page_index", newPageIndex);
+      console.log(this.state.parametros)
+      setTimeout(() => {
+        this.cargar_correos(newPageIndex === 0);
+        if (newPageIndex === 0) {
+          e.detail.complete();
+        } else {
+          e.target.complete();
+        }
+      }, 1000);
+    }
 
-
-  aplicar_filtros = () => {
-    this.setState({ showLoading: true });
-    AxiosCorreo.correo_por_filtro(this.state.filtro_dpto, this.state.filtro_fecha.substring(0, 10)).then(res => {
-      this.setState({ datos: res.data, showLoading: false });
-    }).catch(err => {
-      console.log(err);
-    });
-  }
 
 
   buscar_por_empleado = () => {
+    this.asignar_parametros("page_index", 0);
     this.setState({ showLoading: true });
-    AxiosCorreo.empleado_por_filtro(this.state.filtro_empleado).then(res => {
-      this.setState({ datos: res.data, showLoading: false });
-    }).catch(err => {
-      console.log(err);
-    });
+    this.cargar_correos(true);
   }
 
-
   handle_aplicar = () => {
-    this.aplicar_filtros();
-    this.setState({ popOver: false })
+    this.asignar_parametros("page_index", 0);
+    this.setState({ popOver: false, showLoading: true })
+    console.log("parametros dentro de handle aplicar")
+    console.log(this.state.parametros)
+    this.cargar_correos(true);
+  }
+
+  generar_lista = () => {
+      return (this.state.datos.map((dato: any) => {
+        return (
+          <ListaCorreos key={dato.correo} id_correo={dato.id_correo} nombres={dato.nombre} apellidos={dato.apellido} departamento={dato.departamento}
+            correo={dato.correo} estado={dato.estado} fecha_asignacion={dato.asignacion} bspi_punto={dato.bspi_punto} handle={this} />
+        )
+      }))
   }
 
 
@@ -80,12 +106,12 @@ class HomeCorreo extends React.Component<any, any> {
         <IonHeader>
           <IonToolbar color="primary">
             <IonButtons slot="start">
-              <IonBackButton defaultHref="/inventarios" />
+              <IonButton routerLink="/inventarios"><IonIcon icon={arrowBack}></IonIcon></IonButton>
             </IonButtons>
             <IonTitle >Inventario de correo</IonTitle>
             <IonButtons slot="end">
               <IonButton routerLink="/formularioCorreo"><IonIcon icon={add}></IonIcon></IonButton>
-              <IonButton onClick={() => this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
+              <IonButton onClick={() =>  this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
             </IonButtons>
             <IonPopover
               isOpen={this.state.popOver}
@@ -94,47 +120,63 @@ class HomeCorreo extends React.Component<any, any> {
               <IonList>
                 <IonItem>
                   <IonLabel>Departamento</IonLabel>
-                  <IonSelect okText="Ok" cancelText="Cancelar" name="departamento"
-                    onIonChange={(e) => this.setState({ filtro_dpto: e.detail.value })}>
-                    <IonSelectOption selected>Todos</IonSelectOption>
+                  <IonSelect value={this.state.parametros.departamento} okText="Ok" cancelText="Cancelar" name="departamento"
+                    onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value)}>
+                    <IonSelectOption value="Todos">Todos</IonSelectOption>
                     <SelectOptionDepartamento />
                   </IonSelect>
                 </IonItem>
                 <IonItem>
+                  <IonLabel>Estado</IonLabel>
+                  <IonSelect value={this.state.parametros.estado} okText="Ok" cancelText="Cancelar" name="estado"
+                    onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value)}>
+                    <IonSelectOption value="EU">En uso</IonSelectOption>
+                    <IonSelectOption value="I">Inactivo</IonSelectOption>
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
                   <IonLabel>Fecha de <br /> asignación</IonLabel>
-                  <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e) => this.setState({ filtro_fecha: e.detail.value })}
+                  <IonDatetime value={this.state.parametros.fecha} doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e: any) =>  this.asignar_parametros(e.target.name, e.target.value.substring(0, 10))}
                     placeholder="Fecha" displayFormat="DD/MM/YYYY"
                   ></IonDatetime>
                 </IonItem>
               </IonList>
               <div className="ion-text-center ion-margin">
-                <IonButton onClick={() => this.setState({ popOver: false })} >Cancelar</IonButton>
-                <IonButton onClick={() => this.handle_aplicar()}>Aplicar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.handle_aplicar()}>Aplicar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.clearReload()} >Limpiar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.setState({ popOver: false })}>Cancelar</IonButton>
               </div >
             </IonPopover>
           </IonToolbar>
         </IonHeader>
         <IonContent>
-          <IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
-            <IonRefresherContent refreshingSpinner="bubbles">
+
+          <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.doRefresh(e, 0)}>
+            <IonRefresherContent refreshingSpinner="circles">
             </IonRefresherContent>
           </IonRefresher>
-          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_por_empleado} onIonChange={(e) => this.setState({ filtro_empleado: (e.target as HTMLInputElement).value })}
-            cancelButtonIcon="md-search" showCancelButton="focus">
+
+          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_por_empleado} onIonChange={(e: any) => this.asignar_parametros("empleado", e.target.value)}
+            cancelButtonIcon="md-search" showCancelButton="never">
           </IonSearchbar>
 
           <IonLoading
             isOpen={this.state.showLoading}
             message={'Cargando datos. Espere por favor...'}
           />
+
           <Respuesta informacion={this.state.datos.length}></Respuesta>
-          {this.state.datos.map((dato: any) => {
-            return (
-              <ListaCorreos key={dato.correo} nombres={dato.nombre} apellidos={dato.apellido} departamento={dato.departamento}
-                correo={dato.correo} estado={dato.estado} fecha_asignacion={dato.asignacion} bspi_punto={dato.bspi_punto} />
-            )
-          })
-          }
+
+          <IonList>{this.generar_lista()} </IonList>
+
+          <IonInfiniteScroll disabled={this.state.disable_load} threshold="100px"
+            onIonInfinite={(e: any) =>  this.doRefresh(e, this.state.parametros.page_index + 1)}
+            ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
+            <IonInfiniteScrollContent
+              loadingSpinner="bubbles"
+              loadingText="Cargando mas registros">
+            </IonInfiniteScrollContent>
+          </IonInfiniteScroll>
         </IonContent>
       </IonPage>
     );

@@ -83,3 +83,46 @@ http://ionicframework.com/docs/theming/ */
 .img {
   --size:400px;
 }
+
+.btn2 {
+  --color:white;
+}
+
+.bp {
+  --width: 900px;
+  --height: 900px;
+  --border-radius: 50%;
+  --vertical-align: middle;
+  --padding-start: 11px;
+  --padding-end: 11px;
+  --padding-bottom :0px;
+  --padding-top: 0px;
+  --color-activated:white;
+  --background: white;
+  --background-activated: white;
+}
+
+.bp2 {
+  --overflow: hidden;
+  --ripple-color: white; 
+  --background-hover: white;
+  --padding-start: 11px;
+  --padding-end: 11px;
+  --padding-bottom :0px;
+  --padding-top: 0px;
+}
+
+.user_Name {
+  display: flex;
+  justify-content: center;
+}
+
+.ripple-parent {
+  position: relative;
+  overflow: hidden;
+}
+
+
+.vista {
+  --width: 260px;
+}

@@ -2,9 +2,8 @@ import axios from 'axios';
 
 export default class AxiosRouter {
   static instanceAxios = axios.create({
-    baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
+    baseURL: 'https://backend-hlb.herokuapp.com/api',
     //baseURL: 'http://localhost:8000/api',
-
   });
 
   static listado_routers = () => {
@@ -18,12 +17,32 @@ export default class AxiosRouter {
   static marcas_routers = () => {
     return AxiosRouter.instanceAxios.get(`/marcas_routers`);
   }
+
+  static empleados = () => {
+    return AxiosRouter.instanceAxios.get(`/mostrar_empleados`);
+  }
+
+  static ips = () => {
+    return AxiosRouter.instanceAxios.get(`/ips_libres`);
+  }
   
-  static filtro_router = (marca:any, fecha_registro: any) => {
-    return AxiosRouter.instanceAxios.get(`filtrar_routers/${marca}/${fecha_registro}`);
+  static filtrar_routers = (filtros: any) => {
+    return AxiosRouter.instanceAxios.post(`/filtrar_routers`, filtros);
   }
 
   static buscar_router = (codigo:any) => {
     return AxiosRouter.instanceAxios.get(`/buscar_router/${codigo}`);
+  }
+
+  static datos_router = (codigo:any) => {
+    return AxiosRouter.instanceAxios.get(`/router_id/${codigo}`);
+  }
+
+  static eliminar_router = (id_equipo: any) => {
+    return AxiosRouter.instanceAxios.put(`/eliminar_router/${id_equipo}`);
+  }
+
+  static editar_router = (router: any) => {
+    return AxiosRouter.instanceAxios.post(`/editar_router`, router);
   }
 }

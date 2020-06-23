@@ -1,25 +1,70 @@
 import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
-    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime
+    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, 
+
+    useIonViewDidEnter,
+    useIonViewDidLeave,
+    useIonViewWillEnter,
+    useIonViewWillLeave,
+
+    IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
 import { add, options } from 'ionicons/icons';
 import AxiosIp from '../../services/AxiosIp';
 import { RefresherEventDetail } from '@ionic/core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const HomeIp: React.FC = () => {
     const [ips, setIps] = useState([] as any);
-     const [marcas, setMarcas] = useState([] as any);
+    const [marcas, setMarcas] = useState([] as any);
     const [showPopover, setShowPopover] = useState<{ open: boolean }>({ open: false });
     const [showLoading, setShowLoading] = useState(false);
     const [marca, setMarca] = useState([] as any);
     const [fecha_registro, setFecha_registro] = useState([] as any);
+    const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(false);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageNumberTmp, setPageNumberTmp] = useState(1);
+    
+    async function fetchData() {
+        const url: string =`http://localhost:8000/api/listar_ips?page=${pageNumber}`;
 
-    const cargar_ips = () => {
-        AxiosIp.listado_ips().then(res => {
-            setIps(res.data);
+        const res: Response = await fetch(url);
+        res
+            .json()
+            .then(async (res) => {
+                if (res && res.data && res.data.length > 0) {
+                    setIps([...ips, ...res.data]);
+                    setDisableInfiniteScroll(res.data.length < 10);
+                } else {
+                    setDisableInfiniteScroll(true);
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    async function fetchDataTmp() {
+        const url: string =`http://localhost:8000/api/listar_ips?page=${pageNumberTmp}`;
+
+        const res: Response = await fetch(url);
+        res
+            .json()
+            .then(async (res) => {
+                if (res && res.data && res.data.length > 0) {
+                    setIps(res.data);
+                    setDisableInfiniteScroll(res.data.length < 10);
+                } else {
+                    setDisableInfiniteScroll(true);
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    const cargar_ips_prueba = () => {
+        console.log('Llamada API');
+        AxiosIp.listado_ips_prueba().then(res => {
+            console.log(res.data);
         });
     }
 
@@ -38,9 +83,10 @@ const HomeIp: React.FC = () => {
         setShowPopover({ open: false })
     }
 
-    const onChange = (e: any) => {
+    async function onChange (e: any) {
         let direccion_ip = e.target.value;
         if (direccion_ip) {
+            setDisableInfiniteScroll(true);
             AxiosIp.filtrar_ip(direccion_ip).then(res => {
                 // console.log(res);
                 setIps(res.data);
@@ -48,36 +94,55 @@ const HomeIp: React.FC = () => {
                 console.log(err);
             });
         } else {
-            cargar_ips();
+            setPageNumberTmp(1);
+            setPageNumber(2);
+            fetchDataTmp();
         }
     }
 
-    const onClear = (e: any) => {
-        cargar_ips();
+    async function onClear(e: any)  {
+        await fetchData();
     }
 
     setTimeout(() => {
         setShowLoading(false);
     }, 2000);
 
-    useEffect(() => {
-        setShowLoading(true);
-        AxiosIp.listado_ips().then(res => {
-            setIps(res.data);
-        });
-    }, []);
+    useIonViewWillEnter(async () => {
+        console.log('ionViewWillEnter event fired');
+        // cargar_ips();
+        // cargar_ips_prueba();
+        await fetchData();
+        console.log(ips);
+    });
 
-     useEffect(() => {
-         AxiosIp.listado_ips().then(res => {
-             setMarcas(res.data);
-         });
-     }, []);
+    useIonViewDidEnter(async () => {
+        console.log('useIonViewDidEnter event fired');
+        setPageNumber(pageNumber + 1);
+    });
 
-    function doRefresh(event: CustomEvent<RefresherEventDetail>) {
-        setTimeout(() => {
-            cargar_ips();
-            event.detail.complete();
-        }, 2000);
+    useIonViewWillLeave(async () => {
+        console.log('ionViewWillLeave event fired');
+        setPageNumber(1);
+        setIps([]);
+    });
+
+    useIonViewDidLeave(async () => {
+        console.log('useIonViewDidLeave event fired');
+    });
+
+    async function searchNext($event: CustomEvent<void>) {
+        await fetchData();
+        console.log(ips);
+        setPageNumber(pageNumber + 1);
+        ($event.target as HTMLIonInfiniteScrollElement).complete();
+    }
+
+    async function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+        setPageNumberTmp(1);
+        setPageNumber(2);
+        fetchDataTmp();
+        event.detail.complete();
     }
 
     return (
@@ -101,8 +166,9 @@ const HomeIp: React.FC = () => {
 
             <IonContent>
                 <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
-                    <IonRefresherContent refreshingSpinner="bubbles">
-                    </IonRefresherContent>
+                    <IonRefresherContent
+                        refreshingSpinner="bubbles"
+                    />
                 </IonRefresher>
                 <IonLoading
                     isOpen={showLoading}
@@ -128,6 +194,12 @@ const HomeIp: React.FC = () => {
                         />
                     )
                 })}
+                <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                    onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
+                    <IonInfiniteScrollContent
+                        loadingText="Loading more good doggos...">
+                    </IonInfiniteScrollContent>
+                </IonInfiniteScroll>
             </IonContent>
 
             <IonPopover
@@ -135,19 +207,6 @@ const HomeIp: React.FC = () => {
                 onDidDismiss={e => setShowPopover({ open: false })}>
                 <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                 <IonList>
-                     {/* <IonItem>
-                        <IonLabel>Tipo de equipo</IonLabel>
-                        <IonSelect placeholder="Todas" name="Todas" value={marca} onIonChange={(e) => setMarca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                            <IonSelectOption selected>Todas</IonSelectOption>
-                            {marcas.map((m: any) => {
-                                return (
-                                    <IonSelectOption key={m.id_marca} value={m.nombre}>
-                                        {m.nombre}
-                                    </IonSelectOption>
-                                );
-                            })}
-                        </IonSelect>
-                    </IonItem> */}
                     <IonItem>
                         <IonLabel>Fecha registro</IonLabel>
                         <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e) => setFecha_registro(e.detail.value)}
@@ -163,5 +222,4 @@ const HomeIp: React.FC = () => {
         </IonPage>
     );
 }
-
 export default HomeIp;
