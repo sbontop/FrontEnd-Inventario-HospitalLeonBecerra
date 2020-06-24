@@ -10,29 +10,29 @@ class ListaCorreos extends React.Component<any, any>  {
   constructor(props: any) {
     super(props);
     this.state = {
-      ventanaDetalle: false,
+      mostrar_modal: false,
       mensaje: "",
       alerta: false,
-      showAlertConfirm: false,
-      showLoading: false
+      mostrar_confirmacion: false,
+      mostrar_load: false
     }
   }
 
   handle_eliminar() {
     this.setState({
-      showLoading: true,
-      showAlertConfirm: false
+      mostrar_load: true,
+      mostrar_confirmacion: false
     })
     Axios.eliminar_correo(this.props.id_correo).then(res => {    
       this.setState({
-        showLoading: false,
+        mostrar_load: false,
         mensaje: "Registro eliminado satisfactoriamente",
         alerta: true
       })
       this.props.handle.cargar_correos(true);
     }).catch(error => {
       console.log(error)
-      this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+      this.setState({ mostrar_load: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
     }); 
   }  
   
@@ -40,30 +40,29 @@ class ListaCorreos extends React.Component<any, any>  {
     return (
       <div>
         <IonItem>
-          <IonLabel onClick={() => this.setState({ ventanaDetalle: true })}>
+          <IonLabel onClick={() => this.setState({ mostrar_modal: true })}>
             <IonText color={this.props.estado === "I" ? `danger` : `dark`}><h2><b>USUARIO: {this.props.nombres} {this.props.apellidos}</b></h2></IonText>
             <h3>Departamento: {this.props.departamento}</h3>
             <small>{this.props.correo}</small>
           </IonLabel>
           <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
          <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="warning"  icon={create} ></IonIcon> </IonButton> 
-         <IonButton  size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
+         <IonButton  size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
         </IonItem>
 
         <IonModal
-          isOpen={this.state.ventanaDetalle}
-          onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
+          isOpen={this.state.mostrar_modal}
+          onDidDismiss={e => this.setState({ mostrar_modal: false })}>
           <IonToolbar color="primary">
             <IonTitle>Detalle del correo</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={() =>this.setState({ ventanaDetalle: false })}><IonIcon icon={close}></IonIcon></IonButton>
+              <IonButton onClick={() =>this.setState({ mostrar_modal: false })}><IonIcon icon={close}></IonIcon></IonButton>
             </IonButtons>
           </IonToolbar>
           <IonContent>
             <IonList>
               <IonItem>
                 <IonIcon slot="start" icon={mailOpen}></IonIcon>
-                <IonLabel>Correo</IonLabel>
                 <IonNote slot="end">{this.props.correo}</IonNote>
               </IonItem>
               <IonItem>
@@ -96,12 +95,12 @@ class ListaCorreos extends React.Component<any, any>  {
         </IonModal>
 
         <IonLoading
-          isOpen={this.state.showLoading}
+          isOpen={this.state.mostrar_load}
           message={'Eliminando correo. Espere por favor...'}
         />
 
         <IonAlert
-          isOpen={this.state.showAlertConfirm}
+          isOpen={this.state.mostrar_confirmacion}
           header={"Eliminar Correo"}
           message={'¿Esta seguro de eliminar este correo?'}
           buttons={[
@@ -110,7 +109,7 @@ class ListaCorreos extends React.Component<any, any>  {
               role: 'cancel',
               cssClass: 'secondary',
               handler: () => {
-                this.setState({ showAlertConfirm: false });
+                this.setState({ mostrar_confirmacion: false });
               }
             },
             {

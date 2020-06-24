@@ -25,7 +25,6 @@ class Pop extends React.Component<any, any>  {
         } else {
             let registro_marca = {
                 nombre: this.state.marca,
-                /* key: this.props.id !== undefined? this.props.id: ""  this.props.id !== undefined? this.props.nombre: ""*/
                 key: this.state.id
             }
             if (this.props.editionMode) {

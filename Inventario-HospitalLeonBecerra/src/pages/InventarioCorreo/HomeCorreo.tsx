@@ -14,10 +14,10 @@ class HomeCorreo extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      popOver: false,
+      mostrar_pop: false,
       datos: [] as any,
-      showLoading: false,
-      disable_load: false,
+      mostrar_load: false,
+      mostrar_scroll: false,
       parametros: { page_size: 10, page_index: 0, estado:"" }
     }
   }
@@ -26,24 +26,34 @@ class HomeCorreo extends React.Component<any, any> {
     this.setState({ parametros: { ...this.state.parametros, [name]: value } });
   }
 
-  clearReload() {
-      this.setState({ parametros: { page_size: 10, page_index: 0, estado:"" }, popOver: false });
+  limpiar_filtros() {
+      this.setState({ parametros: { page_size: 10, page_index: 0, estado:"" }, mostrar_pop: false });
       this.cargar_correos(true);
   }
 
+  
+  refrescar = (e: any, newPageIndex: number) => {
+    console.log("parametros dentro refrescar")
+    this.asignar_parametros("page_index", newPageIndex);
+    console.log(this.state.parametros)
+    setTimeout(() => {
+      this.cargar_correos(newPageIndex === 0);
+      if (newPageIndex === 0) {
+        e.detail.complete();
+      } else {
+        e.target.complete();
+      }
+    }, 1000);
+  }
+
   componentDidMount = () => {
-    this.setState({ showLoading: true })
+    this.setState({ mostrar_load: true })
     this.cargar_correos(true);
   }
 
   cargar_correos(newLoad: boolean) {
     let parametros: any = {};
     parametros = this.state.parametros;
-    /* I have used this conditional because sometimes the state "page_index" didn't change its value. For example:
-    If you scroll until the end (when no more data to charge) and later you use a filter, the result is no data to
-    display. If you print the state you can see that... x'd.
-    I don't know if I the only one with this problem or maybe I did something wrong xD
-    */
     if (newLoad) {
       parametros.page_index = 0;
     }
@@ -51,40 +61,22 @@ class HomeCorreo extends React.Component<any, any> {
     console.log(parametros)
     AxiosCorreo.filtrar_correos(parametros).then(res => {
       this.setState({ datos: newLoad ? res.data.resp : [...this.state.datos, ...res.data.resp]});
-      this.setState({ showLoading: false, disable_load: this.state.datos.length === res.data.itemSize }); 
+      this.setState({ mostrar_load: false, mostrar_scroll: this.state.datos.length === res.data.itemSize }); 
     }).catch(err => {
-      this.setState({ showLoading: false });
+      this.setState({ mostrar_load: false });
       console.log(err);
     });
   }
-  
 
-
-  doRefresh = (e: any, newPageIndex: number) => {
-      console.log("parametros dentro doRefresh")
-      this.asignar_parametros("page_index", newPageIndex);
-      console.log(this.state.parametros)
-      setTimeout(() => {
-        this.cargar_correos(newPageIndex === 0);
-        if (newPageIndex === 0) {
-          e.detail.complete();
-        } else {
-          e.target.complete();
-        }
-      }, 1000);
-    }
-
-
-
-  buscar_por_empleado = () => {
+  buscar_empleado = () => {
     this.asignar_parametros("page_index", 0);
-    this.setState({ showLoading: true });
+    this.setState({ mostrar_load: true });
     this.cargar_correos(true);
   }
 
-  handle_aplicar = () => {
+  aplicar_filtros = () => {
     this.asignar_parametros("page_index", 0);
-    this.setState({ popOver: false, showLoading: true })
+    this.setState({ mostrar_pop: false, mostrar_load: true })
     console.log("parametros dentro de handle aplicar")
     console.log(this.state.parametros)
     this.cargar_correos(true);
@@ -111,11 +103,11 @@ class HomeCorreo extends React.Component<any, any> {
             <IonTitle >Inventario de correo</IonTitle>
             <IonButtons slot="end">
               <IonButton routerLink="/formularioCorreo"><IonIcon icon={add}></IonIcon></IonButton>
-              <IonButton onClick={() =>  this.setState({ popOver: true })}><IonIcon icon={options}></IonIcon></IonButton>
+              <IonButton onClick={() =>  this.setState({ mostrar_pop: true })}><IonIcon icon={options}></IonIcon></IonButton>
             </IonButtons>
             <IonPopover
-              isOpen={this.state.popOver}
-              onDidDismiss={e => this.setState({ popOver: false })}>
+              isOpen={this.state.mostrar_pop}
+              onDidDismiss={e => this.setState({ mostrar_pop: false })}>
               <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
               <IonList>
                 <IonItem>
@@ -142,26 +134,26 @@ class HomeCorreo extends React.Component<any, any> {
                 </IonItem>
               </IonList>
               <div className="ion-text-center ion-margin">
-                <IonButton expand="block" size="small" onClick={() =>  this.handle_aplicar()}>Aplicar</IonButton>
-                <IonButton expand="block" size="small" onClick={() =>  this.clearReload()} >Limpiar</IonButton>
-                <IonButton expand="block" size="small" onClick={() =>  this.setState({ popOver: false })}>Cancelar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.aplicar_filtros()}>Aplicar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.limpiar_filtros()} >Limpiar</IonButton>
+                <IonButton expand="block" size="small" onClick={() =>  this.setState({ mostrar_pop: false })}>Cancelar</IonButton>
               </div >
             </IonPopover>
           </IonToolbar>
         </IonHeader>
         <IonContent>
 
-          <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.doRefresh(e, 0)}>
+          <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.refrescar(e, 0)}>
             <IonRefresherContent refreshingSpinner="circles">
             </IonRefresherContent>
           </IonRefresher>
 
-          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_por_empleado} onIonChange={(e: any) => this.asignar_parametros("empleado", e.target.value)}
+          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_empleado} onIonChange={(e: any) => this.asignar_parametros("empleado", e.target.value)}
             cancelButtonIcon="md-search" showCancelButton="never">
           </IonSearchbar>
 
           <IonLoading
-            isOpen={this.state.showLoading}
+            isOpen={this.state.mostrar_load}
             message={'Cargando datos. Espere por favor...'}
           />
 
@@ -169,8 +161,8 @@ class HomeCorreo extends React.Component<any, any> {
 
           <IonList>{this.generar_lista()} </IonList>
 
-          <IonInfiniteScroll disabled={this.state.disable_load} threshold="100px"
-            onIonInfinite={(e: any) =>  this.doRefresh(e, this.state.parametros.page_index + 1)}
+          <IonInfiniteScroll disabled={this.state.mostrar_scroll} threshold="100px"
+            onIonInfinite={(e: any) =>  this.refrescar(e, this.state.parametros.page_index + 1)}
             ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
             <IonInfiniteScrollContent
               loadingSpinner="bubbles"
