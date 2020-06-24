@@ -247,7 +247,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Matricial"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -273,7 +274,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Brazalete"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -302,7 +304,8 @@ mostrar_empleados() {
               incompleto:true
             })  
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined ) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -330,7 +333,8 @@ mostrar_empleados() {
               incompleto:true
             }) 
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -361,7 +365,8 @@ mostrar_empleados() {
             incompleto:true
           })
         }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
           //console.log('Función: ', this.state.data.printer.numero_serie);
         }
       }else{        
@@ -389,7 +394,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }
     }else{
@@ -442,10 +448,10 @@ mostrar_empleados() {
 }
 
   enviar=()=> {
-    this.setState({
+    /*this.setState({
       guardar:false,
       cargando:true
-    });
+    });*/
     let json = this.state.data_impresora_by_id;
     let json_datos_editados = this.copiar_json(json);
     console.log('Before: ',json_datos_editados);
@@ -473,13 +479,13 @@ mostrar_empleados() {
           });          
         }
         this.setState({
-          cargando:false,
+          //cargando:false,
           confirmacion:true,
         });
       }else if (res.data.log === -1){
         console.log('Condicion -1');
         this.setState({
-          cargando:false,
+          //cargando:false,
           existe_repetido:true,
         });
       }
@@ -487,7 +493,7 @@ mostrar_empleados() {
     }).catch(err => {
       //console.log(err);
       this.setState({
-        cargando:false,
+        //cargando:false,
         error_servidor:true,
       });
       console.log('Error 2');
