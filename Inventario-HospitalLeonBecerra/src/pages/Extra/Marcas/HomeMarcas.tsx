@@ -13,13 +13,12 @@ class HomeMarcas extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      popOver: false,
       datos: [] as any,
-      showLoading: false,
-      disable_load: false,
+      mostrar_load: false,
+      mostrar_scroll: false,
       marca: "",
       editionMode: false,
-      parametros: { page_size: 11, page_index: 0 },
+      parametros: { page_size: 20, page_index: 0 },
       open: false
     }
   }
@@ -29,16 +28,16 @@ class HomeMarcas extends React.Component<any, any> {
   }
 
   actualizar_parametros(){
-    this.setState({ parametros: { page_size: 11, page_index: 0 }});
+    this.setState({ parametros: { page_size: 20, page_index: 0 }});
   }
 
   clearReload() {
-    this.setState({ parametros: { page_size: 11, page_index: 0 }, popOver: false });
+    this.setState({ parametros: { page_size: 20, page_index: 0 } });
     this.cargar_marcas(true);
   }
 
   componentDidMount = () => {
-    this.setState({ showLoading: true })
+    this.setState({ mostrar_load: true })
     this.cargar_marcas(true);
   }
 
@@ -47,16 +46,16 @@ class HomeMarcas extends React.Component<any, any> {
     console.log(this.state.parametros)
     Axios.filtrar_marcas(this.state.parametros).then(res => {
       this.setState({ datos: newLoad ? res.data.resp : [...this.state.datos, ...res.data.resp] });
-      this.setState({ showLoading: false, disable_load: this.state.datos.length === res.data.itemSize });
+      this.setState({ mostrar_load: false, mostrar_scroll: this.state.datos.length === res.data.itemSize });
     }).catch(err => {
-      this.setState({ showLoading: false });
+      this.setState({ mostrar_load: false });
       console.log(err);
     });
   }
 
 
-  doRefresh = (e: any, newPageIndex: number) => {
-    console.log("parametros dentro doRefresh")
+  refrescar = (e: any, newPageIndex: number) => {
+    console.log("parametros dentro refrescar")
     this.asignar_parametros("page_index", newPageIndex);
     console.log(this.state.parametros)
     setTimeout(() => {
@@ -74,7 +73,7 @@ class HomeMarcas extends React.Component<any, any> {
   buscar_por_marca = () => {
     this.asignar_parametros("page_index", 0);
     this.asignar_parametros("marca", this.state.marca);
-    this.setState({ showLoading: true });
+    this.setState({ mostrar_load: true });
     this.cargar_marcas(true);
   }
 
@@ -102,7 +101,7 @@ class HomeMarcas extends React.Component<any, any> {
         </IonHeader>
         <IonContent>
 
-          <IonRefresher slot="fixed" onIonRefresh={(e: any) => this.doRefresh(e, 0)}>
+          <IonRefresher slot="fixed" onIonRefresh={(e: any) => this.refrescar(e, 0)}>
             <IonRefresherContent refreshingSpinner="circles">
             </IonRefresherContent>
           </IonRefresher>
@@ -112,7 +111,7 @@ class HomeMarcas extends React.Component<any, any> {
           </IonSearchbar>
 
           <IonLoading
-            isOpen={this.state.showLoading}
+            isOpen={this.state.mostrar_load}
             message={'Cargando datos. Espere por favor...'}
           />
 
@@ -120,8 +119,8 @@ class HomeMarcas extends React.Component<any, any> {
 
           <IonList>{this.generar_lista()} </IonList>
 
-          <IonInfiniteScroll disabled={this.state.disable_load} threshold="100px"
-            onIonInfinite={(e: any) => this.doRefresh(e, this.state.parametros.page_index + 1)}
+          <IonInfiniteScroll disabled={this.state.mostrar_scroll} threshold="100px"
+            onIonInfinite={(e: any) => this.refrescar(e, this.state.parametros.page_index + 1)}
             ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
             <IonInfiniteScrollContent
               loadingSpinner="bubbles"

@@ -5,6 +5,7 @@ import AxiosOtrosEquipos from '../../services/AxiosOtrosEquipos';
 import { RefresherEventDetail } from '@ionic/core';
 import { options,add/*,clipboard*/, home } from 'ionicons/icons';
 import { withIonLifeCycle } from '@ionic/react';
+import SelectOptionEstado from '../../components/SelectOptionEstado';
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 
 
@@ -20,6 +21,7 @@ import ListaOtrosEquipos from '../../components/otrosEquiposComponents/ListaOtro
 }*/
 
 interface IState {
+  estado:any,
   size: any,
   opcion_buscar_codigo: any;
   opcion_buscar_filtro: any;
@@ -53,6 +55,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
+        estado: 'Disponible',
         size:10,
         confirmacion: false,
         redirectTo: false,
@@ -89,6 +92,10 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
     this.getOtrosEquipos(10);
   }
 
+  clearReload() {
+    this.setState({ popOver: false});
+    this.getOtrosEquipos(10);
+  }
   
   ionViewWillLeave() {
     this.setState({
@@ -235,6 +242,11 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
     }   
   }
    
+  cambiar_estado = (e:any) => {
+    this.setState({
+      estado: e.target.value
+    });
+  }
 
 getOtrosEquipos=(size:any)=>{
   this.setState({
@@ -371,7 +383,7 @@ getOtrosEquipos=(size:any)=>{
       busqueda_codigo:""
     })
 
-    AxiosOtrosEquipos.filtrar_equipos_paginado(page, this.state.filtro_marca, this.state.filtro_fecha,10).then((res:any) => {
+    AxiosOtrosEquipos.filtrar_equipos_paginado(page, this.state.filtro_marca, this.state.filtro_fecha, this.state.estado,10).then((res:any) => {
           if (page ===1){
             console.log('Uno');
             this.setState({
@@ -465,8 +477,20 @@ getOtrosEquipos=(size:any)=>{
                 })}
               </IonSelect>
               </IonItem>
+
               <IonItem>
-                <IonLabel>Fecha de <br /> asignación</IonLabel>
+                <IonLabel>Estado operativo</IonLabel>
+                  <IonSelect onIonChange={this.cambiar_estado }>
+
+                  <SelectOptionEstado/>
+
+                  
+                </IonSelect>   
+              </IonItem>
+
+
+              <IonItem>
+                <IonLabel>Fecha Registro</IonLabel>
                 <IonDatetime doneText="Ok" cancelText="Cancelar" name="fecha"
                   value={this.state.filtro_fecha} onIonChange={this.change_fecha}
                   placeholder="Fecha" displayFormat="DD/MM/YYYY"
@@ -474,9 +498,11 @@ getOtrosEquipos=(size:any)=>{
               </IonItem>
             </IonList>
             <div className="ion-text-center ion-margin">
-              <IonButton onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
-              <IonButton onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
-              this.aplicar_filtros(false,1) }              }  }>Aplicar</IonButton>
+              <IonButton expand="block" onClick={(e:any)=>{ if(1){  this.setState({popOver: false, mostrando_datos: true, page_number_buscar_filtro: 1, opcion_buscar_filtro: true, aplicar: true, opcion_buscar_codigo:false, opcion_buscar_general:false}) 
+              this.aplicar_filtros(false,1)}}}>Aplicar</IonButton>
+              <IonButton expand="block" onClick={() =>  this.clearReload()} >Limpiar</IonButton>
+              <IonButton expand="block" onClick={() => this.setState({ popOver: false }) } >Cancelar</IonButton>
+
             </div >
           </IonPopover>
         </IonToolbar>

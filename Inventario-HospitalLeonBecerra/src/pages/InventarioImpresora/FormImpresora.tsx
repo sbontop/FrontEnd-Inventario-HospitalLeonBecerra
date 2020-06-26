@@ -76,7 +76,7 @@ class FormImpresora extends Component<{} , IState> {
     this.mostrar_marcas();
     this.mostrar_direcciones_ip_libres();
     this.mostrar_empleados();
-    this.fn();  
+    this.obtener_id_impresora_editar();  
     if (this.id !== undefined){
       this.obtenerImpresoraById();
     }
@@ -119,7 +119,7 @@ class FormImpresora extends Component<{} , IState> {
     });
   }
 
-  fn =()=>{
+  obtener_id_impresora_editar =()=>{
     if (document.URL.indexOf("edit") > 0) {
       let splitURL = document.URL.split("/");
       this.id= splitURL[splitURL.length-1];
@@ -199,7 +199,6 @@ mostrar_empleados() {
   verificar=()=>{
     let json = this.state.data_impresora_by_id;
     console.log(json);
-    //Si no tiene normal
     let lista_nombres_campos_impresora_defecto:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo"];    
     let lista_nombres_campos_impresora:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho",];    
     let lista_nombres_campos_brazalete:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Rollo"];    
@@ -248,7 +247,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Matricial"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -274,7 +274,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Brazalete"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -303,7 +304,8 @@ mostrar_empleados() {
               incompleto:true
             })  
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined ) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -331,7 +333,8 @@ mostrar_empleados() {
               incompleto:true
             }) 
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -362,7 +365,8 @@ mostrar_empleados() {
             incompleto:true
           })
         }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
           //console.log('Función: ', this.state.data.printer.numero_serie);
         }
       }else{        
@@ -390,7 +394,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }
     }else{
@@ -407,8 +412,6 @@ mostrar_empleados() {
       })
     }
   }
-
-
 
   accion = () =>{
     this.setState({eliminar:true});
@@ -433,25 +436,24 @@ mostrar_empleados() {
     });
   }
 
-  clone( obj:any ) {
+  copiar_json( obj:any ) {
     if ( obj === null || typeof obj  !== 'object' ) {
         return obj;
     }
     var temp = obj.constructor();
     for ( var key in obj ) {
-        temp[ key ] = this.clone( obj[ key ] );
+        temp[ key ] = this.copiar_json( obj[ key ] );
     }
     return temp;
 }
 
   enviar=()=> {
-    this.setState({
+    /*this.setState({
       guardar:false,
       cargando:true
-    });
+    });*/
     let json = this.state.data_impresora_by_id;
-    console.log("JSON ACTUALIZADO:",json);
-    let json_datos_editados = this.clone(json);
+    let json_datos_editados = this.copiar_json(json);
     console.log('Before: ',json_datos_editados);
     console.log('After: ',json_datos_editados);
     if (json.estado_operativo === 'Disponible'){
@@ -477,22 +479,21 @@ mostrar_empleados() {
           });          
         }
         this.setState({
-          cargando:false,
+          //cargando:false,
           confirmacion:true,
         });
       }else if (res.data.log === -1){
         console.log('Condicion -1');
         this.setState({
-          cargando:false,
+          //cargando:false,
           existe_repetido:true,
         });
       }
-      //console.log('Impresora: ',res.data.length);
-      //console.log('Impresora: ',res.data.log);
+      
     }).catch(err => {
       //console.log(err);
       this.setState({
-        cargando:false,
+        //cargando:false,
         error_servidor:true,
       });
       console.log('Error 2');
@@ -788,7 +789,7 @@ mostrar_empleados() {
                 </div>
                   <IonItem>
                   <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
-                    <IonSelect name="printer.estado_operativo" value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} >                    
+                    <IonSelect value = {this.state.data_impresora_by_id.estado_operativo} onIonChange={this.onChangeInput} name="printer.estado_operativo" >                    
                     
                     {estadosImpresoras.map((object, i) => {
                       return (
@@ -800,6 +801,7 @@ mostrar_empleados() {
                   </IonSelect>
                   </IonItem>
                 
+                  
 
 
                   {
@@ -836,8 +838,7 @@ mostrar_empleados() {
                          {this.state.ip_anterior}
                         </IonSelectOption>
                         </div>
-                      }
-                      
+                      }   
                     {this.state.lista_direcciones_ip.map((object: any, i: any) => {
                         return (
                             <IonSelectOption key={object.id_ip} value={object.direccion_ip}>

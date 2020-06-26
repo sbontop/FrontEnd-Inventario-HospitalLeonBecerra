@@ -351,7 +351,10 @@ verificar2=()=>{
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
+
+
         }
       }else if(this.state.data_equipo_by_id.tipo_equipo==="disco_duro" || this.state.data_equipo_by_id.tipo_equipo==="memoria_ram"){
         if ((json.hasOwnProperty('tipo_equipo')!==true || (json.tipo+'').trim()==='') ||
@@ -394,7 +397,8 @@ verificar2=()=>{
               incompleto:true
             })
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       
       }else if(this.state.data_equipo_by_id.tipo_equipo==="Otro"){
@@ -427,7 +431,8 @@ verificar2=()=>{
               incompleto:true
             }) 
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }else if(this.state.data_equipo_by_id.tipo_equipo==="procesador"){
         if ((json.hasOwnProperty('tipo_equipo')!==true || (json.tipo+'').trim()==='') ||
@@ -458,7 +463,8 @@ verificar2=()=>{
               incompleto:true
             }) 
           }else{
-          this.setState({guardar:true})
+          //this.setState({guardar:true})
+          this.enviar();
         }
       }
 
@@ -501,10 +507,10 @@ verificar2=()=>{
 }
 
   enviar=()=> {
-    this.setState({
+    /*this.setState({
       guardar:false,
       cargando:true
-    });
+    });*/
     let json = this.state.data_equipo_by_id;
     console.log("JSON ACTUALIZADO:",json);
     let json_datos_editados = this.clone(json);
@@ -533,7 +539,7 @@ verificar2=()=>{
           });          
         }
         this.setState({
-          cargando:false,
+          //cargando:false,
           confirmacion:true,
         });
       }
@@ -545,18 +551,18 @@ verificar2=()=>{
 
         if (err.response.data.log.length===47){
           this.setState({
-            cargando:false,
+            //cargando:false,
             existe_repetido:true,
           });  
         }else{
           this.setState({
-            cargando:false,
+            //cargando:false,
             error_servidor:true,
           });
         }        
       }else{
         this.setState({
-          cargando:false,
+          //cargando:false,
           error_servidor:true,
         });        
       }
