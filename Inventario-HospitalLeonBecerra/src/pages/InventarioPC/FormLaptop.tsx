@@ -27,8 +27,8 @@ export default class FormPCLaptop extends Component<any, IState> {
             data: {
                 "pc-licencia": false,
                 "pc-service": false,
-                "pc-ups_regulador":{
-                    "tipo_equipo":null
+                "pc-ups_regulador": {
+                    "tipo_equipo": null
                 }
             },
             marcas: [],
@@ -50,7 +50,7 @@ export default class FormPCLaptop extends Component<any, IState> {
             listSO: [],
             listOffice: [],
             fuente: false,
-            visible_fuente:false
+            visible_fuente: false
 
         }
     }
@@ -62,7 +62,7 @@ export default class FormPCLaptop extends Component<any, IState> {
         GlobalPC.getListEmpleado(this);
         GlobalPC.getListSO(this);
         GlobalPC.getListOffice(this);
-        GlobalPC.getIpByID(this.props.match.params.ip===undefined?-1:this.props.match.params.ip,this);
+        GlobalPC.getIpByID(this.props.match.params.ip === undefined ? -1 : this.props.match.params.ip, this);
         console.log(this.props.match.params.ip);
         if (this.props.match.params.id !== undefined) {
             GlobalPC.getEquipoByID(this, 1);
@@ -80,28 +80,31 @@ export default class FormPCLaptop extends Component<any, IState> {
 
     validarData(): string | any[][] {
         console.log(this.state.data)
-        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", 'pc-ram_soportada', 'pc-conexiones_disco', 'pc-slots_ram', "pc-procesador", "pc-nombre_pc", 'pc-usuario_pc', "pc-sistema_operativo", "pc-tipo_sistema_operativo", "pc-licencia", "pc-service", "pc-version_office", "pc-empleado_asignado", "pc-ip_asignada"];
+        //, 'pc-conexiones_dd'
+        let formValues = ['pc-codigo', 'pc-id_marca', 'pc-modelo', "pc-numero_serie", "pc-estado", 'pc-ram_soportada', 'pc-numero_slots', 
+        "pc-procesador", "pc-nombre_pc", 'pc-usuario_pc', "pc-sistema_operativo", "pc-tipo_sistema_operativo", "pc-licencia", 
+        "pc-service", "pc-version_office", "pc-empleado_asignado", "pc-ip_asignada"];
         let indValues = ['id_marca', 'modelo', 'numero_serie', "codigo"];
         let valuesRD = ['tipo', 'capacidad', "tipo_capacidad"];
         let valuesP = ['frecuencia', 'nucleos'];
         let ramSoportada = 0;
         let slotsTotal = 0;
-        let discConect = 0;
+        //let discConect = 0;
         let ramTotal = 0;
         let arr_cod: any[] = [];
         let arr_serie: any[] = [];
         formValues = formValues.concat(this.state.ramTabs);
         formValues = formValues.concat(this.state.storageTabs);
         let dataCopy = this.state.data;
-        let arrPrincipal = Object.keys(dataCopy).filter((value:any)=>{return value.indexOf("num_")===-1&&value.indexOf("list_")===-1});
+        let arrPrincipal = Object.keys(dataCopy).filter((value: any) => { return value.indexOf("num_") === -1 && value.indexOf("list_") === -1 });
         if (this.state.fuente) {
             formValues = formValues.concat(["pc-ups_regulador"]);
         } else {
-            
+
             arrPrincipal = arrPrincipal.filter((value: any) => { return value !== "pc-ups_regulador" });
             formValues = formValues.filter((value: any) => { return value !== "pc-ups_regulador" });
         }
-        
+
         for (var _i = 0; _i < formValues.length; _i++) {
             if (arrPrincipal.indexOf(formValues[_i]) < 0 || dataCopy[formValues[_i]] === undefined || ((typeof dataCopy[formValues[_i]] === "string" || typeof dataCopy[formValues[_i]] === "number" ? String(dataCopy[formValues[_i]]).trim() : dataCopy[formValues[_i]]) === "")) {
                 return 'No se han ingresado datos sobre ' + formValues[_i].split('-')[1].toUpperCase().replace('_', " ");
@@ -127,16 +130,16 @@ export default class FormPCLaptop extends Component<any, IState> {
         if (!GlobalPC.valRegExpNum(dataCopy['pc-ram_soportada'], "{1,2}", false)) {
             return "Los datos ingresados en Ram Soportada no son validos";
         }
-        if (!GlobalPC.valRegExpNum(dataCopy['pc-slots_ram'], "{0}", false)) {
+        if (!GlobalPC.valRegExpNum(dataCopy['pc-numero_slots'], "{0}", false)) {
             return "Los datos ingresados en Slots para Ram no son validos";
         }
-        if (!GlobalPC.valRegExpNum(dataCopy['pc-conexiones_disco'], "{0}", false)) {
-            return "Los datos ingresados en Conexiones para Discos no son validos"
-        }
+        // if (!GlobalPC.valRegExpNum(dataCopy['pc-conexiones_dd'], "{0}", false)) {
+        //     return "Los datos ingresados en Conexiones para Discos no son validos"
+        // }
         if ((Number(dataCopy['pc-ram_soportada']) === 1 ? 2 : Number(dataCopy['pc-ram_soportada'])) % 2 !== 0 || Number((dataCopy['pc-ram_soportada']) <= 0)) return 'La Ram Soportada por la tarjeta Madre no es correcta. Deben ser numeros positivos pares multipos de 2. '
         ramSoportada = Number(dataCopy['pc-ram_soportada']);
-        slotsTotal = Number(dataCopy['pc-slots_ram']);
-        discConect = Number(dataCopy['pc-conexiones_disco']);
+        slotsTotal = Number(dataCopy['pc-numero_slots']);
+        //discConect = Number(dataCopy['pc-conexiones_dd']);
         for (var _k = 0; _k < arrPrincipal.length; _k++) {
             if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1 || (arrPrincipal[_k].indexOf('cpu-disco_duro') !== -1 || (arrPrincipal[_k].indexOf('pc-ups_regulador') !== -1) || arrPrincipal[_k].indexOf('pc-procesador') !== -1)) {
                 for (var _j = 0; _j < indValues.length; _j++) {
@@ -197,9 +200,9 @@ export default class FormPCLaptop extends Component<any, IState> {
         if (ramSoportada < ramTotal) {
             return 'La Memoria(s) Ram ingresadas sobre pasan la capacidad del Equipo.'
         }
-        if (discConect < this.state.storageTabs.length) {
-            return 'La cantidad de Discos Duro no coinciden con La cantidad de Conexiones Disponibles en el Equipo.'
-        }
+        // if (discConect < this.state.storageTabs.length) {
+        //     return 'La cantidad de Discos Duro no coinciden con La cantidad de Conexiones Disponibles en el Equipo.'
+        // }
 
 
 
@@ -279,11 +282,20 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating">Numero de slots para Ram<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-slots_ram"]} className="root" name='pc-slots_ram' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
+                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-numero_slots"]} className="root" name='pc-numero_slots' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
                                         </IonItem>
-                                        <IonItem>
+                                        {/* <IonItem>
                                             <IonLabel position="floating">Numero de Conexiones para Disco Duro<IonText color="danger">*</IonText></IonLabel>
-                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-conexiones_disco"]} className="root" name='pc-conexiones_disco' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
+                                            <IonInput required disabled={this.state.disabled_form} type="number" value={this.state.data["pc-conexiones_dd"]} className="root" name='pc-conexiones_dd' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}></IonInput>
+                                        </IonItem> */}
+                                        <IonItem>
+                                            <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect disabled={this.state.disabled_form} value={this.state.data["pc-estado"]} name={'pc-estado'} onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, this) }}>
+                                                <IonSelectOption value={"O"}>Operativo</IonSelectOption>
+                                                <IonSelectOption value={"D"}>Disponible</IonSelectOption>
+                                                <IonSelectOption value={"ER"}>En Revision</IonSelectOption>
+                                                <IonSelectOption value={"R"}>Reparado</IonSelectOption>
+                                            </IonSelect>
                                         </IonItem>
 
                                         {GlobalPC.generateFormExt(this)}
@@ -399,13 +411,15 @@ export default class FormPCLaptop extends Component<any, IState> {
                                         </Button>
                                     </ExpansionPanelActions>
                                 </ExpansionPanel>
-                                {GlobalPC.generateFuenteForm(this, 5)}
+                                {
+                                    //GlobalPC.generateFuenteForm(this, 5)
+                                }
                             </div>
                             <br />
                             <IonRow class="ion-text-center">
                                 <IonCol>
                                     <IonButton color="success" class="ion-no-margin" disabled={this.state.disabled_form} onClick={(e: any) => {
-                                        
+
                                         const res = this.validarData();
                                         GlobalPC.saveHandler(res, this);
 
@@ -450,7 +464,7 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                             GlobalPC.editEquipo(this, this.props.match.params.id, this.state.data, 1);
                                                         }
                                                     } else {
-                                                        
+
 
                                                         GlobalPC.sendData(1, this);
                                                     }

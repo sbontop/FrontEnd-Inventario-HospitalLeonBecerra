@@ -1,13 +1,16 @@
 import {
-  IonItem, IonLabel, IonLoading, IonAlert, IonAvatar, IonIcon, IonList, IonPopover, IonTitle, IonButton
+  IonItem, IonLabel, IonLoading, IonAlert, IonAvatar, IonIcon, IonList,
+  IonToolbar, IonContent, IonTitle, IonButton, IonButtons, IonModal
 } from '@ionic/react';
 import { Redirect } from 'react-router-dom';
-import { menu, eye, trash, create } from 'ionicons/icons';
+import { trash, create } from 'ionicons/icons';
 import React from 'react';
 import AxiosPC from '../../services/AxiosPC';
+import DescriptionLaptop from "./DescriptionLaptop";
+import DescriptionDesktop from "./DescriptionDesktop";
 
 export default class ItemEquipo extends React.Component<{ info: any, tipo: any, principal: any }, any> {
-  //principal: any
+
   constructor(props: any) {
     super(props);
     this.state = {
@@ -66,25 +69,31 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
 
   render() {
     if (this.state.changePage) {
-      let path_ =(this.props.info.ip === null?"/form-"+this.props.tipo+"/edit/" + this.props.info.id_equipo:"/form-"+this.props.tipo+"-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
-     // let path_desk = (this.props.info.ip === null?"/form-desktop/edit/" + this.props.info.id_equipo:"/form-desktop-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
+      let path_ = (this.props.info.original.general.ip === null ? "/form-" + this.props.tipo + "/edit/" + this.props.info.original.general.id_equipo : "/form-" + this.props.tipo + "-2/edit-2/" + this.props.info.original.general.id_equipo + "/" + this.props.info.original.general.ip);
+      // let path_desk = (this.props.info.ip === null?"/form-desktop/edit/" + this.props.info.id_equipo:"/form-desktop-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
       //return (this.props.tipo === 'laptop' ? <Redirect to={path_} /> : <Redirect to={"/form-desktop/edit/" + this.props.info.id_equipo} />);
-      return <Redirect to={path_} /> 
+      return <Redirect to={path_} />
     }
     return (
-      <div>
-        <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: true }) }} >
+      <div key={this.props.info.original.general.id_equipo}>
+        <IonItem >
           <IonAvatar slot="start">
             <img src={process.env.PUBLIC_URL + "/assets/img/" + this.props.tipo + ".png"} alt="" />
           </IonAvatar>
 
-          <IonLabel color="dark">
-            <h2><b>{this.props.info.tipo_equipo.toUpperCase() + ": " + this.props.info.codigo}</b></h2>
-            <h3>{"Usuario: " + this.props.info.encargado_registro}</h3>
-            <p>{"Fecha. Reg: " + this.props.info.fecha_registro}</p>
+          <IonLabel onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }} color="dark">
+            <h2><b>{this.props.info.original.general.tipo_equipo.toUpperCase() + ": " + this.props.info.original.general.codigo}</b></h2>
+            <h3>{"Usuario Reg: " + this.props.info.original.general.encargado_registro}</h3>
+            <p>{"Fecha. Reg: " + this.props.info.original.general.fecha_registro}</p>
           </IonLabel>
 
-          <IonIcon icon={menu}></IonIcon>
+          {/* <IonIcon icon={menu}></IonIcon> */}
+          <IonButton size="default" fill="clear" onClick={() => { this.setState({ changePage: true }) }} color="warning" >
+            <IonIcon color="warning" icon={create}></IonIcon>
+          </IonButton>
+          <IonButton size="default" fill="clear" onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }} color="primary">
+            <IonIcon color="primary" icon={trash}></IonIcon>
+          </IonButton>
 
         </IonItem>
         <IonLoading
@@ -134,65 +143,27 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
             }
           ]}
         />
-        <IonPopover
-          isOpen={this.state.ventanaOptions}
-          onDidDismiss={e => { if (this.state.mounted) this.setState({ ventanaOptions: false }) }}>
-          <IonTitle className="ion-margin-top" color="warn">{"Opciones: " + this.props.info.codigo}</IonTitle>
-          <IonList>
-            <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }}>
-              <IonLabel>
-                Ver Detalles
-              </IonLabel>
-              <IonIcon icon={eye}></IonIcon>
-            </IonItem>
-            <IonItem onClick={() => {
-              if (this.state.mounted)
 
-                this.setState({ changePage: true })
-              //this.props.principal.setState({ editarEquipo: true }) 
+        <IonContent>
+          <IonModal
+            isOpen={this.state.ventanaDetalle}
+            onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
+            <IonToolbar color="primary">
+              <IonTitle>{"Detalle de " + (this.props.tipo !== "desktop" ? "Laptop" : "Desktop")}</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>
+                  <IonIcon name="close" slot="icon-only"></IonIcon>
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+            <IonContent>
+              <IonList>
+                {this.props.tipo === "laptop" ? <DescriptionLaptop obj={this.props.info.original}></DescriptionLaptop> : <DescriptionDesktop obj={this.props.info.original}></DescriptionDesktop>}
+              </IonList>
+            </IonContent>
+          </IonModal>
 
-            }}>
-              <IonLabel>
-                Editar Informacion
-              </IonLabel>
-              <IonIcon icon={create}></IonIcon>
-            </IonItem>
-            <IonItem onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }}>
-              <IonLabel>
-                Eliminar Equipo
-              </IonLabel>
-              <IonIcon icon={trash}></IonIcon>
-            </IonItem>
-          </IonList>
-        </IonPopover>
-        <IonPopover
-          isOpen={this.state.ventanaDetalle}
-          onDidDismiss={e => { if (this.state.mounted) this.setState({ ventanaDetalle: false }) }}>
-          <IonTitle className="ion-margin-top" color="warn">Detalle del equipo</IonTitle>
-          <IonList>
-            <IonItem>
-              <IonLabel>Id: {this.props.info.id_equipo}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Codigo: {this.props.info.codigo}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Descripcion: {this.props.info.descripcion}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Encargado Registro: {this.props.info.encargado_registro}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Estado: {this.props.info.estado_operativo}</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Fecha Registro: {this.props.info.fecha_registro}</IonLabel>
-            </IonItem>
-          </IonList>
-          <div className="ion-text-center ion-margin">
-            <IonButton onClick={() => { if (this.state.mounted) this.setState({ ventanaDetalle: false }) }}>Cerrar</IonButton>
-          </div>
-        </IonPopover>
+        </IonContent>
       </div>
     )
   }

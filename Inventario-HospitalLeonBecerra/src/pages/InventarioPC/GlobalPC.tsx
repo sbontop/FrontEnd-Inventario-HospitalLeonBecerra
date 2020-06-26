@@ -36,6 +36,7 @@ export default interface IState {
     listOffice: any;
     fuente: any;
     visible_fuente: any;
+   
 
 }
 
