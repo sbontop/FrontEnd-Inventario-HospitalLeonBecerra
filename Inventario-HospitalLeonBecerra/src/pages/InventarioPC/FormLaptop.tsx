@@ -92,7 +92,7 @@ export default class FormPCLaptop extends Component<any, IState> {
         //let discConect = 0;
         let ramTotal = 0;
         let arr_cod: any[] = [];
-        let arr_serie: any[] = [];
+        //let arr_serie: any[] = [];
         formValues = formValues.concat(this.state.ramTabs);
         formValues = formValues.concat(this.state.storageTabs);
         let dataCopy = this.state.data;
@@ -119,15 +119,15 @@ export default class FormPCLaptop extends Component<any, IState> {
 
         }
 
-        if (arr_serie.indexOf(dataCopy["pc-numero_serie"]) > -1) {
+        // if (arr_serie.indexOf(dataCopy["pc-numero_serie"]) > -1) {
 
-            return "El Numero de Serie " + dataCopy['pc-numero_serie'] + " esta repetido. Por favor revise el formulario..."
-        } else {
+        //     return "El Numero de Serie " + dataCopy['pc-numero_serie'] + " esta repetido. Por favor revise el formulario..."
+        // } else {
 
-            arr_serie = arr_serie.concat([dataCopy["pc-numero_serie"]]);
-        }
+        //     arr_serie = arr_serie.concat([dataCopy["pc-numero_serie"]]);
+        // }
 
-        if (!GlobalPC.valRegExpNum(dataCopy['pc-ram_soportada'], "{1,2}", false)) {
+        if (!GlobalPC.valRegExpNum(dataCopy['pc-ram_soportada'], "{0,2}", false)) {
             return "Los datos ingresados en Ram Soportada no son validos";
         }
         if (!GlobalPC.valRegExpNum(dataCopy['pc-numero_slots'], "{0}", false)) {
@@ -155,14 +155,14 @@ export default class FormPCLaptop extends Component<any, IState> {
                                 arr_cod = arr_cod.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
                             }
                         }
-                        if (indValues[_j] === "numero_serie") {
-                            if (arr_serie.indexOf(dataCopy[arrPrincipal[_k]][indValues[_j]]) > -1) {
+                        // if (indValues[_j] === "numero_serie") {
+                        //     if (arr_serie.indexOf(dataCopy[arrPrincipal[_k]][indValues[_j]]) > -1) {
 
-                                return "El Numero de serie " + dataCopy[arrPrincipal[_k]][indValues[_j]] + " esta repetido. Por favor revise el formulario..."
-                            } else {
-                                arr_serie = arr_serie.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
-                            }
-                        }
+                        //         return "El Numero de serie " + dataCopy[arrPrincipal[_k]][indValues[_j]] + " esta repetido. Por favor revise el formulario..."
+                        //     } else {
+                        //         arr_serie = arr_serie.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
+                        //     }
+                        // }
                     }
                 }
             }
@@ -205,8 +205,8 @@ export default class FormPCLaptop extends Component<any, IState> {
         // }
 
 
-
-        return [arr_cod, arr_serie];
+        //arr_serie
+        return [arr_cod];
     }
 
 
@@ -295,6 +295,7 @@ export default class FormPCLaptop extends Component<any, IState> {
                                                 <IonSelectOption value={"D"}>Disponible</IonSelectOption>
                                                 <IonSelectOption value={"ER"}>En Revision</IonSelectOption>
                                                 <IonSelectOption value={"R"}>Reparado</IonSelectOption>
+                                                <IonSelectOption value={"B"}>De Baja</IonSelectOption>
                                             </IonSelect>
                                         </IonItem>
 

@@ -1,16 +1,33 @@
 import React from 'react';
 import {
-    IonItem, IonIcon, IonListHeader, IonNote
+    IonItem, IonIcon, IonListHeader, IonNote, 
 } from '@ionic/react';
 import {
-    reorder, barcode
+    reorder, barcode,pricetag, informationCircle
 } from 'ionicons/icons';
 import ItemSection from "./ItemSection";
 export default class DescriptionLaptop extends React.Component<{ obj: any }, any>{
     render() {
         return (
             <div>
-                {this.props.obj.so === null || this.props.obj.general === null ? null : <ItemSection comp={{ "general": this.props.obj.general, "so": this.props.obj.so }} header="Informacion General"></ItemSection>}
+                {this.props.obj.so === null || this.props.obj.general === null ? null :
+                    <div>
+                        <ItemSection comp={{ "general": this.props.obj.general, "so": this.props.obj.so }} header="Informacion General"></ItemSection>
+                        <IonItem>
+                            <IonIcon slot="start" icon={pricetag}> </IonIcon>
+                                Marca <IonNote color="dark" slot="end">{this.props.obj.general.marca}</IonNote>
+                        </IonItem>
+                        <IonItem>
+                            <IonIcon slot="start" icon={informationCircle} > </IonIcon>
+                                Modelo <IonNote color="dark" slot="end">{this.props.obj.general.modelo}</IonNote>
+                        </IonItem>
+                        <IonItem>
+                            <IonIcon slot="start" icon={barcode} > </IonIcon>
+                                Número de serie <IonNote color="dark" slot="end">{this.props.obj.general.numero_serie}</IonNote>
+                        </IonItem>
+                    </div>
+                }
+
                 {this.props.obj.so === null ? null : <ItemSection header="Sistema Operativo" comp={this.props.obj.so}></ItemSection>}
 
 

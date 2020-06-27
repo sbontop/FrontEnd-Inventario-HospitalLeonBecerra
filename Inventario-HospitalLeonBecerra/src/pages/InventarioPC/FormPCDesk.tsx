@@ -90,7 +90,7 @@ export default class FormPCDesk extends Component<any, IState> {
         let valuesRD = ['tipo', 'capacidad', "tipo_capacidad"];
         let valuesP = ['frecuencia', 'nucleos'];
         let arr_cod: any[] = [];
-        let arr_serie: any[] = [];
+       // let arr_serie: any[] = [];
         let ramSoportada = 0;
         let slotsTotal = 0;
         let ramTotal = 0;
@@ -148,14 +148,14 @@ export default class FormPCDesk extends Component<any, IState> {
                                 arr_cod = arr_cod.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
                             }
                         }
-                        if (indValues[_j] === "numero_serie") {
-                            if (arr_serie.indexOf(dataCopy[arrPrincipal[_k]][indValues[_j]]) > -1) {
+                        // if (indValues[_j] === "numero_serie") {
+                        //     if (arr_serie.indexOf(dataCopy[arrPrincipal[_k]][indValues[_j]]) > -1) {
 
-                                return "El Numero de serie " + dataCopy[arrPrincipal[_k]][indValues[_j]] + " esta repetido. Por favor revise el formulario..."
-                            } else {
-                                arr_serie = arr_serie.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
-                            }
-                        }
+                        //         return "El Numero de serie " + dataCopy[arrPrincipal[_k]][indValues[_j]] + " esta repetido. Por favor revise el formulario..."
+                        //     } else {
+                        //         arr_serie = arr_serie.concat([dataCopy[arrPrincipal[_k]][indValues[_j]]])
+                        //     }
+                        // }
                     }
                 }
             }
@@ -163,7 +163,7 @@ export default class FormPCDesk extends Component<any, IState> {
                 for (var _h = 0; _h < valuesTM.length; _h++) {
                     if (Object.keys(dataCopy[arrPrincipal[_k]]).indexOf(valuesTM[_h]) < 0 || dataCopy[arrPrincipal[_k]][valuesTM[_h]] === undefined || dataCopy[arrPrincipal[_k]][valuesTM[_h]] === null || (String(dataCopy[arrPrincipal[_k]][valuesTM[_h]]).trim() === "")) return 'Debe ingresar datos en el campo ' + valuesTM[_h].replace('_', " ").toUpperCase() + ' en el componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ");
                 }
-                if (!GlobalPC.valRegExpNum(dataCopy[arrPrincipal[_k]]['ram_soportada'], "{1,2}", false)) {
+                if (!GlobalPC.valRegExpNum(dataCopy[arrPrincipal[_k]]['ram_soportada'], "{0,2}", false)) {
                     return "Los datos ingresados en Ram Soportada no son validos";
                 }
                 if (!GlobalPC.valRegExpNum(dataCopy[arrPrincipal[_k]]['numero_slots'], "{0}", false)) {
@@ -186,7 +186,7 @@ export default class FormPCDesk extends Component<any, IState> {
                     return "La Capacidad ingresada en " + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ") + " no es valida."
                 }
                 if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
-                    if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
+                    if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ") + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
                     //ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
                     let r = Number(dataCopy[arrPrincipal[_k]]['capacidad']);
                     ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"] === "GB" ? r : r / 1000);
@@ -214,8 +214,8 @@ export default class FormPCDesk extends Component<any, IState> {
         if (discConect < this.state.storageTabs.length) {
             return 'La cantidad de Discos Duro no coinciden con La cantidad de Conexiones Disponibles en la Tarjeta Madre.'
         }
-
-        return [arr_cod, arr_serie];
+        //arr_serie
+        return [arr_cod];
     }
 
 
@@ -334,6 +334,7 @@ export default class FormPCDesk extends Component<any, IState> {
                                             <IonSelectOption value={"D"}>Disponible</IonSelectOption>
                                             <IonSelectOption value={"ER"}>En Revision</IonSelectOption>
                                             <IonSelectOption value={"R"}>Reparado</IonSelectOption>
+                                            <IonSelectOption value={"B"}>De Baja</IonSelectOption>
                                         </IonSelect>
                                     </IonItem>
                                 </IonList>
