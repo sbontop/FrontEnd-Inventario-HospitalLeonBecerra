@@ -9,6 +9,7 @@ import {trash} from 'ionicons/icons'
 import AxiosImpresora from '../../services/AxiosImpresora';
 
 interface IState {
+  suministro_multifuncional:any,
   ip_anterior:any,
   id_ip_anterior:any,
   confirmacion_eliminar:any,
@@ -37,12 +38,14 @@ interface IState {
 
 const tiposImpresoras = [{id: 'Multifuncional'},{id: 'Matricial'},{id: 'Brazalete'},{id: 'Impresora'},{id: 'Escáner'}];
 let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
+let suministros = [{id:'Toner'},{id:'Tinta'},{id:'Cartucho'}];
 
 class FormImpresora extends Component<{} , IState> {
   private id:any;
   constructor(props: any) {
     super(props);
     this.state = {
+        suministro_multifuncional:"",
         data:{},
         confirmacion_eliminar:false,
         data_impresora_by_id:[],
@@ -78,6 +81,7 @@ class FormImpresora extends Component<{} , IState> {
     this.mostrar_empleados();
     this.obtener_id_impresora_editar();  
     if (this.id !== undefined){
+      
       this.obtenerImpresoraById();
     }
   }
@@ -88,6 +92,9 @@ class FormImpresora extends Component<{} , IState> {
       cargando: true
     });
     AxiosImpresora.mostrar_dato_impresora_by_id(this.id).then((res:any) => {
+
+     
+      
       this.setState({
         estado_anterior: (() => {
           switch (res.data[0].estado_operativo) {
@@ -100,6 +107,15 @@ class FormImpresora extends Component<{} , IState> {
         })()
       })
       let data_id = res.data[0];
+      
+      if (data_id.tinta !==null){
+        data_id.suministro = "Tinta";
+      }else if(data_id.cartucho !==null){
+        data_id.suministro = "Cartucho";
+      }else{
+        data_id.suministro = "Toner";
+      }
+
       data_id.estado_operativo = this.state.estado_anterior;
       this.setState({
         data_impresora_by_id: data_id,
@@ -202,14 +218,15 @@ mostrar_empleados() {
     let lista_nombres_campos_impresora_defecto:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo"];    
     let lista_nombres_campos_impresora:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho",];    
     let lista_nombres_campos_brazalete:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Rollo"];    
-    let lista_nombres_campos_multifuncional:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho","Toner"];    
+    //let lista_nombres_campos_multifuncional:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Tinta","Cartucho","Toner"];    
+    let lista_nombres_campos_multifuncional:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Suministro"];
     let lista_nombres_campos_matricial:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Cinta"];    
     let lista_nombres_campos_escaner:any=["Número de serie","Tipo","Marca","Código","Estado Operativo","Modelo","Rodillo"];    
 
     let lista_campos_completos_impresora_defecto:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo"];
     let lista_campos_completos_impresora:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","tinta","cartucho"];
     let lista_campos_completos_brazalete:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","rollo"];
-    let lista_campos_completos_multifuncional:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","tinta","cartucho","toner"];
+    let lista_campos_completos_multifuncional:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","suministro"];
     let lista_campos_completos_matricial:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","cinta"];
     let lista_campos_completos_escaner:any=["numero_serie","tipo","id_marca","codigo","estado_operativo","modelo","rodillo"];
 
@@ -230,6 +247,7 @@ mostrar_empleados() {
           (json.hasOwnProperty('tinta')!==true || (json.tinta+'').trim()==='') || (json.hasOwnProperty('cartucho')!==true || (json.cartucho+'').trim()==='')){
             console.log('Condición96');
             for(let i in lista_campos_completos_impresora){
+            
               campo = lista_campos_completos_impresora[i]; //marca
               campo_nombre_completo = lista_nombres_campos_impresora[i];
               valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
@@ -308,18 +326,60 @@ mostrar_empleados() {
           this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
-        if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined ) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
+        
+
+        //if (json.hasOwnProperty('suministro')===true && (json.sumnistro+'').trim()!==''){
+        //  console.log("999999999999999999");
+        //  lista_campos_completos_multifuncional.push((this.state.data_impresora_by_id.suministro+'').toLowerCase());
+        //  console.log("Convert: ",(this.state.data_impresora_by_id.suministro+'').toLowerCase());
+        //  lista_nombres_campos_multifuncional.push(this.state.data_impresora_by_id.suministro+''.toLowerCase().replace(/\b[a-z]/g, function(letter:any) { 
+        //    return letter.toUpperCase(); 
+        //  }));
+        //}
+
+        console.log('CAMPOS IN: ', lista_campos_ingresados);
+        //let suministro_parametro:any = (json.suministro+'').toLowerCase();
+        //this.state.data_impresora_by_id.palw = "AAAAAAAAAAAAAAAAAA";
+        console.log("Cambiado: ",this.state.data_impresora_by_id);
+        
+        //console.log("Acc: ",json.json.suministro);
+
+
+        
+
+        
+        let mostrar_alerta:any = false;
+
+        if (((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined ) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
           (json.hasOwnProperty('id_marca')!==true || (json.id_marca+'').trim()==='') || (json.hasOwnProperty('codigo')!==true || (json.codigo+'').trim()==='' || json.codigo=== undefined) || 
-          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined) || 
-          (json.hasOwnProperty('tinta')!==true || (json.tinta+'').trim()==='') || (json.hasOwnProperty('cartucho')!==true || (json.cartucho+'').trim()==='') ||
-          (json.hasOwnProperty('toner')!==true || (json.toner+'').trim()==='')){
+          (json.hasOwnProperty('estado_operativo')!==true || (json.estado_operativo+'').trim()==='') || (json.hasOwnProperty('modelo')!==true || (json.modelo+'').trim()==='' || json.modelo=== undefined)) || 
+          (json.hasOwnProperty('suministro')!==true || (json.sumnistro+'').trim()==='')){
+            console.log('CAMPOS IN: ', lista_campos_ingresados);
+            console.log('CAMPOS INW:  ', json);            
+            //json.hasOwnProperty(json.sumnistro)
+
             console.log('Condición96');
             for(let i in lista_campos_completos_multifuncional){
               campo = lista_campos_completos_multifuncional[i]; //marca
               campo_nombre_completo = lista_nombres_campos_multifuncional[i];
+              /*if (campo_nombre_completo===this.state.data_impresora_by_id.suministro )*/
               valor_indice = lista_campos_ingresados.indexOf(campo); // 2 veo si ese campo está en la lista,
               valor_vacio = (lista_valores_imgresados[valor_indice]+'').trim();
-  
+              /*console.log("\nvalor_indice: ", valor_indice);
+              console.log("valor_indice: ",valor_vacio);
+              
+              console.log("lista_valores_imgresados[valor_indice]: ",lista_valores_imgresados[valor_indice]);
+              console.log("values input: ",lista_valores_imgresados);*/
+
+              console.log('\ncampo: ',lista_campos_completos_multifuncional[i]);
+              console.log('campo completo: ',lista_nombres_campos_multifuncional[i]);
+              console.log('list campo: ',lista_campos_completos_multifuncional);
+              console.log('list campo completo: ',lista_nombres_campos_multifuncional);
+              console.log("valor_indice: ", valor_indice);
+              console.log("valor_vacio: ", valor_vacio);
+              console.log();
+
+              console.log("");
               if (valor_indice<0 || valor_vacio==='' || lista_valores_imgresados[valor_indice] === undefined){ //Si el valor índice es menor que cero
                                    // no está ingresado ese campo
                   texto = texto+" "+campo_nombre_completo+",";
@@ -328,12 +388,77 @@ mostrar_empleados() {
             if(texto.slice(-1)===','){
               texto=texto.slice(0,-1);
             }
+            
+            mostrar_alerta = true;
+
+            
+          }
+          
+          if (json.suministro==="Cartucho" && ((json.hasOwnProperty('cartucho')!==true || (json.cartucho+'').trim()==='') || json.cartucho === undefined )){
+            console.log("ONE");
+            mostrar_alerta = true;
+            if(texto.slice(-1)===','){
+              texto = texto+' Cartucho';
+            }else{
+              if (texto.length>0){
+                texto = texto+', Cartucho';
+              }else{
+                texto = texto+'Cartucho';
+              }
+            }
+            //texto = texto+' Cartucho';
+          }else if (json.suministro==="Tinta" && ((json.hasOwnProperty('tinta')!==true || (json.tinta+'').trim()==='') || json.tinta === undefined)){
+            console.log("TWO");
+            mostrar_alerta = true;
+            if(texto.slice(-1)===','){
+              texto = texto+' Tinta';
+            }else{
+              if (texto.length>0){
+                texto = texto+', Tinta';  
+              }else{
+                texto = texto+'Tinta';
+              }
+            }
+            //texto = texto+' Tinta';
+          }else if (json.suministro==="Toner" && ((json.hasOwnProperty('toner')!==true || (json.toner+'').trim()==='') || json.toner === undefined)){
+            console.log("THREE");
+            mostrar_alerta = true;
+            if(texto.slice(-1)===','){
+              texto = texto+' Toner';
+            }else{
+              if (texto.length>0){
+                texto = texto+', Toner';
+              }else{
+                texto = texto+'Toner';
+              }
+
+            }
+            //texto = texto+' Toner';
+          }
+          console.log(mostrar_alerta);
+          if (mostrar_alerta){
             this.setState({
               campos_incompletos:texto,
               incompleto:true
             }) 
           }else{
           //this.setState({guardar:true})
+          let json = this.state.data_impresora_by_id;
+          let json_datos_editados = this.copiar_json(json);
+          if (this.state.data_impresora_by_id.suministro === "Cartucho"){
+            json_datos_editados.toner = "";
+            json_datos_editados.tinta = "";
+          }else if (this.state.data_impresora_by_id.suministro === "Tinta"){
+            json_datos_editados.cartucho = "";
+            json_datos_editados.toner = "";
+          }else{
+            json_datos_editados.cartucho = "";
+            json_datos_editados.tinta = "";
+          }
+          this.setState({
+            data_impresora_by_id:json_datos_editados
+          });
+          console.log("Edit: ",json_datos_editados);
           this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
@@ -448,6 +573,7 @@ mostrar_empleados() {
 }
 
   enviar=()=> {
+    console.log("A: ",this.state.data_impresora_by_id);
     /*this.setState({
       guardar:false,
       cargando:true
@@ -730,11 +856,36 @@ mostrar_empleados() {
                   <IonInput required value= {this.state.data_impresora_by_id.rollo} onIonChange={this.onChangeInput}  name="printer.rollo" type="text" ></IonInput>
                   </IonItem>: null
                 }
+
+
                 {
                   this.state.data_impresora_by_id.tipo==="Multifuncional"?
+
+                            
+                  
+
+
                   <div>
-                                 <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
+
+<IonItem>
+                  <IonLabel position="stacked">Suministro <IonText color="danger">*</IonText></IonLabel>
+                  <IonSelect disabled = {this.id!==undefined?true:false} name="printer.suministro"
+                            value = {this.state.data_impresora_by_id.suministro} 
+                            onIonChange={(e:any)=>{this.onChangeInput(e)}}>
+                    {suministros.map((object, i) => {
+                      return (
+                        <IonSelectOption key={object.id} value={object.id}>
+                          {object.id} 
+                        </IonSelectOption>
+                      );
+                    })}
+                  </IonSelect>
+                </IonItem>
+
+                {this.state.data_impresora_by_id.suministro === "Tinta"?
+
+                  <IonItem>
+                  <IonLabel position="stacked">Información - Tinta <IonText color="danger">*</IonText></IonLabel>
                   <IonSelect name="printer.tinta" value = {this.state.data_impresora_by_id.tinta} onIonChange={this.onChangeInput} >
                     {this.state.marcas.map((object:any, i:any) => {
                       return (
@@ -744,15 +895,27 @@ mostrar_empleados() {
                       );
                     })}
                   </IonSelect>
-                </IonItem>
+                  </IonItem>:null
+                }
+                {
+                  this.state.data_impresora_by_id.suministro === "Cartucho"?
                   <IonItem>
-                  <IonLabel position="stacked">Cartucho<IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="stacked">Información - Cartucho<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required value= {this.state.data_impresora_by_id.cartucho} onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                  </IonItem>
+                  </IonItem>:null
+                }
+                {this.state.data_impresora_by_id.suministro === "Toner"?
+
                   <IonItem>
-                  <IonLabel position="stacked">Toner<IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="stacked">Información - Toner<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required value = {this.state.data_impresora_by_id.toner} onIonChange={this.onChangeInput} name="printer.toner" type="text" ></IonInput>
-                  </IonItem>
+                  </IonItem>:null
+                }
+
+
+
+
+
                   </div>: null
                 }
                 {

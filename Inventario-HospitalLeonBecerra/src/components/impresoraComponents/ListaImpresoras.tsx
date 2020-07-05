@@ -162,7 +162,7 @@ import {
               
               <div>
                 {
-                this.props.tipo==="Impresora" || this.props.tipo==="Multifuncional"? 
+                this.props.tipo==="Impresora"? 
                 <div>
                 <IonItem>
                   <IonIcon slot="start" icon={colorFilter}></IonIcon>
@@ -178,17 +178,39 @@ import {
                 </div>
                 : null
                }
+               
+               
                {
                 this.props.tipo==="Multifuncional"? 
 
-                <IonItem>
-                  <IonIcon slot="start" icon={aperture}></IonIcon>
-                  <IonLabel>Toner</IonLabel>
-                  <IonNote slot="end">{this.props.toner}</IonNote>
-                </IonItem>
+                <div>
+                  {
+                 this.props.tinta!==null && this.props.tinta!=='' && this.props.tinta!==' '?
+                 <IonItem>
+                  <IonIcon slot="start" icon={colorFilter}></IonIcon>
+                  <IonLabel>Tinta</IonLabel>
+                  <IonNote slot="end">{this.props.tinta}</IonNote>
+                </IonItem>:null 
+               }
+               {
+                 this.props.cartucho!==null && this.props.cartucho!=='' && this.props.cartucho!==' '?
+                 <IonItem>
+                  <IonIcon slot="start" icon={cube}></IonIcon>
+                  <IonLabel>Cartucho</IonLabel>
+                  <IonNote slot="end">{this.props.cartucho}</IonNote>
+                </IonItem>:null 
+               }
+               {
+                 this.props.toner!==null && this.props.toner!=='' && this.props.toner!==' '?
+                 <IonItem>
+                 <IonIcon slot="start" icon={aperture}></IonIcon>
+                 <IonLabel>Toner</IonLabel>
+                 <IonNote slot="end">{this.props.toner}</IonNote>
+               </IonItem>:null 
+               }
+                </div>:null
+                                
 
-                          
-                : null
                }
                {
                 this.props.tipo==="Matricial"? 
