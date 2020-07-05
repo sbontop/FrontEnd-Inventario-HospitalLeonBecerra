@@ -143,7 +143,63 @@ import {
               <IonItem>
                 <IonIcon slot="start" icon={appstore}></IonIcon>
                 <IonLabel>Tipo</IonLabel>
-                <IonNote slot="end">{this.props.tipo_equipo}</IonNote>
+                <IonNote slot="end">
+                  {
+                    this.props.tipo_equipo === "case"?
+                    'Case':null
+                  }
+                  {
+                    this.props.tipo_equipo === "CPU"?
+                    'CPU':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Mouse"?
+                    'Mouse':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Monitor"?
+                    'Monitor':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Teclado"?
+                    'Teclado':null
+                  }
+                  {
+                    this.props.tipo_equipo === "disco_duro"?
+                    'Disco duro':null
+                  }
+                  {
+                    this.props.tipo_equipo === "fuente_poder"?
+                    'Fuente de poder':null
+                  }
+                  {
+                    this.props.tipo_equipo === "memoria_ram"?
+                    'Memoria RAM':null
+                  }
+                  {
+                    this.props.tipo_equipo === "parlantes"?
+                    'Parlantes':null
+                  }
+                  {
+                    this.props.tipo_equipo === "procesador"?
+                    'Procesador':null
+                  }
+                  {
+                    this.props.tipo_equipo === "regulador"?
+                    'Regulador':null
+                  }
+                  {
+                    this.props.tipo_equipo === "tarjeta_madre"?
+                    'Tarjeta madre': null
+                  }
+                  {
+                    this.props.tipo_equipo === "tarjeta_red"?
+                    'Tarjet de red': null
+                  }
+                  {
+                    this.props.tipo_equipo === "ups"?
+                    'UPS': null
+                  }</IonNote>
               </IonItem>
 
               <IonItem>

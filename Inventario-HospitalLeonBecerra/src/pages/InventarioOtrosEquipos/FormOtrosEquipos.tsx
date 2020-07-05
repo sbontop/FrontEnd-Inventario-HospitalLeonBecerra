@@ -31,24 +31,18 @@ interface IState {
   error_servidor:any;
   marcas:any;
   childVisible:any;
-  matricial:any;
-  brazalete:any;
-  multifuncional:any;
-  impresora:any;
   escaner:any;
   estado_anterior:any;
   existe_repetido:any;
   lista_direcciones_ip:any;
   lista_empleados:any;
-  id_impresora_editar: any;
   value:any,
   compentes: any
 }
 
 const tipos_memorias = [{id: 'DDR'},{id: 'DDR2'},{id: 'DDR3'},{id: 'DDR3/DDR4'},{id: 'DDR4'}];
 const tipos_disco_duro = [{id: 'SSD'},{id: 'HDD'}];
-let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
-
+let estados_equipos = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
 
 class FormOtrosEquipos extends Component<{} , IState> {
   private id:any;
@@ -71,15 +65,10 @@ class FormOtrosEquipos extends Component<{} , IState> {
         error_servidor:false,
         marcas:[],
         childVisible:false,
-        matricial:false,
-        brazalete:false,
-        multifuncional:false,
-        impresora:false,
         escaner:false,
         existe_repetido: false,
         lista_direcciones_ip:[],
         lista_empleados: [],
-        id_impresora_editar:"",
         value:"",
         ip_anterior:"",
         id_ip_anterior:"",
@@ -92,7 +81,7 @@ class FormOtrosEquipos extends Component<{} , IState> {
   }
 
   ionViewWillEnter() {
-    estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
+    estados_equipos = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
     this.mostrar_tipos_equipos();
     this.mostrar_marcas();
     this.mostrar_componentes();
@@ -134,7 +123,6 @@ class FormOtrosEquipos extends Component<{} , IState> {
         id_ip_anterior: res.data[0].id_ip,
       });
 
-      console.log("data_impresora_by_id: ",this.state.data_equipo_by_id);
     }).catch((err:any) => {
       this.setState({
         //cargando:false,
@@ -189,9 +177,7 @@ class FormOtrosEquipos extends Component<{} , IState> {
     if (document.URL.indexOf("edit") > 0) {
       let splitURL = document.URL.split("/");
       this.id= splitURL[splitURL.length-1];
-      this.setState({
-        id_impresora_editar:splitURL[splitURL.length-1]
-      })
+      
     }
   }
 
@@ -746,7 +732,63 @@ verificar2=()=>{
                       
                       return (
                         <IonSelectOption key={object.tipo_equipo} value={object.tipo_equipo}>
-                          {object.tipo_equipo} 
+                          {
+                            object.tipo_equipo === "case"?
+                            'Case':null
+                          }
+                          {
+                            object.tipo_equipo === "CPU"?
+                            'CPU':null
+                          }
+                          {
+                            object.tipo_equipo === "Mouse"?
+                            'Mouse':null
+                          }
+                          {
+                            object.tipo_equipo === "Monitor"?
+                            'Monitor':null
+                          }
+                          {
+                            object.tipo_equipo === "Teclado"?
+                            'Teclado':null
+                          }
+                          {
+                            object.tipo_equipo === "disco_duro"?
+                            'Disco duro':null
+                          }
+                          {
+                            object.tipo_equipo === "fuente_poder"?
+                            'Fuente de poder':null
+                          }
+                          {
+                            object.tipo_equipo === "memoria_ram"?
+                            'Memoria RAM':null
+                          }
+                          {
+                            object.tipo_equipo === "parlantes"?
+                            'Parlantes':null
+                          }
+                          {
+                            object.tipo_equipo === "procesador"?
+                            'Procesador':null
+                          }
+                          {
+                            object.tipo_equipo === "regulador"?
+                            'Regulador':null
+                          }
+                          {
+                            object.tipo_equipo === "tarjeta_madre"?
+                            'Tarjeta madre': null
+                          }
+                          {
+                            object.tipo_equipo === "tarjeta_red"?
+                            'Tarjet de red': null
+                          }
+                          {
+                            object.tipo_equipo === "ups"?
+                            'UPS': null
+                          }
+                          
                         </IonSelectOption>
                       );
                     })}
@@ -806,7 +848,7 @@ verificar2=()=>{
                   <IonLabel position="stacked">Estado <IonText color="danger">*</IonText></IonLabel>
                     <IonSelect name="printer.estado_operativo" value = {this.state.data_equipo_by_id.estado_operativo} onIonChange={this.onChangeInput} >                    
                     
-                    {estadosImpresoras.map((object, i) => {
+                    {estados_equipos.map((object, i) => {
                       return (
                         <IonSelectOption key={object.id} value={object.id}>
                           {object.id}
@@ -939,7 +981,7 @@ verificar2=()=>{
 
 
                 <IonItem>
-                  <IonLabel position="stacked">Asignar a componente principal <IonText color="danger">*</IonText></IonLabel>
+                  <IonLabel position="stacked">Asignar a componente principal <IonText color="danger"></IonText></IonLabel>
                   <IonSelect name="printer.componente_principal" value = {this.state.data_equipo_by_id.componente_principal} onIonChange={this.onChangeInput} >
                   <IonSelectOption value={null}>Ninguno</IonSelectOption>
 
@@ -978,73 +1020,16 @@ verificar2=()=>{
 
                 
                 <div>
-                {
-                    this.state.data_equipo_by_id.tipo_equipo==="Matricial"? <IonItem>
-                    <IonLabel position="stacked">Cinta <IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required value={this.state.data_equipo_by_id.cinta  } onIonChange={this.onChangeInput} name="printer.cinta" type="text" ></IonInput>
-                  </IonItem>: null  
-                } 
-                {
-                  this.state.brazalete? <IonItem>
-                  <IonLabel position="stacked">Rollo-Brazalete<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required value= {this.state.data_equipo_by_id.rollo} onIonChange={this.onChangeInput}  name="printer.rollo" type="text" ></IonInput>
-                  </IonItem>: null
-                }
-                {
-                  this.state.multifuncional?
-                  <div>
-                                 <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                  <IonSelect name="printer.tinta" value = {this.state.data_equipo_by_id.tinta} onIonChange={this.onChangeInput} >
-                    {this.state.marcas.map((object:any, i:any) => {
-                      return (
-                        <IonSelectOption key={object.marca} value={object.marca}>
-                          {object.marca}
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
-                </IonItem>
-                  <IonItem>
-                  <IonLabel position="stacked">Cartucho<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required value= {this.state.data_equipo_by_id.cartucho} onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                  </IonItem>
-                  <IonItem>
-                  <IonLabel position="stacked">Toner<IonText color="danger">*</IonText></IonLabel>
-                  <IonInput required value = {this.state.data_equipo_by_id.toner} onIonChange={this.onChangeInput} name="printer.toner" type="text" ></IonInput>
-                  </IonItem>
-                  </div>: null
-                }
+                 
+                
+                
                 {
                   this.state.escaner? <IonItem>
                   <IonLabel position="stacked">Rodillo<IonText color="danger">*</IonText></IonLabel>
                   <IonInput required onIonChange={this.onChangeInput} value = {this.state.data_equipo_by_id.rodillo} name="printer.rodillo" type="text" ></IonInput>
                   </IonItem>: null
                 }
-                {
-                  this.state.impresora? 
-                  <div>                  
-                <IonItem>
-                  <IonLabel position="stacked">Tinta <IonText color="danger">*</IonText></IonLabel>
-                  
-                  <IonSelect name="printer.tinta" value = {this.state.data_equipo_by_id.tinta} onIonChange={this.onChangeInput} >
-                    
-                    {this.state.marcas.map((object:any, i:any) => {
-                      return (
-                        <IonSelectOption key={object.marca} value={object.marca}>
-                          {object.marca}
-                        </IonSelectOption>
-                      );
-                    })}
-                  </IonSelect>
-                </IonItem>
-
-                  <IonItem>
-                    <IonLabel position="stacked">Cartucho <IonText color="danger">*</IonText></IonLabel>
-                    <IonInput required value= {this.state.data.cartucho} onIonChange={this.onChangeInput} name="printer.cartucho" type="text" ></IonInput>
-                  </IonItem>
-                  </div>: null
-                }
+                
 
                 </div>
                 <IonLoading
