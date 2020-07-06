@@ -8,7 +8,8 @@ export default class DescriptionDesktop extends React.Component<{ obj: any }, an
             <div>
                 {this.props.obj.so === null || this.props.obj.general === null||this.props.obj.so === undefined || this.props.obj.general === undefined  ? null : <ItemSection comp={{ "general": this.props.obj.general, "so": this.props.obj.so }} header="Informacion General"></ItemSection>}
                 {this.props.obj.so === null ||this.props.obj.so === undefined ? null : <ItemSection header="Sistema Operativo" comp={this.props.obj.so}></ItemSection>}
-
+                {this.props.obj.programas === null ? null : <ItemSection header="Programas instalados" comp={this.props.obj.programas}></ItemSection>}
+                
                 {this.props.obj.monitor === null || this.props.obj.monitor === undefined? null : <ItemSection header="Monitor" comp={this.props.obj.monitor}></ItemSection>}
                 {this.props.obj.teclado === null|| this.props.obj.teclado === undefined? null : <ItemSection header="Teclado" comp={this.props.obj.teclado}></ItemSection>}
                 {this.props.obj.mouse === null ||this.props.obj.mouse === undefined? null : <ItemSection header="Mouse" comp={this.props.obj.mouse}></ItemSection>}

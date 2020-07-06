@@ -1,17 +1,21 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/react';
 import OpcionesInventario from './OpcionesInventario'
 import React from 'react';
 import {
   RouteComponentProps
 } from 'react-router';
+import { arrowBack } from 'ionicons/icons';
 const Inventarios: React.FC<RouteComponentProps> = (props) => {
   return (
     <IonPage>
       <IonHeader>
 
         <IonToolbar color="primary">
-          <IonButtons slot="start">
+          {/* <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
+          </IonButtons> */}
+          <IonButtons slot="start">
+            <IonButton routerLink="/home"><IonIcon icon={arrowBack}></IonIcon></IonButton>
           </IonButtons>
           <IonTitle>Gestión de inventario</IonTitle>
         </IonToolbar>

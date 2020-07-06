@@ -29,7 +29,8 @@ export default class DescriptionLaptop extends React.Component<{ obj: any }, any
                 }
 
                 {this.props.obj.so === null ? null : <ItemSection header="Sistema Operativo" comp={this.props.obj.so}></ItemSection>}
-
+                {this.props.obj.programas === null ? null : <ItemSection header="Programas instalados" comp={this.props.obj.programas}></ItemSection>}
+                
 
                 <IonListHeader> Datos generales de memoria RAM  </IonListHeader>
                 <IonItem>

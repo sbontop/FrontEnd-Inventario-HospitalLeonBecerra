@@ -99,7 +99,7 @@ class HomeRouter extends React.Component<any, any> {
                 <IonHeader>
                     <IonToolbar color="primary">
                         <IonButtons slot="start">
-                            <IonButton routerLink="/home"><IonIcon icon={arrowBack}></IonIcon></IonButton>
+                            <IonButton routerLink="/tiposequiposinventario"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
                         <IonTitle>Inventario de routers</IonTitle>
                         <IonButtons slot="end">
@@ -113,15 +113,15 @@ class HomeRouter extends React.Component<any, any> {
                     onIonChange={(e: any) => { this.buscar(e) }} 
                     onIonClear={(e: any) => { this.onClear(e) }}>
                 </IonSearchbar>  
-
+                <IonLoading
+                    isOpen={this.state.showLoading}
+                    message={'Cargando datos, espere por favor...'}
+                />
                 <IonContent>
                     <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.doRefresh(e, 0)}>
                         <IonRefresherContent refreshingSpinner="bubbles"></IonRefresherContent>
                     </IonRefresher>
-                    <IonLoading
-                        isOpen={this.state.showLoading}
-                        message={'Cargando datos, espere por favor...'}
-                    />
+                    
                     <Respuesta informacion={this.state.routers.length}></Respuesta>
                     <IonList>{this.state.routers.map((r: any)=>{
                         return (             

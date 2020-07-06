@@ -32,33 +32,35 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
       <IonContent>
         <IonGrid class="grid">
           <IonRow  class="row">
-            <IonCol  size="6">     
+            <IonCol  size="12">     
               <IonButton color="primary" class="boton" routerLink="/inventarios" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/inventory.png"} className="responsive" alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/inventory.png"} className="responsive" alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
               </div> 
               </IonButton>
             </IonCol>
-            <IonCol size="6">
+            {/* <IonCol size="6">
               <IonButton class="boton" routerLink="/tabs" expand="block" size="large">
               <div className="margen">
                 <img src={process.env.PUBLIC_URL + "/assets/img/asignacion.png"} className="responsive"  alt="" /><br/><br/><IonLabel>Asignación</IonLabel>   
               </div>
               </IonButton>
-            </IonCol>
+            </IonCol> */}
           </IonRow>
           <IonRow class="row">
-            <IonCol size="6">
-              <IonButton class="boton" routerLink="/formImpresora" expand="block" size="large">
+            <IonCol size="12">
+              <IonButton color="primary" class="boton" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
               </div>
               </IonButton>
             </IonCol>
-            <IonCol size="6">
-              <IonButton class="boton" expand="block" size="large">
+            </IonRow>
+            <IonRow class="row">
+            <IonCol size="12">
+              <IonButton color="primary" class="boton" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/historial.png"} className="responsive"  alt="" /><br/><br/>
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/historial.png"} className="responsive"  alt="" /><br/><br/>
                 <IonLabel>Mantenimiento</IonLabel>   
               </div>
               </IonButton>

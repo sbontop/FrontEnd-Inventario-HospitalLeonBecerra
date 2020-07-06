@@ -1,8 +1,8 @@
 import {
-    IonItem, IonIcon, IonListHeader, IonNote
+    IonItem, IonIcon, IonListHeader, IonNote,
 } from '@ionic/react';
 import {
-    key, locate, business, reorder, person, pricetag,
+    key, locate, business, reorder, person, pricetag,codeDownload,
     card, informationCircle, calendar, barcode, globe, logIn, speedometer
 } from 'ionicons/icons';
 import React from 'react';
@@ -93,7 +93,6 @@ export default class ItemSection extends React.Component<{ comp: any, header: an
         return (
             <div>
                 <IonListHeader>Sistema Operativo</IonListHeader>
-
                 <IonItem>
                     <IonIcon slot="start" icon={logIn}> </IonIcon>
                                    SO <IonNote slot="end">{this.props.comp.so}</IonNote>
@@ -110,13 +109,11 @@ export default class ItemSection extends React.Component<{ comp: any, header: an
                     <IonIcon slot="start" icon={logIn}> </IonIcon>
                                    Service Pack 1 <IonNote slot="end">{this.props.comp.services_pack === "1" ? "Si" : "No"}</IonNote>
                 </IonItem>
-                <IonItem>
-                    <IonIcon slot="start" icon={logIn}> </IonIcon>
-                                   Office <IonNote slot="end">{this.props.comp.office}</IonNote>
-                </IonItem>
             </div>
         );
     }
+
+    
 
     private generateContent() {
 
@@ -143,7 +140,7 @@ export default class ItemSection extends React.Component<{ comp: any, header: an
                     {this.globalContent(this.props.header, this.props.comp)}
                     <IonItem>
                         <IonIcon slot="start" icon={barcode} > </IonIcon>
-                                Frecuencia     <IonNote color="dark" slot="end">{this.props.comp.frecuencia+" "+"GHz"}</IonNote>
+                                Frecuencia     <IonNote color="dark" slot="end">{this.props.comp.frecuencia.concat( "GHz")}</IonNote>
                     </IonItem>
                     <IonItem>
                         <IonIcon slot="start" icon={reorder}> </IonIcon>
@@ -178,6 +175,22 @@ export default class ItemSection extends React.Component<{ comp: any, header: an
                 <div >
                     {this.SOContent()}
                 </div>
+            );
+        }
+        else if (this.props.header === "Programas instalados") {
+            return (
+                <div key={this.props.comp.id_programa}><IonListHeader>Programas instalados</IonListHeader>
+                       {this.props.comp.map((programa:any, i:any) => {
+                           return (
+                            // console.log("here progrsm", programa.nombre)
+                           <IonItem key={programa.id_programa}><IonIcon slot="start" icon={codeDownload}> </IonIcon>
+                           <IonNote slot="end">{programa.nombre} </IonNote>
+                           </IonItem>
+                           
+                           );
+                       } 
+                       )}
+</div>
             );
         }
         else if (this.props.header === "Informacion General") {

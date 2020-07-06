@@ -38,24 +38,39 @@ class ListRouters extends React.Component<any, any>  {
             <IonList>
                 <IonItem className = "ion-activatable">
                     <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
-                        <h2><b>Código: {this.props.id_router}</b></h2>
-                        <h3>Estado: 
-                            { this.props.estado === 'D' ? " Disponible" : null }
-                            { this.props.estado === 'B' ? " De baja" : null }
-                            { this.props.estado === 'R' ? " Reparado" : null }
-                            { this.props.estado === 'ER' ? " En revisión" : null }
-                            { this.props.estado === 'O' ? " Operativo" : null }
+                        <h2><b> {this.props.id_router}</b></h2>
+                        <h3 color="secondary">Estado: 
+                            { 
+                                this.props.estado === 'D' ? " Disponible" : 
+                                this.props.estado === 'B' ? " De baja" : 
+                                this.props.estado === 'R' ? " Reparado" : 
+                                this.props.estado === 'ER' ? " En revisión" :
+                                this.props.estado === 'O' ? " Operativo" : null 
+                            }
                         </h3>
                         <p>Marca: {this.props.marca}</p>
                         <IonRippleEffect></IonRippleEffect> 
                     </IonLabel>
-                    <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
-                    <IonButton size="default" fill="clear" onClick={() => console.log("Acción editar")} routerLink={"/formulariorouter/edit/"+this.props.id_equipo} color="warning" >
-                        <IonIcon color="warning" icon={create}></IonIcon>
+                    
+                    <IonAvatar slot="start"> 
+                        {
+                        this.props.estado === 'D'  ? <img src="./assets/img/router/D.png"  alt="D" /> : 
+                        this.props.estado === 'R'  ? <img src="./assets/img/router/R.png"  alt="R" /> : 
+                        this.props.estado === 'ER' ? <img src="./assets/img/router/ER.png" alt="ER" /> :
+                        this.props.estado === 'O'  ? <img src="./assets/img/router/O.png"  alt="O" /> :
+                                                     <img src="./assets/img/router/B.png"  alt="B" />
+                        }
+                    </IonAvatar> 
+
+                    <IonButton size="default"  fill="clear" onClick={() => console.log("Acción editar")} routerLink={"/formulariorouter/edit/"+this.props.id_equipo} color="secondary" >
+                        <IonIcon color="medium" icon={create}></IonIcon>
                     </IonButton>
-                    <IonButton size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary">
-                        <IonIcon color="primary" icon={trash}></IonIcon>
-                    </IonButton>
+
+                    {this.props.estado === "B" ? <IonButton disabled size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary" >
+                        <IonIcon color="medium" icon={trash}></IonIcon>
+                    </IonButton> :
+                    <IonButton size="default"  fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary" >
+                    <IonIcon color="medium" icon={trash}></IonIcon></IonButton>}
                 </IonItem>
         
                 <IonContent>      
