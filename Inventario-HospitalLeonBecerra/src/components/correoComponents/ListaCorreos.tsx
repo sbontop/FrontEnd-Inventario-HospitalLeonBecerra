@@ -18,6 +18,9 @@ class ListaCorreos extends React.Component<any, any>  {
     }
   }
 
+  /**
+   * Esta función permite manejar la eliminación de los items.
+   */
   handle_eliminar() {
     this.setState({
       mostrar_load: true,
@@ -35,19 +38,31 @@ class ListaCorreos extends React.Component<any, any>  {
       this.setState({ mostrar_load: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
     }); 
   }  
+
+  /**
+   * Esta función permite obtener la ruta del icono de acuerdo al estado
+   * del correo.
+   * @param estado "I" para correos Inactivos, "EU" para aquellos que están En uso 
+   */
+  icono_estado(estado: string ){
+   if(estado==='I'){
+    return "./assets/img/correo/I.png";
+   }
+   return "./assets/img/correo/EU.png";
+  }
   
   render() {
     return (
       <div>
         <IonItem>
           <IonLabel onClick={() => this.setState({ mostrar_modal: true })}>
-            <IonText color={this.props.estado === "I" ? `danger` : `dark`}><h2><b>USUARIO: {this.props.nombres} {this.props.apellidos}</b></h2></IonText>
+            <IonText ><h2><b>{this.props.nombres} {this.props.apellidos}</b></h2></IonText>
             <h3>Departamento: {this.props.departamento}</h3>
             <small>{this.props.correo}</small>
           </IonLabel>
-          <IonAvatar slot="start"><img src="./assets/img/miniuser.svg" alt="imagen" /></IonAvatar>
-         <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="warning"  icon={create} ></IonIcon> </IonButton> 
-         <IonButton  size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
+          <IonAvatar slot="start"><img src={this.icono_estado(this.props.estado)} alt="imagen" /></IonAvatar>
+         <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="medium"  icon={create} ></IonIcon> </IonButton> 
+         <IonButton  size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })}><IonIcon slot="end" color="medium" icon={trash} ></IonIcon> </IonButton>
         </IonItem>
 
         <IonModal

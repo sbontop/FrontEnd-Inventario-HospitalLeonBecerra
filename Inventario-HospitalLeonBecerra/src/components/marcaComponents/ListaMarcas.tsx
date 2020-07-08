@@ -36,10 +36,10 @@ class ListaMarcas extends React.Component<any, any>  {
         return (
             <>
                 <IonItem>
-                    <IonIcon slot="start" icon={pricetag}></IonIcon>
+                    <IonIcon slot="start" color="warning" icon={pricetag}></IonIcon>
                     <IonLabel>MARCA: {this.props.nombre}</IonLabel>
-                    <IonButton size="default" fill="clear" onClick={() => this.setState({ open: true })}  ><IonIcon slot="end" color="warning" icon={create} ></IonIcon> </IonButton>
-                    <IonButton size="default" fill="clear" onClick={() => this.setState({ mostrar_alerta: true })}><IonIcon slot="end" color="danger" icon={trash} ></IonIcon> </IonButton>
+                    <IonButton size="default" fill="clear" onClick={() => this.setState({ open: true })}  ><IonIcon slot="end" color="medium" icon={create} ></IonIcon> </IonButton>
+                    <IonButton size="default" fill="clear" onClick={() => this.setState({ mostrar_alerta: true })}><IonIcon slot="end" color="medium" icon={trash} ></IonIcon> </IonButton>
                 </IonItem>
                 <Pop prop={this} handle={this.props.handle} editionMode={true} id={this.props.id} nombre={this.props.nombre}></Pop>
                 <IonAlert

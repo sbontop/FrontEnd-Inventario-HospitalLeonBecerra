@@ -21,6 +21,7 @@ import { home, desktop, list, pricetag, codeDownload } from 'ionicons/icons';
 import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
 import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
+import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,6 +45,7 @@ import HomeCorreo from './pages/InventarioCorreo/HomeCorreo';
 import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
 import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
 import GlobalPC from './pages/InventarioPC/GlobalPC';
+
 
 const appPages: AppPage[] = [
     {
@@ -111,6 +113,8 @@ const App: React.FC = () => (
                     <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
                     <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
                     <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
+
+                    <Route path="/homesolicitudes" component={HomeSolicitudes} exact={true} />
 
                     <Route path="/homemarcas" component={HomeMarcas} exact={true} />
                 </IonRouterOutlet>
