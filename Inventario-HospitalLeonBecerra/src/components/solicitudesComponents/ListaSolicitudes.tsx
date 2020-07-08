@@ -1,5 +1,5 @@
 import {
-    IonItem, IonLabel, IonIcon, IonText, IonNote, IonChip
+    IonItem, IonLabel, IonIcon, IonText, IonChip
 } from '@ionic/react';
 import { trendingDown, trendingUp, flash, remove } from 'ionicons/icons';
 import React from 'react';

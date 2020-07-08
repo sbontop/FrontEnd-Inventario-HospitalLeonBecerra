@@ -194,7 +194,7 @@ const FormularioCorreo: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Correo<IonText color="danger">*</IonText></IonLabel>
-              <IonInput required inputmode="email" type="email" minlength={10} pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" className="ion-margin-top" value={correo} placeholder="example@hospitalleonbecerra.org" name="correo" onIonChange={e => setCorreo(e.detail.value!)}></IonInput>
+              <IonInput required inputmode="email" type="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" className="ion-margin-top" value={correo} placeholder="example@hospitalleonbecerra.org" name="correo" onIonChange={e => setCorreo(e.detail.value!)}></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Contraseña<IonText color="danger">*</IonText></IonLabel>
