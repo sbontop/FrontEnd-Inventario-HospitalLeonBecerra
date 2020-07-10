@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { IonList, IonItem, IonLabel, IonContent, IonThumbnail, IonRippleEffect, IonHeader, IonPage, 
-         IonTitle, IonToolbar, IonBackButton, IonButtons } from '@ionic/react';
+         IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/react';
 import './InventarioPC/style.css';
+import { arrowBack } from 'ionicons/icons';
 
 export default class TiposEquiposInventario extends Component <{history:any}, any>{
     render() {
@@ -9,8 +10,11 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
             <IonPage>
                 <IonHeader> 
                     <IonToolbar color="primary">
-                        <IonButtons slot="start">
+                        {/* <IonButtons slot="start">
                             <IonBackButton defaultHref="/home"></IonBackButton>
+                        </IonButtons> */}
+                        <IonButtons slot="start">
+                            <IonButton routerLink="/inventarios"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
 
                         <IonTitle>Equipos</IonTitle>
@@ -49,7 +53,7 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                         <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('../homerouter')}}>
                             <IonRippleEffect></IonRippleEffect>
                             <IonThumbnail slot="start">
-                                <img src={process.env.PUBLIC_URL + "/assets/img/router1.png"} alt="" />
+                                <img src={process.env.PUBLIC_URL + "/assets/img/router/router.png"} alt="" />
                             </IonThumbnail>
                             <IonLabel>
                                 <h2>Router</h2>
@@ -58,7 +62,7 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
                         <IonItem className = "ion-activatable" onClick={() => {this.props.history.push('/consultaOtrosEquiposHome')}}>
                             <IonRippleEffect></IonRippleEffect>
                             <IonThumbnail slot="start">
-                                <img src={process.env.PUBLIC_URL + "/assets/img/appstore4.png"} alt="" />
+                                <img src={process.env.PUBLIC_URL + "/assets/img/otros.png"} alt="" />
                             </IonThumbnail>
                             <IonLabel>
                                 <h2>Otros equipos</h2>

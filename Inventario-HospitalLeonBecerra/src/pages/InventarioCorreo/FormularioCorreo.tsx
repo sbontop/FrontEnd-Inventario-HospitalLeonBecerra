@@ -48,7 +48,9 @@ const FormularioCorreo: React.FC = () => {
     }
   }, [id]);
 
-
+  /**
+   * Función para gestionar el registro de un correo
+   */
   const registrar_correo = () => {
     if (usuario === "" || correo === "" || contrasena === "") {
       setMensaje("Debe completar todos los campos");
@@ -59,36 +61,54 @@ const FormularioCorreo: React.FC = () => {
         contrasena: contrasena,
         estado: estado,
         cedula: cedula,
-        id: id,
+        id: id
       }
       if (!editionMode) {
-        AxiosCorreo.crear_correo(registro_correo).then(res => {
-          setMensaje("Registro guardado satisfactoriamente")
-          setAlerta(true);
-        }).catch(error => {
-          setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-          if (error.response) {
-            setMensaje(error.response.data.log)
-          }
-          setError(true);
-        });
+        crear_correo(registro_correo);
       } else {
-        AxiosCorreo.editar_correo(registro_correo).then(res => {
-          setMensaje("Registro actualizado satisfactoriamente")
-          setAlerta(true);
-        }).catch(error => {
-          setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-          if (error.response) {
-            setMensaje(error.response.data.log)
-          }
-          setError(true);
-        });
+        editar_correo(registro_correo);
       }
-
-
     }
   }
 
+  /**
+   * Función para crear un nuevo correo en la base de datos.
+   * @param registro_correo 
+   */
+  const crear_correo = (registro_correo: any) => {
+    AxiosCorreo.crear_correo(registro_correo).then(res => {
+      setMensaje("Registro guardado satisfactoriamente")
+      setAlerta(true);
+    }).catch(error => {
+      setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+      if (error.response) {
+        setMensaje(error.response.data.log)
+      }
+      setError(true);
+    });
+  }
+
+  /**
+   * Función para editar un correo en la base de datos.
+   * @param registro_correo 
+   */
+  const editar_correo = (registro_correo: any) => {
+    AxiosCorreo.editar_correo(registro_correo).then(res => {
+      setMensaje("Registro actualizado satisfactoriamente")
+      setAlerta(true);
+    }).catch(error => {
+      setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+      if (error.response) {
+        setMensaje(error.response.data.log)
+      }
+      setError(true);
+    });
+  }
+
+  /**
+   * Función que permite buscar un empleado y colocar sus datos en los 
+   * campos departamento y bspi_punto del formulario
+   */
   const buscar_usuario = () => {
     if (!editionMode) {
       if (usuario === "") {
@@ -113,17 +133,25 @@ const FormularioCorreo: React.FC = () => {
     }
   }
 
+  /**
+   * Función auxiliar que permite manipular la forma en que se muestra el texto de la contraseña.
+   */
   const cambiar_tipo = () => {
     passwordMode ? setPasswordMode(false) : setPasswordMode(true)
   }
 
-
+  /**
+   * Función auxiliar utilizada para gestionar los estados que permite cerrar la alerta producida 
+   * y para cambiar la vista.
+   */
   const cambiar_estados = () => {
     setAlerta(false);
     setDirigir(true);
   }
 
-
+  /**
+   * Función que recibe una variable booleana, si es true la vista actual se redirige hacia otra ventana.
+   */
   if (dirigir) {
     return (<Redirect to="/homeCorreo" />);
   }
@@ -136,20 +164,26 @@ const FormularioCorreo: React.FC = () => {
           <IonButtons slot="start">
             <IonButton routerLink="/homeCorreo"><IonIcon icon={arrowBack}></IonIcon></IonButton>
           </IonButtons>
-          <IonTitle>Inventario de correo</IonTitle>
+          <IonTitle>{editionMode ? "Editar correo electrónico" : "Nuevo correo electrónico"}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonTitle className="ion-text-center">{editionMode ? "Editar correo electrónico" : "Nuevo correo electrónico"}</IonTitle>
-        <p className="ion-text-center">
-          <img src="./assets/icon/user.png" alt="Usuario" />
-        </p>
+
         <form onSubmit={(e) => { e.preventDefault(); registrar_correo(); }} action="post">
           <IonList>
-            <IonItem>
-              <IonInput required className="ion-margin-top" disabled={editionMode} placeholder="Buscar Empleado" value={usuario} name="usuario" onIonChange={(e) => setUsuario((e.target as HTMLInputElement).value)}></IonInput>
-              <IonIcon icon={search} color={editionMode ? "light" : "danger"} onClick={() => buscar_usuario()} ></IonIcon>
-            </IonItem>
+
+            <IonRow class="ion-text-center">
+              <IonCol size="4">
+                <img src="./assets/icon/user.png" alt="usuario" />
+              </IonCol>
+              <IonCol size="8">
+                <IonItem>
+                  <IonInput required className="ion-margin-top" disabled={editionMode} placeholder="Buscar Empleado" value={usuario} name="usuario" onIonChange={(e) => setUsuario((e.target as HTMLInputElement).value)}></IonInput>
+                  <IonIcon icon={search} color={editionMode ? "light" : "danger"} onClick={() => buscar_usuario()} ></IonIcon>
+                </IonItem>
+              </IonCol>
+              
+            </IonRow>
             <IonItem>
               <IonLabel position="stacked">Departamento</IonLabel>
               <IonInput className="ion-margin-top" disabled name="departamento" value={departamento}></IonInput>
@@ -164,7 +198,7 @@ const FormularioCorreo: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Contraseña<IonText color="danger">*</IonText></IonLabel>
-              <IonInput required type={passwordMode ? "password" : "text"} className="ion-margin-top" name="contrasena" value={contrasena} onIonChange={e => setContrasena(e.detail.value!)}></IonInput>
+              <IonInput required type={passwordMode ? "password" : "text"} minlength={5} className="ion-margin-top" name="contrasena" value={contrasena} onIonChange={e => setContrasena(e.detail.value!)}></IonInput>
               <IonIcon className="btn_eye_icon" icon={passwordMode ? eye : eyeOff} color="danger" onClick={() => cambiar_tipo()} ></IonIcon>
             </IonItem>
             <IonList>

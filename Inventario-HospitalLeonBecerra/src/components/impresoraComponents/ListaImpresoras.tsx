@@ -69,7 +69,7 @@ import {
               <IonLabel key={this.props.id_impresora} onClick={() => this.setState({ ventanaDetalle: true })}>
                 
               <IonRippleEffect></IonRippleEffect>
-                <h2><b>IMPRESORA: {this.props.codigo}</b></h2>
+                <h2><b>{this.props.codigo}</b></h2>
                 {
                   this.props.estado_operativo==='D'?
                     <h3>Estado: Disponible</h3>
@@ -98,9 +98,22 @@ import {
                 <p>Marca: {this.props.marca}</p>
               </IonLabel>
 
-              <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/icon_printer.png"} alt="imagen" /></IonAvatar>
-              <IonButton size="default" color="warning" class="bp" routerLink={"/formimpresora/edit/"+this.props.id_impresora} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
-              <IonButton size="default" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton>
+              <IonAvatar slot="start"> 
+                        {
+                        this.props.estado_operativo === 'D'  ? <img src="./assets/img/impresora/D.png"  alt="D" /> : 
+                        this.props.estado_operativo === 'R'  ? <img src="./assets/img/impresora/R.png"  alt="R" /> : 
+                        this.props.estado_operativo === 'ER' ? <img src="./assets/img/impresora/ER.png" alt="ER" /> :
+                        this.props.estado_operativo === 'O'  ? <img src="./assets/img/impresora/O.png"  alt="O" /> :
+                                                     <img src="./assets/img/impresora/B.png"  alt="B" />
+                        }
+                    </IonAvatar> 
+
+
+                  
+
+
+              <IonButton size="default" fill="clear" routerLink={"/formimpresora/edit/"+this.props.id_impresora} color="secondary" ><IonIcon color="medium" icon={create}></IonIcon></IonButton>
+              <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>
               {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}><Redirect to={"/FormImpresora/edit/"+this.props.id_equipo} /></IonIcon></IonButton>*/}
             </IonItem>
 
@@ -162,7 +175,7 @@ import {
               
               <div>
                 {
-                this.props.tipo==="Impresora" || this.props.tipo==="Multifuncional"? 
+                this.props.tipo==="Impresora"? 
                 <div>
                 <IonItem>
                   <IonIcon slot="start" icon={colorFilter}></IonIcon>
@@ -178,17 +191,39 @@ import {
                 </div>
                 : null
                }
+               
+               
                {
                 this.props.tipo==="Multifuncional"? 
 
-                <IonItem>
-                  <IonIcon slot="start" icon={aperture}></IonIcon>
-                  <IonLabel>Toner</IonLabel>
-                  <IonNote slot="end">{this.props.toner}</IonNote>
-                </IonItem>
+                <div>
+                  {
+                 this.props.tinta!==null && this.props.tinta!=='' && this.props.tinta!==' '?
+                 <IonItem>
+                  <IonIcon slot="start" icon={colorFilter}></IonIcon>
+                  <IonLabel>Tinta</IonLabel>
+                  <IonNote slot="end">{this.props.tinta}</IonNote>
+                </IonItem>:null 
+               }
+               {
+                 this.props.cartucho!==null && this.props.cartucho!=='' && this.props.cartucho!==' '?
+                 <IonItem>
+                  <IonIcon slot="start" icon={cube}></IonIcon>
+                  <IonLabel>Cartucho</IonLabel>
+                  <IonNote slot="end">{this.props.cartucho}</IonNote>
+                </IonItem>:null 
+               }
+               {
+                 this.props.toner!==null && this.props.toner!=='' && this.props.toner!==' '?
+                 <IonItem>
+                 <IonIcon slot="start" icon={aperture}></IonIcon>
+                 <IonLabel>Toner</IonLabel>
+                 <IonNote slot="end">{this.props.toner}</IonNote>
+               </IonItem>:null 
+               }
+                </div>:null
+                                
 
-                          
-                : null
                }
                {
                 this.props.tipo==="Matricial"? 

@@ -1,4 +1,6 @@
-import { IonContent, IonToolbar, IonTitle, IonInput, IonSelectOption, IonSelect, IonDatetime, IonRefresherContent, IonRefresher, IonLoading, IonHeader, IonPage, IonPopover, IonItem, IonIcon, IonLabel, IonButton, IonButtons, IonBackButton, IonList } from '@ionic/react';
+import { IonContent, IonToolbar, IonTitle, IonInput, IonSelectOption, IonSelect, IonDatetime, IonRefresherContent, IonRefresher, 
+    IonLoading, IonHeader, IonPage, IonPopover, IonItem, IonIcon, IonLabel, IonButton, IonButtons, IonBackButton, 
+    IonText, IonList } from '@ionic/react';
 import React from 'react';
 import { add, search } from 'ionicons/icons';
 import AxiosPC from '../../services/AxiosPC'
@@ -136,7 +138,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                 return this.state.equipos.map((value: any, index: any) => {
                     return (
                         <div key={index}>
-                            <ItemEquipo tipo = { this.props.tipo} principal={this} info={value}></ItemEquipo>
+                            <ItemEquipo tipo={this.props.tipo} principal={this} info={value}></ItemEquipo>
                         </div>
                     );
                 });
@@ -163,13 +165,13 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                 }
 
             }).catch(err => {
-                if (this.state.mounted){
+                if (this.state.mounted) {
                     this.setState({
                         solicitando_datos: false
                     })
                     console.log(err);
                 }
-                
+
             })
         }
 
@@ -190,7 +192,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
 
     }
 
-    
+
 
     render() {
 
@@ -226,29 +228,36 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                             onDidDismiss={e => { if (this.state.mounted) this.setState({ popOver: false }) }}>
                             <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                             <IonList>
+                               
+
                                 <IonItem >
-                                    <IonList >
-
-                                        <IonItem >
-                                            <IonLabel position="floating">Codigo del Equipo</IonLabel>
-                                            <IonInput value={this.state.data.codigo} required type="text" className="root" name='codigo' onIonInput={(e: any) => {
-                                                if(this.state.mounted)this.onChangeInput(e.target.name, e.target.value)
-                                            }}></IonInput>
-                                        </IonItem>
-                                        <IonItem >
-                                            <IonLabel position="floating">Num Serie</IonLabel>
-                                            <IonInput value={this.state.data.num_serie} required type="text" className="root" name='num_serie' onIonChange={(e: any) => {if(this.state.mounted) this.onChangeInput(e.target.name, e.target.value) }}></IonInput>
-                                        </IonItem>
-                                        <IonItem>
-                                            <IonLabel position="floating">Usuario Registra</IonLabel>
-                                            <IonInput value={this.state.data.user} required type="text" className="root" name='user' onIonChange={(e: any) => {if(this.state.mounted) this.onChangeInput(e.target.name, e.target.value) }}></IonInput>
-                                        </IonItem>
-                                    </IonList>
-
+                                    <IonLabel position="floating">Codigo del Equipo</IonLabel>
+                                    <IonInput value={this.state.data.codigo} required type="text" className="root" name='codigo' onIonInput={(e: any) => {
+                                        if (this.state.mounted) this.onChangeInput(e.target.name, e.target.value)
+                                    }}></IonInput>
+                                </IonItem>
+                                <IonItem >
+                                    <IonLabel position="floating">Num Serie</IonLabel>
+                                    <IonInput value={this.state.data.num_serie} required type="text" className="root" name='num_serie' onIonChange={(e: any) => { if (this.state.mounted) this.onChangeInput(e.target.name, e.target.value) }}></IonInput>
+                                </IonItem>
+                                <IonItem>
+                                    <IonLabel position="floating">Usuario Registra</IonLabel>
+                                    <IonInput value={this.state.data.user} required type="text" className="root" name='user' onIonChange={(e: any) => { if (this.state.mounted) this.onChangeInput(e.target.name, e.target.value) }}></IonInput>
+                                </IonItem>
+                               
+                                <IonItem>
+                                    <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
+                                    <IonSelect  value={this.state.data.estado} name={'estado'} onIonChange={(e: any) => { this.onChangeInput(e.target.name, e.target.value)}}>
+                                        <IonSelectOption value={"O"}>Operativo</IonSelectOption>
+                                        <IonSelectOption value={"D"}>Disponible</IonSelectOption>
+                                        <IonSelectOption value={"ER"}>En Revision</IonSelectOption>
+                                        <IonSelectOption value={"R"}>Reparado</IonSelectOption>
+                                        <IonSelectOption value={"B"}>De Baja</IonSelectOption>
+                                    </IonSelect>
                                 </IonItem>
                                 <IonItem hidden={this.props.tipo !== "laptop"}>
                                     <IonLabel position="floating">Marca</IonLabel>
-                                    <IonSelect value={this.state.data.marca} name='marca' onIonChange={(e: any) => { if(this.state.mounted)this.onChangeInput(e.target.name, e.target.value) }}>
+                                    <IonSelect value={this.state.data.marca} name='marca' onIonChange={(e: any) => { if (this.state.mounted) this.onChangeInput(e.target.name, e.target.value) }}>
                                         {this.state.marcas.map((object: any, i: any) => {
                                             return (
                                                 <IonSelectOption key={object.id_marca} value={object.id_marca}>
@@ -263,7 +272,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                                     <IonDatetime value={this.state.data.fecha_desde} doneText="Ok" cancelText="Cancelar" name="fecha"
                                         onIonChange={(e) => {
 
-                                            if(this.state.mounted) this.onChangeInput("fecha_desde", e.detail.value !== null && e.detail.value !== undefined ? e.detail.value.split("T")[0] : "");
+                                            if (this.state.mounted) this.onChangeInput("fecha_desde", e.detail.value !== null && e.detail.value !== undefined ? e.detail.value.split("T")[0] : "");
                                         }}
                                         placeholder="Desde" displayFormat="DD/MM/YYYY"
                                     ></IonDatetime>
@@ -275,7 +284,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                                     <IonDatetime value={this.state.data.fecha_hasta} doneText="Ok" cancelText="Cancelar" name="fecha"
                                         onIonChange={(e) => {
 
-                                            if(this.state.mounted)  this.onChangeInput("fecha_hasta", e.detail.value !== null && e.detail.value !== undefined ? e.detail.value.split("T")[0] : "");
+                                            if (this.state.mounted) this.onChangeInput("fecha_hasta", e.detail.value !== null && e.detail.value !== undefined ? e.detail.value.split("T")[0] : "");
                                         }}
                                         placeholder="Hasta" displayFormat="DD/MM/YYYY"
                                     ></IonDatetime>
@@ -283,16 +292,16 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
 
                             </IonList>
                             <div className="ion-text-center ion-margin">
-                                <IonButton size="small" onClick={(e: any) => {
+                                <IonButton expand="block" size="small" onClick={(e: any) => {
                                     if (this.state.mounted) {
                                         this.setState({ popOver: false, solicitando_datos: true, page_index: 0 })
                                         this.getEquipos(true);
                                     }
                                 }}>Aplicar</IonButton>
-                                <IonButton size="small" onClick={() => {
+                                <IonButton expand="block" size="small" onClick={() => {
                                     if (this.state.mounted) this.clearReload()
                                 }} >Limpiar</IonButton>
-                                <IonButton size="small" onClick={() => { if (this.state.mounted) this.setState({ popOver: false }) }} >Cancelar</IonButton>
+                                <IonButton expand="block" size="small" onClick={() => { if (this.state.mounted) this.setState({ popOver: false }) }} >Cancelar</IonButton>
 
                             </div >
                         </IonPopover>

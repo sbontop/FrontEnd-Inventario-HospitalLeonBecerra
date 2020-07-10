@@ -5,11 +5,6 @@ export default class AxiosCorreo {
     baseURL: 'http://localhost:8000/api',
   });
 
-  
-
- /*  static mostrar_correos = () => {
-    return AxiosCorreo.instanceAxios.get(`/mostrar_correos`);
-  } */
 
   static empleado_por_dpto = (departamento: any) => {
     return AxiosCorreo.instanceAxios.get(`/empleados_dpto/{departamento}`);

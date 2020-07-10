@@ -8,6 +8,7 @@ import { withIonLifeCycle } from '@ionic/react';
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import ListaImpresoras from '../../components/impresoraComponents/ListaImpresoras';
 import SelectOptionEstado from '../../components/SelectOptionEstado';
+//import AxiosAutenticacion from '../../services/AxiosAutenticacion';
 
 interface IState {
   size: any,
@@ -74,7 +75,23 @@ class HomeImpresora extends Component<{lista:any}, IState> {
   ionViewWillEnter() {
     this.getMarcas();
     this.getImpresoras(10);
+
+    
+    
   }
+
+  onSubmit=() => {
+    //e.preventDefault()
+
+
+
+    
+
+
+
+
+
+}
   
   ionViewWillLeave() {
     this.setState({
@@ -86,7 +103,7 @@ class HomeImpresora extends Component<{lista:any}, IState> {
 
   verificar =() =>{
     this.setState({eliminar:true})
-  }
+  } 
 
   clearReload() {
     this.setState({ popOver: false});

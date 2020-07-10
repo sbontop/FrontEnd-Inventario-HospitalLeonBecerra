@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AxiosRouter from '../../services/AxiosRouter';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { arrowBack } from 'ionicons/icons';
+import { arrowBack, eye, eyeOff } from 'ionicons/icons';
 
 const FormularioRouter: React.FC = () => {
     let { id } = useParams();
@@ -24,6 +24,8 @@ const FormularioRouter: React.FC = () => {
     const [modelo, setModelo] = useState("");
     const [numero_serie, setNumero_serie] = useState("");
     const [puerta_enlace, setPuerta_enlace] = useState("");
+    const [passwordMode, setPasswordMode] = useState(true);    
+    const [passwordMode1, setPasswordMode1] = useState(true);
     const [descripcion, setDescripcion] = useState("");
     const [guardar, setGuardar] = useState(false);
     const [alerta, setAlerta] = useState(false);
@@ -74,6 +76,14 @@ const FormularioRouter: React.FC = () => {
         }
     }, [id]);
 
+    const cambiar_tipo = () => {
+        passwordMode ? setPasswordMode(false) : setPasswordMode(true)
+    }
+
+    const cambiar_tipo1 = () => {
+        passwordMode1 ? setPasswordMode1(false) : setPasswordMode1(true)
+    }
+
     const registrar = () => { 
         if (codigo === undefined || nombre === undefined || pass === undefined || usuario === undefined || clave === undefined
          || id_marca === undefined || modelo === undefined || numero_serie === undefined || estado === undefined) {
@@ -101,9 +111,10 @@ const FormularioRouter: React.FC = () => {
                 clave: clave
             }
             if (!editionMode) {
-                AxiosRouter.crear_equipo_router(registro_equipo_router).then(res => {
+                AxiosRouter.crear_equipo_router(registro_equipo_router).then(() => {
                     setMensaje("Registro guardado satisfactoriamente")
                     setConfirmarRegistro(true);
+                    console.log(guardar)
                 }).catch(err => {
                     setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                     if (err.response) {
@@ -117,7 +128,7 @@ const FormularioRouter: React.FC = () => {
                     console.log(res)
                     setMensaje("Registro actualizado satisfactoriamente")                   
                     setConfirmarEdicion(true);
-                }).catch(error => {
+                }).catch(() => {
                     setError(true);
                 });
             }
@@ -140,20 +151,37 @@ const FormularioRouter: React.FC = () => {
                     <IonButtons slot="start">
                         <IonButton routerLink="/homerouter"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                     </IonButtons>
-                    <IonTitle>Inventario de routers</IonTitle>
+                    <IonTitle>{!editionMode ? "Agregar router" : "Editar router"}</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
-                <IonTitle className="ion-text-center">{!editionMode ? "Nuevo router" : "Editar router"}</IonTitle>
-                <p className="ion-text-center">
-                    <img src="./assets/img/router2.png" alt="Usuario" />
-                </p>
-                <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">   
-                    <IonList>
-                        <IonItem>
-                            <IonLabel position="floating">Código<IonText color="danger">*</IonText></IonLabel>
+                {/* <IonTitle className="ion-text-center">{!editionMode ? "Nuevo router" : "Editar router"}</IonTitle> */}
+                {/* <p className="ion-text-center">
+                    <img src="./assets/img/router/routerR3.png" alt="Usuario" />
+                </p> */}
+                <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">
+                <IonList>  
+                     {/* <IonGrid> */}
+
+          <IonRow class="ion-text-center">
+            <IonCol size="4">
+            <img src="./assets/img/router/router.png" alt="router" />
+            </IonCol>
+            <IonCol size="8">            
+              
+            <IonItem>
+                            <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
                             <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
-                        </IonItem> 
+                        </IonItem>            
+             
+            </IonCol>
+          </IonRow>  
+          {/* </IonGrid>    */}
+                    
+                        {/* <IonItem>
+                            <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
+                            <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
+                        </IonItem>  */}
                         <IonItem>
                             <IonLabel position="floating">Asignar a empleado</IonLabel>
                             <IonSelect name="empleado" value={empleado} onIonChange={(e) => setEmpleado(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
@@ -170,23 +198,27 @@ const FormularioRouter: React.FC = () => {
                             </IonSelect>   
                         </IonItem> 
                         <IonItem>
-                            <IonLabel position="floating">Nombre<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Nombre<IonText color="primary">*</IonText></IonLabel>
                             <IonInput required type="text" name="nombre" value={nombre} onIonChange={(e) => setNombre((e.target as HTMLInputElement).value)} ></IonInput>
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Pass<IonText color="danger">*</IonText></IonLabel>
-                            <IonInput required type="text" name="pass" value={pass} onIonChange={(e) => setPass((e.target as HTMLInputElement).value)} ></IonInput>
+                            <IonLabel position="floating">Pass<IonText color="primary">*</IonText></IonLabel>
+                            <IonInput required type={passwordMode ? "password" : "text"} name="pass" value={pass} onIonChange={(e) => setPass((e.detail.value!))} >
+                            <IonIcon className="btn_eye_icon" icon={passwordMode ? eye : eyeOff} color="primary" onClick={() => cambiar_tipo()} ></IonIcon></IonInput>
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Usuario<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Usuario<IonText color="primary">*</IonText></IonLabel>
                             <IonInput required type="text" name="usuario" value={usuario} onIonChange={(e) => setUsuario((e.target as HTMLInputElement).value)} ></IonInput>
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Clave <IonText color="danger">*</IonText></IonLabel>
-                            <IonInput required type="text" name="clave" value={clave} onIonChange={(e) => setClave((e.target as HTMLInputElement).value)} ></IonInput>
+                            <IonLabel position="floating">Clave <IonText color="primary">*</IonText></IonLabel>
+                            <IonInput type={passwordMode1 ? "password" : "text"} name="clave" value={clave} onIonChange={(e) => setClave((e.detail.value!))} >
+                            <IonIcon className="btn_eye_icon"  icon={passwordMode1 ? eye : eyeOff} color="primary" onClick={() => cambiar_tipo1()} ></IonIcon>
+                            </IonInput>
+
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Marca<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Marca<IonText color="primary">*</IonText></IonLabel>
                             <IonSelect name="id_marca" value={id_marca} onIonChange={(e) => setId_marca(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                             {marcas.map((m:any, index:number) => {
                                 return (
@@ -198,15 +230,15 @@ const FormularioRouter: React.FC = () => {
                             </IonSelect>   
                         </IonItem> 
                         <IonItem>
-                            <IonLabel position="floating">Modelo<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Modelo<IonText color="primary">*</IonText></IonLabel>
                             <IonInput required type="text" name="modelo" value={modelo} onIonChange={(e) => setModelo((e.target as HTMLInputElement).value)} ></IonInput>
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Número de serie<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Número de serie<IonText color="primary">*</IonText></IonLabel>
                             <IonInput required type="text"  name="numero_serie" value={numero_serie} onIonChange={(e) => setNumero_serie((e.target as HTMLInputElement).value)} ></IonInput>
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Estado<IonText color="primary">*</IonText></IonLabel>
                             <IonSelect name="estado" value={estado} onIonChange={(e) => setEstado(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                                 {estados.map((m:any, index:number) => {
                                 return (
@@ -244,10 +276,10 @@ const FormularioRouter: React.FC = () => {
                             <IonGrid>
                                 <IonRow class="ion-text-center">
                                     <IonCol>
-                                        <IonButton type="submit" color="success" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
+                                        <IonButton type="submit" color="secondary" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
                                     </IonCol>
                                     <IonCol>
-                                        <IonButton color="danger" routerLink="/homerouter" class="ion-no-margin">Cancelar</IonButton>          
+                                        <IonButton color="primary" routerLink="/homerouter" class="ion-no-margin">Cancelar</IonButton>          
                                     </IonCol>
                                 </IonRow> 
                             </IonGrid>
@@ -281,7 +313,7 @@ const FormularioRouter: React.FC = () => {
                         {
                             text: 'Cancelar',
                             role: 'cancel',
-                            cssClass: 'danger',
+                            cssClass: 'primary',
                             handler: () => {
                                 setConfirmarRegistro(false)
                             }
@@ -305,7 +337,7 @@ const FormularioRouter: React.FC = () => {
                         {
                         text: 'Cancelar',
                         role: 'cancel',
-                        cssClass: 'danger',
+                        cssClass: 'primary',
                             handler: () => {
                                 setConfirmarEdicion(false)
                             }

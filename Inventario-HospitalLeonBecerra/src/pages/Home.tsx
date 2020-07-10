@@ -15,16 +15,30 @@ import {
 import React from 'react';
 import './Home.css';
 import {
-  RouteComponentProps
+  RouteComponentProps,Redirect
 } from 'react-router';
 
+import AxiosAutenticacion from '../services/AxiosAutenticacion';
+//import MenuLateral from '../components/Menu_Lateral';
+
+
 const HomePage: React.FC<RouteComponentProps> = (props) => {
+
+  if (localStorage.usertoken){
+    console.log('Existe');
+
+  }else{
+    console.log('No existe');
+    return (<Redirect to="/iniciarsesion" />);      
+
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonMenuButton />
+          <IonMenuButton hidden={localStorage.usertoken?false:true} />
           </IonButtons>
           <IonTitle>Bienvenido</IonTitle>
         </IonToolbar>
@@ -32,33 +46,35 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
       <IonContent>
         <IonGrid class="grid">
           <IonRow  class="row">
-            <IonCol  size="6">     
+            <IonCol  size="12">     
               <IonButton color="primary" class="boton" routerLink="/inventarios" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/inventory.png"} className="responsive" alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/inventory.png"} className="responsive" alt="" /><br/><br/><IonLabel>Inventario</IonLabel>   
               </div> 
               </IonButton>
             </IonCol>
-            <IonCol size="6">
+            {/* <IonCol size="6">
               <IonButton class="boton" routerLink="/tabs" expand="block" size="large">
               <div className="margen">
                 <img src={process.env.PUBLIC_URL + "/assets/img/asignacion.png"} className="responsive"  alt="" /><br/><br/><IonLabel>Asignación</IonLabel>   
               </div>
               </IonButton>
-            </IonCol>
+            </IonCol> */}
           </IonRow>
           <IonRow class="row">
-            <IonCol size="6">
-              <IonButton class="boton" routerLink="/formImpresora" expand="block" size="large">
+            <IonCol size="12">
+              <IonButton color="primary" routerLink="/homesolicitudes" class="boton" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
               </div>
               </IonButton>
             </IonCol>
-            <IonCol size="6">
-              <IonButton class="boton" expand="block" size="large">
+            </IonRow>
+            <IonRow class="row">
+            <IonCol size="12">
+              <IonButton color="primary" class="boton" expand="block" size="large">
               <div className="margen">
-                <img src={process.env.PUBLIC_URL + "/assets/img/historial.png"} className="responsive"  alt="" /><br/><br/>
+                <img src={process.env.PUBLIC_URL + "/assets/img/main/historial.png"} className="responsive"  alt="" /><br/><br/>
                 <IonLabel>Mantenimiento</IonLabel>   
               </div>
               </IonButton>

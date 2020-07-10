@@ -95,9 +95,19 @@ import {
                 <p>Marca: {this.props.marca}</p>
               </IonLabel>
 
-              <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/variosequipos4.png"} alt="imagen" /></IonAvatar>             
-              <IonButton size="default" color="warning" class="bp" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
-              <IonButton size="default" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton> 
+
+              <IonAvatar slot="start"> 
+                        {
+                        this.props.estado_operativo === 'D'  ? <img src="./assets/img/otros/D.png"  alt="D" /> : 
+                        this.props.estado_operativo === 'R'  ? <img src="./assets/img/otros/R.png"  alt="R" /> : 
+                        this.props.estado_operativo === 'ER' ? <img src="./assets/img/otros/ER.png" alt="ER" /> :
+                        this.props.estado_operativo === 'O'  ? <img src="./assets/img/otros/O.png"  alt="O" /> :
+                                                     <img src="./assets/img/otros/B.png"  alt="B" />
+                        }
+                    </IonAvatar> 
+
+              <IonButton size="default" color="secondary" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} fill="clear"><IonIcon color="medium" icon={create}></IonIcon></IonButton>
+              <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton> 
             </IonItem>
 <IonModal
           isOpen={this.state.ventanaDetalle}
@@ -143,7 +153,63 @@ import {
               <IonItem>
                 <IonIcon slot="start" icon={appstore}></IonIcon>
                 <IonLabel>Tipo</IonLabel>
-                <IonNote slot="end">{this.props.tipo_equipo}</IonNote>
+                <IonNote slot="end">
+                  {
+                    this.props.tipo_equipo === "case"?
+                    'Case':null
+                  }
+                  {
+                    this.props.tipo_equipo === "CPU"?
+                    'CPU':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Mouse"?
+                    'Mouse':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Monitor"?
+                    'Monitor':null
+                  }
+                  {
+                    this.props.tipo_equipo === "Teclado"?
+                    'Teclado':null
+                  }
+                  {
+                    this.props.tipo_equipo === "disco_duro"?
+                    'Disco duro':null
+                  }
+                  {
+                    this.props.tipo_equipo === "fuente_poder"?
+                    'Fuente de poder':null
+                  }
+                  {
+                    this.props.tipo_equipo === "memoria_ram"?
+                    'Memoria RAM':null
+                  }
+                  {
+                    this.props.tipo_equipo === "parlantes"?
+                    'Parlantes':null
+                  }
+                  {
+                    this.props.tipo_equipo === "procesador"?
+                    'Procesador':null
+                  }
+                  {
+                    this.props.tipo_equipo === "regulador"?
+                    'Regulador':null
+                  }
+                  {
+                    this.props.tipo_equipo === "tarjeta_madre"?
+                    'Tarjeta madre': null
+                  }
+                  {
+                    this.props.tipo_equipo === "tarjeta_red"?
+                    'Tarjet de red': null
+                  }
+                  {
+                    this.props.tipo_equipo === "ups"?
+                    'UPS': null
+                  }</IonNote>
               </IonItem>
 
               <IonItem>

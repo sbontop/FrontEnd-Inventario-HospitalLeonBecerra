@@ -36,6 +36,7 @@ export default interface IState {
     listOffice: any;
     fuente: any;
     visible_fuente: any;
+   
 
 }
 
@@ -46,7 +47,6 @@ export default class GlobalPC {
     static varLaptop = "laptop";
     static varIdDesktop = -1;
     static varIdLaptop = -1;
-
 
     static handleChange = (panel: number, obj: React.Component<any, IState>) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         obj.setState({ expanded: !isExpanded ? -1 : panel });
@@ -81,10 +81,11 @@ export default class GlobalPC {
 
     static getListOffice(obj: React.Component<any, IState>) {
         AxiosPC.get_lista_office().then((res: any) => {
+            console.log("lar",res.data)
             obj.setState({
                 listOffice: res.data
             });
-            console.log("DATA:", obj.state.listOffice);
+            console.log("DATAoof:", obj.state.listOffice);
         }).catch((err: any) => {
             console.log(err.response.data);
         });
@@ -683,13 +684,17 @@ export default class GlobalPC {
                                             </IonSelect>
                                         </IonItem>
                                         <IonItem>
-                                            <IonLabel position="floating">Version de Office<IonText color="danger">*</IonText></IonLabel>
-                                            <IonSelect disabled={obj.state.disabled_form} value={obj.state.data["pc-version_office"]} name='pc-version_office' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
-
+                                            <IonLabel position="floating">Programas instalados<IonText color="danger">*</IonText></IonLabel>
+                                            <IonSelect multiple={true} disabled={obj.state.disabled_form} value={obj.state.data["pc-version_office"]
+                                            // obj.state.data["pc-version_office"].map((object: any, i: any) => {
+                                            //     obj.state.id_programas.push(object.id_programa)
+                                            // })
+                                        } 
+                                            name='pc-version_office' onIonChange={(e: any) => { GlobalPC.onChangeCodInput(e, obj) }}>
                                                 {obj.state.listOffice.map((object: any, i: any) => {
                                                     return (
-                                                        <IonSelectOption key={object + "_" + i} value={object}>
-                                                            {object}
+                                                        <IonSelectOption key={object + "_" + i} value={object.id_programa}>
+                                                            {object.nombre}
                                                         </IonSelectOption>
                                                     );
                                                 })}

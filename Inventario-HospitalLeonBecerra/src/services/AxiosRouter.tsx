@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default class AxiosRouter {
   static instanceAxios = axios.create({
-    baseURL: 'https://backend-hlb.herokuapp.com/api',
-    //baseURL: 'http://localhost:8000/api',
+    //  baseURL: 'https://backend-hlb.herokuapp.com/api',
+    baseURL: 'http://localhost:8000/api',
   });
 
   static listado_routers = () => {
