@@ -1,6 +1,6 @@
 import {
   IonItem, IonLabel, IonLoading, IonAlert, IonAvatar, IonIcon, IonList,
-  IonToolbar, IonContent, IonTitle, IonButton, IonButtons, IonModal,IonText
+  IonToolbar, IonContent, IonTitle, IonButton, IonButtons, IonModal, IonText
 } from '@ionic/react';
 import { Redirect } from 'react-router-dom';
 import { trash, create } from 'ionicons/icons';
@@ -43,7 +43,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
         showLoading: true,
         showAlertConfirm: false
       })
-      AxiosPC.deleteEquipo(this.props.info.original.general.id_equipo   , this.props.tipo).then((response: any) => {
+      AxiosPC.deleteEquipo(this.props.info.original.general.id_equipo, this.props.tipo).then((response: any) => {
         if (this.state.mounted) {
           this.setState({
             showLoading: false,
@@ -70,29 +70,34 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
   render() {
     if (this.state.changePage) {
       let path_ = (this.props.info.original.general.ip === null ? "/form-" + this.props.tipo + "/edit/" + this.props.info.original.general.id_equipo : "/form-" + this.props.tipo + "-2/edit-2/" + this.props.info.original.general.id_equipo + "/" + this.props.info.original.general.ip);
-      // let path_desk = (this.props.info.ip === null?"/form-desktop/edit/" + this.props.info.id_equipo:"/form-desktop-2/edit-2/" + this.props.info.id_equipo+"/"+this.props.info.ip );
-      //return (this.props.tipo === 'laptop' ? <Redirect to={path_} /> : <Redirect to={"/form-desktop/edit/" + this.props.info.id_equipo} />);
       return <Redirect to={path_} />
     }
     return (
       <div key={this.props.info.original.general.id_equipo}>
         <IonItem >
           <IonAvatar slot="start">
-            <img src={process.env.PUBLIC_URL + "/assets/img/" + this.props.tipo + ".png"} alt="" />
+            {/* <img src={process.env.PUBLIC_URL + "/assets/img/" + this.props.tipo + ".png"} alt="" /> */}
+            {
+              this.props.info.original.general.estado_operativo === 'D' ? <img src={"./assets/img/" + this.props.tipo + "/D.png"} alt="D" /> :
+                this.props.info.original.general.estado_operativo === 'R' ? <img src={"./assets/img/" + this.props.tipo + "/R.png"} alt="R" /> :
+                  this.props.info.original.general.estado_operativo === 'ER' ? <img src={"./assets/img/" + this.props.tipo + "/ER.png"} alt="ER" /> :
+                    this.props.info.original.general.estado_operativo === 'O' ? <img src={"./assets/img/" + this.props.tipo + "/O.png"} alt="O" /> :
+                      <img src={"./assets/img/" + this.props.tipo + "/B.png"} alt="B" />
+            }
           </IonAvatar>
 
           <IonLabel onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }} color="dark">
-            <IonText color={this.props.info.original.general.estado_operativo === "B"? `danger` : `dark`}><h2><b>{this.props.info.original.general.tipo_equipo.toUpperCase() + ": " + this.props.info.original.general.codigo}</b></h2></IonText>
+            <IonText color={this.props.info.original.general.estado_operativo === "B" ? `danger` : `dark`}><h2><b>{this.props.info.original.general.tipo_equipo.toUpperCase() + ": " + this.props.info.original.general.codigo}</b></h2></IonText>
             <h3>{"Usuario Reg: " + this.props.info.original.general.encargado_registro}</h3>
             <p>{"Fecha. Reg: " + this.props.info.original.general.fecha_registro}</p>
           </IonLabel>
 
           {/* <IonIcon icon={menu}></IonIcon> */}
-          <IonButton size="default" fill="clear" onClick={() => { this.setState({ changePage: true }) }} color="warning" >
-            <IonIcon color="warning" icon={create}></IonIcon>
+          <IonButton disabled={this.props.info.original.general.estado_operativo === "B"} size="default" fill="clear" onClick={() => { this.setState({ changePage: true }) }} color="secondary" >
+            <IonIcon  color="medium" icon={create}></IonIcon>
           </IonButton>
-          <IonButton size="default" fill="clear" onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }} color="primary">
-            <IonIcon color="primary" icon={trash}></IonIcon>
+          <IonButton disabled={this.props.info.original.general.estado_operativo === "B"} size="default" fill="clear" onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }} color="primary">
+            <IonIcon color="medium" icon={trash}></IonIcon>
           </IonButton>
 
         </IonItem>

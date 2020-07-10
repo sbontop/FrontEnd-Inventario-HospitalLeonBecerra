@@ -334,7 +334,7 @@ export default class FormPCDesk extends Component<any, IState> {
                                             <IonSelectOption value={"D"}>Disponible</IonSelectOption>
                                             <IonSelectOption value={"ER"}>En Revision</IonSelectOption>
                                             <IonSelectOption value={"R"}>Reparado</IonSelectOption>
-                                            <IonSelectOption value={"B"}>De Baja</IonSelectOption>
+                                            {/* <IonSelectOption value={"B"}>De Baja</IonSelectOption> */}
                                         </IonSelect>
                                     </IonItem>
                                 </IonList>
