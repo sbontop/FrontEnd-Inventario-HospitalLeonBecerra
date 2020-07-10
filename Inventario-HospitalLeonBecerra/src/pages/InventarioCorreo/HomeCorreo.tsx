@@ -149,15 +149,16 @@ class HomeCorreo extends React.Component<any, any> {
                 </IonItem>
                 <IonItem>
                   <IonLabel>Fecha de <br /> asignación</IonLabel>
-                  <IonDatetime value={this.state.parametros.fecha} doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value.substring(0, 10))}
+                  <IonDatetime value={this.state.parametros.fecha} doneText="Ok" cancelText="Cancelar" name="fecha"
+                    onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.detail.value! ? e.detail.value.substring(0, 10) : "")}
                     placeholder="Fecha" displayFormat="DD/MM/YYYY"
                   ></IonDatetime>
                 </IonItem>
               </IonList>
               <div className="ion-text-center ion-margin">
-                <IonButton expand="block"  onClick={() => this.aplicar_filtros()}>Aplicar</IonButton>
-                <IonButton expand="block"  onClick={() => this.limpiar_filtros()} >Limpiar</IonButton>
-                <IonButton expand="block"  onClick={() => this.setState({ mostrar_pop: false })}>Cancelar</IonButton>
+                <IonButton expand="block" onClick={() => this.aplicar_filtros()}>Aplicar</IonButton>
+                <IonButton expand="block" onClick={() => this.limpiar_filtros()} >Limpiar</IonButton>
+                <IonButton expand="block" onClick={() => this.setState({ mostrar_pop: false })}>Cancelar</IonButton>
               </div >
             </IonPopover>
           </IonToolbar>

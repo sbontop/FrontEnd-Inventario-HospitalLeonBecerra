@@ -1,24 +1,20 @@
 import React from 'react';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
-/* import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge } from '@ionic/react'; */
-/* import { Route, Redirect } from 'react-router'; */
 import { time, globe, arrowBack, stats, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
-/* import Respuesta from '../../components/Respuesta'; */
-/* import TabsRecientes from './TabsRecientes';
-import TabsProgreso from './TabsProgreso';
-import TabsSolicitudes from './TabsSolicitudes'; */
+import AxiosSolicitudes from '../../services/AxiosSolicitudes'
+import Respuesta from '../../components/Respuesta';
 
 class HomeSolicitudes extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
             segmento: "",
+            pendientes: 0,
             mostrar_pop: false,
             mostrar_load: false,
             mostrar_scroll: false,
             datos: [] as any,
-            filtro_estado: "",
             parametros: { page_size: 10, page_index: 0, estado: "P" }
         }
     }
@@ -35,13 +31,15 @@ class HomeSolicitudes extends React.Component<any, any> {
     }
 
     cambiar_estado(valor: any) {
-        this.setState({ parametros: { page_size: 10, page_index: 0, estado: valor } });
-        console.log(this.state.parametros)
+        this.setState({ parametros: { page_size: 10, page_index: 0, estado: valor, filtro_estado: "C" } });
+        console.log(this.state.parametros);
+        this.cargar_solicitudes(true);
     }
 
     componentDidMount = () => {
-        /*  this.setState({ mostrar_load: true })
-           this.cargar_solicitudes(true); */
+        this.setState({ mostrar_load: true })
+        this.cargar_solicitudes(true);
+        this.solicitudes_pendientes();
     }
 
     cargar_solicitudes(newLoad: boolean) {
@@ -50,15 +48,28 @@ class HomeSolicitudes extends React.Component<any, any> {
         if (newLoad) {
             parametros.page_index = 0;
         }
+        AxiosSolicitudes.filtrar_solicitudes(parametros).then(res => {
+            this.setState({ datos: newLoad ? res.data.resp : [...this.state.datos, ...res.data.resp] });
+            this.setState({ mostrar_load: false, mostrar_scroll: this.state.datos.length === res.data.itemSize });
+        }).catch(err => {
+            this.setState({ mostrar_load: false });
+        });
+    }
+
+    solicitudes_pendientes() {
+        AxiosSolicitudes.contar_solicitudes().then(res => {
+            this.setState({ pendientes: res.data });
+        })
     }
 
 
+
     /**
-   * Función utilizada para cargar datos al momento de realizar la acción "arrastrar y soltar" y
-   * al activarse la opción Infinitive Scroll.
-   * @param e 
-   * @param newPageIndex número referente al paginado
-   */
+    * Función utilizada para cargar datos al momento de realizar la acción "arrastrar y soltar" y
+    * al activarse la opción Infinitive Scroll.
+    * @param e 
+    * @param newPageIndex número referente al paginado
+    */
     refrescar = (e: any, newPageIndex: number) => {
         this.asignar_parametros("page_index", newPageIndex);
         setTimeout(() => {
@@ -72,17 +83,17 @@ class HomeSolicitudes extends React.Component<any, any> {
     }
 
     /**
-   * Función auxiliar para asignar los valores de filtrado por defecto en el objeto parametros. 
-   */
+    * Función auxiliar para asignar los valores de filtrado por defecto en el objeto parametros. 
+    */
     limpiar_filtros() {
-        this.setState({ parametros: { page_size: 10, page_index: 0, estado: "C" } });
+        this.setState({ parametros: { page_size: 10, page_index: 0, estado: "O", filtro_estado: "C" } });
     }
 
     cambiar_titulo() {
         let titulo = "Pendientes";
         if (this.state.parametros.estado === "EP")
             titulo = "En progreso";
-        if (this.state.parametros.estado === "C")
+        if (this.state.parametros.estado === "O")
             titulo = "Otras Solicitudes";
         return (
             <IonLabel color="medium" className="ion-margin-top">{titulo}</IonLabel>
@@ -90,69 +101,26 @@ class HomeSolicitudes extends React.Component<any, any> {
     }
 
     /**
-   * Función para cargar los datos según los filtros seleccionados.
-   */
+    * Función para cargar los datos según los filtros seleccionados.
+    */
     aplicar_filtros = () => {
+        console.log("filtros");
         console.log(this.state.parametros)
-        /*  this.asignar_parametros("page_index", 0);
-         this.setState({ mostrar_pop: false, mostrar_load: true })
-         this.cargar_solicitudes(true); */
+        this.asignar_parametros("page_index", 0);
+        this.setState({ mostrar_pop: false, mostrar_load: true })
+        this.cargar_solicitudes(true);
     }
 
 
-    /*  generar_lista = () => {
-       return (this.state.datos.map((dato: any) => {
-         return (
-           <ListaSolicitudes key={dato.id} nombres={dato.nombre} apellidos={dato.apellido} prioridad={dato.prioridad}
-             estado={dato.estado} fecha={dato.fecha} />
-         )
-       }))
-     } */
-
     generar_lista = () => {
-        let solicitudes = [
-            {
-                id: 1,
-                nombres: "Kimihiro",
-                apellidos: "Watanuki",
-                prioridad: "A",
-                estado: "P",
-                fecha: "2020-05-07"
-            },
-            {
-                id: 2,
-                nombres: "Yuko",
-                apellidos: "Ichihara",
-                prioridad: "B",
-                estado: "R",
-                fecha: "2020-05-02"
-            },
-            {
-                id: 3,
-                nombres: "Shizuka",
-                apellidos: "Doumeki",
-                prioridad: "M",
-                estado: "C",
-                fecha: "2020-05-06"
-            },
-            {
-                id: 4,
-                nombres: "Subaru",
-                apellidos: "Sumeragi",
-                prioridad: "C",
-                estado: "EP",
-                fecha: "2020-05-05"
-            }
-        ]
-
-        return (solicitudes.map((dato: any) => {
+        return (this.state.datos.map((dato: any) => {
             return (
-                <ListaSolicitudes key={dato.id} nombres={dato.nombres} apellidos={dato.apellidos} prioridad={dato.prioridad}
-                    estado={dato.estado} fecha={dato.fecha} />
+                <ListaSolicitudes key={dato.id_solicitud} usuario={dato.id_usuario} prioridad={dato.prioridad}
+                    estado={dato.estado} fecha_realizacion={dato.fecha_realizacion} hora_realizacion={dato.hora_realizacion}
+                    tipo={dato.tipo} />
             )
         }))
     }
-
 
     render() {
         return (
@@ -168,12 +136,12 @@ class HomeSolicitudes extends React.Component<any, any> {
                         <IonSegment value={this.state.parametros.estado} onIonChange={(e: any) => this.cambiar_estado(e.detail.value)}>
                             <IonSegmentButton value="P" layout="icon-start"> {/*Pendientes */}
                                 <IonIcon icon={time} />
-                                <IonBadge color="light">1</IonBadge>
+                                <IonBadge color="light">{this.state.pendientes === 0 ? "" : this.state.pendientes}</IonBadge>
                             </IonSegmentButton>
                             <IonSegmentButton value="EP">  {/*En progreso */}
                                 <IonIcon icon={stats} />
                             </IonSegmentButton>
-                            <IonSegmentButton value="C">  {/*Completadas */}
+                            <IonSegmentButton value="O">  {/*Otras solicitudes: Completadas y rechazadas */}
                                 <IonIcon icon={globe} />
                             </IonSegmentButton>
                         </IonSegment>
@@ -182,10 +150,11 @@ class HomeSolicitudes extends React.Component<any, any> {
                 <IonContent>
                     <IonItem lines="none">
                         {this.cambiar_titulo()}
-                        {this.state.parametros.estado === "C" ? <IonIcon slot="end" color="medium" onClick={() => this.setState({ mostrar_pop: true })} icon={options}></IonIcon> : null}
+                        {this.state.parametros.estado === "O" ? <IonIcon slot="end" color="medium"
+                            onClick={() => this.setState({ mostrar_pop: true })} icon={options}></IonIcon> : null}
                     </IonItem>
 
-                    {/* <Respuesta informacion={this.state.datos.length}></Respuesta> */}
+                    <Respuesta informacion={this.state.datos.length}></Respuesta>
 
                     <IonPopover
                         isOpen={this.state.mostrar_pop}
@@ -194,15 +163,15 @@ class HomeSolicitudes extends React.Component<any, any> {
                         <IonList>
                             <IonItem>
                                 <IonLabel>Estado</IonLabel>
-                                <IonSelect value={this.state.parametros.estado} okText="Ok" cancelText="Cancelar" name="estado"
-                                    onIonChange={(e: any) => this.setState({filtro_estado: e.target.value})}>
+                                <IonSelect placeholder="Estado" value={this.state.parametros.filtro_estado} okText="Ok" cancelText="Cancelar"
+                                    name="filtro_estado" onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value)}>
                                     <IonSelectOption value="C">Completadas</IonSelectOption>
                                     <IonSelectOption value="R">Rechazadas</IonSelectOption>
                                 </IonSelect>
                             </IonItem>
                             <IonItem>
                                 <IonLabel>Prioridad</IonLabel>
-                                <IonSelect value={this.state.parametros.prioridad} okText="Ok" cancelText="Cancelar" name="prioridad"
+                                <IonSelect placeholder="Prioridad" value={this.state.parametros.prioridad} okText="Ok" cancelText="Cancelar" name="prioridad"
                                     onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value)}>
                                     <IonSelectOption value="A">Alta</IonSelectOption>
                                     <IonSelectOption value="B">Baja</IonSelectOption>
@@ -212,13 +181,13 @@ class HomeSolicitudes extends React.Component<any, any> {
                             </IonItem>
                             <IonItem>
                                 <IonLabel>Fecha de <br /> realización</IonLabel>
-                                <IonDatetime value={this.state.parametros.fecha} doneText="Ok" cancelText="Cancelar" name="fecha" onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value.substring(0, 10))}
-                                    placeholder="Fecha" displayFormat="DD/MM/YYYY"
-                                ></IonDatetime>
+                                <IonDatetime value={this.state.parametros.fecha_realizacion} doneText="Ok" cancelText="Cancelar" name="fecha_realizacion"
+                                    onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.detail.value! ? e.detail.value.substring(0, 10) : "")}
+                                    placeholder="Fecha" displayFormat="DD/MM/YYYY"></IonDatetime>
                             </IonItem>
                         </IonList>
                         <div className="ion-text-center ion-margin">
-                            <IonButton expand="block"  onClick={() => this.aplicar_filtros()}>Aplicar</IonButton>
+                            <IonButton expand="block" onClick={() => this.aplicar_filtros()}>Aplicar</IonButton>
                             <IonButton expand="block" onClick={() => this.limpiar_filtros()} >Limpiar</IonButton>
                             <IonButton expand="block" onClick={() => this.setState({ mostrar_pop: false })}>Cancelar</IonButton>
                         </div >
@@ -238,31 +207,6 @@ class HomeSolicitudes extends React.Component<any, any> {
                     </IonInfiniteScroll>
                 </IonContent>
             </IonPage>
-
-
-            /*  <IonTabs>
-                 <IonRouterOutlet> 
-                     <Redirect exact path="/homesolicitudes" to="/tabs/recientes" />
-                     <Route path="/tabs/recientes" render={() => <TabsRecientes />} exact={true} />
-                     <Route path="/tabs/progreso" render={() => <TabsProgreso />} exact={true} />
-                     <Route path="/tabs/completadas" render={() => <TabsSolicitudes />} exact={true} />
-                 </IonRouterOutlet>
-                 <IonTabBar slot="top">
-                     <IonTabButton tab="recientes" href="/tabs/recientes">
-                         <IonIcon icon={mailUnread} />
-                         <IonLabel>Recientes</IonLabel>
-                         <IonBadge color="dark">99</IonBadge>
-                     </IonTabButton>
-                     <IonTabButton tab="progreso" href="/tabs/progreso">
-                         <IonIcon icon={time} />
-                         <IonLabel>En progreso</IonLabel>
-                     </IonTabButton>
-                     <IonTabButton tab="completadas" href="/tabs/completadas">
-                         <IonIcon icon={globe} />
-                         <IonLabel>completadas</IonLabel>
-                     </IonTabButton>
-                 </IonTabBar>
-             </IonTabs> */
         )
     }
 }

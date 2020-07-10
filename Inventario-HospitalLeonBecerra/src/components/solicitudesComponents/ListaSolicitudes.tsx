@@ -28,12 +28,12 @@ class ListaSolicitudes extends React.Component<any, any>  {
         if (prioridad === 'M') {
             return <IonIcon color="medio" slot="start" icon={remove}></IonIcon>;
         }
-        if (prioridad === 'C') {
+        if (prioridad === 'CT') {
             return <IonIcon color="critico" slot="start" icon={flash}></IonIcon>;
         }
     }
 
-    transformar_prioridad(prioridad: string){
+    transformar_prioridad(prioridad: string) {
         if (prioridad === 'A') {
             return "Alta";
         }
@@ -43,7 +43,7 @@ class ListaSolicitudes extends React.Component<any, any>  {
         if (prioridad === 'M') {
             return "Media";
         }
-        if (prioridad === 'C') {
+        if (prioridad === 'CT') {
             return "Crítica";
         }
     }
@@ -65,17 +65,23 @@ class ListaSolicitudes extends React.Component<any, any>  {
     }
 
 
+    transformar_tipo(tipo: string) {
+        return tipo === "ST" ? "Servicio Técnico" : "Asignación de equipo";
+    }
+
+
     render() {
         return (
             <IonItem>
-               {this.icono_prioridad(this.props.prioridad)}
+                {this.icono_prioridad(this.props.prioridad)}
                 <IonLabel>
-                    <IonText><h2><b>{this.props.nombres} {this.props.apellidos}</b></h2></IonText>
-                    <h3>Prioridad: {this.transformar_prioridad(this.props.prioridad)}</h3> 
-                    <small>{this.props.fecha}</small>
+                    <IonText><h2><b>{this.props.usuario}</b></h2></IonText>
+                    <h3>Prioridad: {this.transformar_prioridad(this.props.prioridad)}</h3>
+                    <h3>Tipo: {this.transformar_tipo(this.props.tipo)}</h3>
+                    <small>{this.props.fecha_realizacion}  {this.props.hora_realizacion}</small>
                 </IonLabel>
-                    {this.transformar_estado(this.props.estado)}
-               
+                {this.transformar_estado(this.props.estado)}
+
             </IonItem>
 
         )
