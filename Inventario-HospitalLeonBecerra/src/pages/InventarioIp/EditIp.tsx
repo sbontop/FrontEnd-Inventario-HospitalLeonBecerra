@@ -67,7 +67,7 @@ const EditIp: React.FC = () => {
             maquinas_adicionales: maquinas_adicionales,
             /**Estos campos se manejan desde el backend */
             nombre_usuario: 'Samuel Braganza',
-            encargado_registro: 'samuel'
+            encargado_registro: 'admin'
         }
 
         AxiosIp.editar_ip(registro_ip_obj).then(res => {
