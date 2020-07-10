@@ -783,7 +783,7 @@ mostrar_empleados() {
         <IonGrid>
           <IonRow class="ion-text-center">
             <IonCol>
-              <img src={process.env.PUBLIC_URL+"/assets/img/printer.png"} alt=""/>
+              <img src="./assets/img/printer.png" alt=""/>
             </IonCol>
             <IonCol>            
               <IonList>

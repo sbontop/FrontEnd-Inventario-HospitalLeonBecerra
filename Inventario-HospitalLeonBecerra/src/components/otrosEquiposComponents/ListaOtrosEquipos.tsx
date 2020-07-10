@@ -95,9 +95,19 @@ import {
                 <p>Marca: {this.props.marca}</p>
               </IonLabel>
 
-              <IonAvatar slot="start"><img src={process.env.PUBLIC_URL+"/assets/img/variosequipos4.png"} alt="imagen" /></IonAvatar>             
-              <IonButton size="default" color="warning" class="bp" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} fill="clear"><IonIcon icon={create}></IonIcon></IonButton>
-              <IonButton size="default" shape="round" color="danger" class="bp" fill="clear" onClick={this._remove.bind(this)}><IonIcon icon={trash}></IonIcon></IonButton> 
+
+              <IonAvatar slot="start"> 
+                        {
+                        this.props.estado_operativo === 'D'  ? <img src="./assets/img/otros/D.png"  alt="D" /> : 
+                        this.props.estado_operativo === 'R'  ? <img src="./assets/img/otros/R.png"  alt="R" /> : 
+                        this.props.estado_operativo === 'ER' ? <img src="./assets/img/otros/ER.png" alt="ER" /> :
+                        this.props.estado_operativo === 'O'  ? <img src="./assets/img/otros/O.png"  alt="O" /> :
+                                                     <img src="./assets/img/otros/B.png"  alt="B" />
+                        }
+                    </IonAvatar> 
+
+              <IonButton size="default" color="secondary" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} fill="clear"><IonIcon color="medium" icon={create}></IonIcon></IonButton>
+              <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton> 
             </IonItem>
 <IonModal
           isOpen={this.state.ventanaDetalle}

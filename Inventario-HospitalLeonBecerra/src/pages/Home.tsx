@@ -15,16 +15,30 @@ import {
 import React from 'react';
 import './Home.css';
 import {
-  RouteComponentProps
+  RouteComponentProps,Redirect
 } from 'react-router';
 
+import AxiosAutenticacion from '../services/AxiosAutenticacion';
+//import MenuLateral from '../components/Menu_Lateral';
+
+
 const HomePage: React.FC<RouteComponentProps> = (props) => {
+
+  if (localStorage.usertoken){
+    console.log('Existe');
+
+  }else{
+    console.log('No existe');
+    return (<Redirect to="/iniciarsesion" />);      
+
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonMenuButton />
+          <IonMenuButton hidden={localStorage.usertoken?false:true} />
           </IonButtons>
           <IonTitle>Bienvenido</IonTitle>
         </IonToolbar>
