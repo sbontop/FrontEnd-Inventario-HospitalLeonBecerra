@@ -17,11 +17,14 @@ import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import { home, desktop, list, pricetag, codeDownload } from 'ionicons/icons';
+import { home, desktop, logOut, list, pricetag, codeDownload } from 'ionicons/icons';
 import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
 import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
-
+import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
+import AxiosAutenticacion from './services/AxiosAutenticacion';
+import IniciarSesion from './pages/InicioSesion/IniciarSesion';
+import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -44,6 +47,7 @@ import HomeCorreo from './pages/InventarioCorreo/HomeCorreo';
 import FormularioCorreo from './pages/InventarioCorreo/FormularioCorreo';
 import ConsultarDesktop from './pages/InventarioPC/ConsultaEquipos';
 import GlobalPC from './pages/InventarioPC/GlobalPC';
+
 
 const appPages: AppPage[] = [
     {
@@ -70,7 +74,12 @@ const appPages: AppPage[] = [
         title: 'Registro de programas',
         url: '/homeprograma',
         icon: codeDownload
-    }
+    },
+    {
+        title: 'Cerrar sesión',
+        url: '/iniciarsesion',
+        icon: logOut
+    },
 ];
 
 const App: React.FC = () => (
@@ -82,6 +91,8 @@ const App: React.FC = () => (
                     <Route path="/formimpresora" component={FormImpresora} exact={true} />
                     <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
                     <Route path="/consulta" component={HomeImpresora} exact={true} />
+                    <Route path="/iniciarsesion" component={IniciarSesion} exact={true} />
+                    <Route path="/registrarusuario" component={RegistrarUsuario} exact={true} />
                     <Route path="/formotrosequipos" component={FormOtrosEquipos} exact={true} />
                     <Route path="/formotrosequipos/edit/:id" component={FormOtrosEquipos} exact={true} />
                     <Route path="/formlaptop" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
@@ -98,19 +109,19 @@ const App: React.FC = () => (
                     <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
                     <Route path="/homerouter" component={HomeRouter} exact={true} />
                     <Route path="/formulariorouter" component={FormularioRouter} exact={true} />      
-                    
                     <Route path="/formularioprograma" component={FormularioPrograma} exact={true} /> 
                     <Route path="/homeprograma" component={HomePrograma} exact={true} /> 
                     <Route path="/formularioprograma/edit/:id" component={FormularioPrograma} exact={true} />
-
                     <Route path="/formulariorouter/edit/:id" component={FormularioRouter} exact={true} />
                     <Route path="/homeip" component={HomeIp} exact={true} />
                     <Route path="/formularioip" component={FormularioIp} exact={true} />
                     <Route path="/Home" component={Home} exact={true} />
-                    <Route path="/" render={() => <Redirect to="/home" />} exact={true} />
+                    <Route path="/" render={() => <Redirect to="/iniciarsesion" />} exact={true} />
                     <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
                     <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
                     <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
+
+                    <Route path="/homesolicitudes" component={HomeSolicitudes} exact={true} />
 
                     <Route path="/homemarcas" component={HomeMarcas} exact={true} />
                 </IonRouterOutlet>

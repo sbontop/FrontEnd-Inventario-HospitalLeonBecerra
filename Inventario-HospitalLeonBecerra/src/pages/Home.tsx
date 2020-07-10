@@ -15,16 +15,30 @@ import {
 import React from 'react';
 import './Home.css';
 import {
-  RouteComponentProps
+  RouteComponentProps,Redirect
 } from 'react-router';
 
+import AxiosAutenticacion from '../services/AxiosAutenticacion';
+//import MenuLateral from '../components/Menu_Lateral';
+
+
 const HomePage: React.FC<RouteComponentProps> = (props) => {
+
+  if (localStorage.usertoken){
+    console.log('Existe');
+
+  }else{
+    console.log('No existe');
+    return (<Redirect to="/iniciarsesion" />);      
+
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonMenuButton />
+          <IonMenuButton hidden={localStorage.usertoken?false:true} />
           </IonButtons>
           <IonTitle>Bienvenido</IonTitle>
         </IonToolbar>
@@ -49,7 +63,7 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
           </IonRow>
           <IonRow class="row">
             <IonCol size="12">
-              <IonButton color="primary" class="boton" expand="block" size="large">
+              <IonButton color="primary" routerLink="/homesolicitudes" class="boton" expand="block" size="large">
               <div className="margen">
                 <img src={process.env.PUBLIC_URL + "/assets/img/main/solicitud.png"} className="responsive" alt="" /><br/><br/><IonLabel>Solicitudes</IonLabel>   
               </div>

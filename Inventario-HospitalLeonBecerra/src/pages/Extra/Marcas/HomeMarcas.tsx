@@ -124,7 +124,7 @@ class HomeMarcas extends React.Component<any, any> {
             ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
             <IonInfiniteScrollContent
               loadingSpinner="bubbles"
-              loadingText="Cargando mas registros">
+              loadingText="Cargando más registros">
             </IonInfiniteScrollContent>
           </IonInfiniteScroll>
            <Pop prop={this} editionMode={false} handle={this} ></Pop> 

@@ -714,7 +714,7 @@ verificar2=()=>{
         <IonGrid>
           <IonRow class="ion-text-center">
             <IonCol>
-              <img src={process.env.PUBLIC_URL+"/assets/img/variosequipos5.png"} alt=""/>
+              <img src="./assets/img/variosequipos5.png" alt=""/>
             </IonCol>
             <IonCol>               
               <IonList>
