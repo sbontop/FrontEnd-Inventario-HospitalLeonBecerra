@@ -13,6 +13,7 @@ import FormularioRouter from './pages/InventarioRouter/FormularioRouter';
 import HomePrograma from './pages/Extra/Programas/HomePrograma';
 import FormularioPrograma from './pages/Extra/Programas/FormularioPrograma';
 import HomeIp from './pages/InventarioIp/HomeIp';
+import EditIp from './pages/InventarioIp/EditIp';
 import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
@@ -113,6 +114,7 @@ const App: React.FC = () => (
                     <Route path="/homeprograma" component={HomePrograma} exact={true} /> 
                     <Route path="/formularioprograma/edit/:id" component={FormularioPrograma} exact={true} />
                     <Route path="/formulariorouter/edit/:id" component={FormularioRouter} exact={true} />
+                    <Route path="/ip/edit/:id_ip" component={EditIp} exact={true} />
                     <Route path="/homeip" component={HomeIp} exact={true} />
                     <Route path="/formularioip" component={FormularioIp} exact={true} />
                     <Route path="/Home" component={Home} exact={true} />
