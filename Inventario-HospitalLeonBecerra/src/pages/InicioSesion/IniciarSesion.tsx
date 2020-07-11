@@ -57,14 +57,21 @@ class IniciarSesion extends Component<any , any> {
       //console.log("Función obtener 99");
       //console.log('In of method');
       //console.log("Read ss : ",res.status);
+
+      console.log("Respuesta login: ",res.status);
+
       if (res.status === 'Token is Expired'){
         //console.log('En la condición');
+        console.log("Perf 1");
         localStorage.removeItem('usertoken'); 
         //setRedireccionar(true);
       }else if (res.status === 'Token is Invalid'){
+        console.log("Perf 2");
         localStorage.removeItem('usertoken');
         //console.log('Not valid');
+        console.log("Al ultimooooooooo222222222222222222222222");
       }else{
+        console.log("Perf 3");
         this.setState({
           redirect: true
         })

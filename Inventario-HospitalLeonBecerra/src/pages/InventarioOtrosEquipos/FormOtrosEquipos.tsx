@@ -516,6 +516,9 @@ verificar2=()=>{
 
     if(this.id===undefined){
       console.log('Creando equipo');
+      this.setState({
+        confirmacion:false
+      }); 
     AxiosOtrosEquipos.crear_otro_equipo(json_datos_editados).then(res => {
       console.log('res.data: ',res);
       if (res.status === 200){
@@ -560,6 +563,10 @@ verificar2=()=>{
     console.log('Editando equipo');
     json_datos_editados.key = json.id_equipo;
     console.log('Actualizar: ',json_datos_editados);
+    this.setState({
+      //cargando:false,
+      confirmacion:false,
+    });
     AxiosOtrosEquipos.editar_equipo(json_datos_editados).then(res => {  
         this.setState({
           cargando:false,
@@ -585,9 +592,9 @@ verificar2=()=>{
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
-        <IonTitle >Registro Otros Equipos</IonTitle>
+        <IonTitle >  {this.id!==undefined?'Editar otro equipo':'Registrar otros equipo'} </IonTitle>
         <IonButtons slot="end">
-        <IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>
+        {/*<IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>*/}
         </IonButtons>
       </IonToolbar>
       <IonContent fullscreen>
