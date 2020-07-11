@@ -93,7 +93,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
           </IonLabel>
 
           {/* <IonIcon icon={menu}></IonIcon> */}
-          <IonButton disabled={this.props.info.original.general.estado_operativo === "B"} size="default" fill="clear" onClick={() => { this.setState({ changePage: true }) }} color="secondary" >
+          <IonButton  size="default" fill="clear" onClick={() => { this.setState({ changePage: true }) }} color="secondary" >
             <IonIcon  color="medium" icon={create}></IonIcon>
           </IonButton>
           <IonButton disabled={this.props.info.original.general.estado_operativo === "B"} size="default" fill="clear" onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, showAlertConfirm: true }) }} color="primary">
