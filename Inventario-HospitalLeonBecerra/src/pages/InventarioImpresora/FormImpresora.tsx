@@ -597,6 +597,9 @@ mostrar_empleados() {
     if(this.id===undefined){
       console.log('Creando impresora');
       console.log('json_datos_editados: ',json_datos_editados);
+      this.setState({
+        confirmacion:false
+      });   
     AxiosImpresora.crear_impresora_nueva(json_datos_editados).then(res => {
       if (res.data.log === 1){
         if (this.state.cargando===true){
@@ -629,6 +632,10 @@ mostrar_empleados() {
     console.log('Editando impresora');
     json_datos_editados.key = json.id_impresora;
     console.log('Actualizar: ',json_datos_editados);
+    this.setState({
+      //cargando:false,
+      confirmacion:false,
+    });
     AxiosImpresora.editar_impresora(json_datos_editados).then(res => {  
         this.setState({
           cargando:false,

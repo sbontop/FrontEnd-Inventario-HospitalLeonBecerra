@@ -170,6 +170,11 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
       eliminar:false,
       eliminando:true
     });
+    this.setState({
+      //impresoras: res.data.data,
+      //eliminando:false,
+      confirmacion:false
+    });
     AxiosOtrosEquipos.eliminar_otros_equipos(this.state.id_equipo_eliminar, info).then((res:any) => {
       this.setState({
         equipos: res.data.data,

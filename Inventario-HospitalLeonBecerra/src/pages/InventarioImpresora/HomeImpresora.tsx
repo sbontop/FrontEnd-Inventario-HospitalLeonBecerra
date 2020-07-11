@@ -168,6 +168,11 @@ class HomeImpresora extends Component<{lista:any}, IState> {
       eliminar:false,
       eliminando:true
     });
+    this.setState({
+      //impresoras: res.data.data,
+      //eliminando:false,
+      confirmacion:false
+    });
     AxiosImpresora.eliminar_impresora(this.state.id_equipo_eliminar,info).then((res:any) => {
       this.setState({
         impresoras: res.data.data,
