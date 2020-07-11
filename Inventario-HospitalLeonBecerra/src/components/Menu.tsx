@@ -11,6 +11,8 @@ import {
   IonToolbar,
   IonAvatar
 } from '@ionic/react';
+import { home, desktop, logOut, list, pricetag, codeDownload } from 'ionicons/icons';
+
 import React, {useState, useEffect} from 'react';
 import { RouteComponentProps, withRouter,Redirect } from 'react-router-dom';
 import { AppPage } from '../declarations';
@@ -108,7 +110,8 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
     
     
     
-                <h3>Nombre: {nombre} Apellido: {apellido}</h3>
+                <h3>Nombre: {nombre}</h3>
+                <h3>Apellido: {apellido}</h3>
                 <p>Usuario: {username}</p>
                 <p>Cédula: {cedula}</p>
     
@@ -117,29 +120,46 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
     
             <br/>
 
-        <IonList>
-          {appPages.map((appPage, index) => {
-            if (appPage.title === 'Cerrar sesión'){
-              return (
-                <IonMenuToggle key={index} autoHide={false}>
-                  <IonItem routerLink={appPage.url} onClick ={(e:any) => {localStorage.removeItem('usertoken')}} routerDirection="none">
-                    <IonIcon slot="start" icon={appPage.icon} />
-                    <IonLabel>{appPage.title}</IonLabel>
-                  </IonItem>
-                </IonMenuToggle>
-              );
-            }else if (appPage.url+'' !== 'nombre' && appPage.url+'' !== 'username'&& appPage.url+'' !== 'cedula'){
-              return (              
-                <IonMenuToggle key={index} autoHide={false}>
-                  <IonItem routerLink={appPage.url} routerDirection="none">
-                    <IonIcon slot="start" icon={appPage.icon} />
-                    <IonLabel>{appPage.title}</IonLabel>
-                  </IonItem>
-                </IonMenuToggle>
-              );
-            }
-          })}
-        </IonList>
+      <IonList>
+
+        <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/home' routerDirection="none">
+          <IonIcon slot="start" icon={home} />
+          <IonLabel>Menú principal</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+
+        <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/inventarios' routerDirection="none">
+          <IonIcon slot="start" icon={list} />
+          <IonLabel>Inventario</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+
+        <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/tiposequiposinventario' routerDirection="none">
+          <IonIcon slot="start" icon={desktop} />
+          <IonLabel>Registro de equipos</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+
+        <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/homemarcas' routerDirection="none">
+          <IonIcon slot="start" icon={pricetag} />
+          <IonLabel>Registro de Marcas</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+
+
+        <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/iniciarsesion' onClick ={ (e:any) => {localStorage.removeItem('usertoken')} } routerDirection="none">
+            <IonIcon slot="start" icon={logOut} />
+            <IonLabel>Cerrar sesión</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+
+      </IonList>
+
       </IonContent>
     </IonMenu>
   

@@ -66,7 +66,7 @@ import {
               <IonLabel key={this.props.id_equipo} onClick={() => this.setState({ ventanaDetalle: true })}>
                 
               <IonRippleEffect></IonRippleEffect>
-                <h2><b>EQUIPO: {this.props.codigo}</b></h2>
+                <h2><b>{this.props.codigo}</b></h2>
                 {
                   this.props.estado_operativo==='D'?
                     <h3>Estado: Disponible</h3>
@@ -105,9 +105,11 @@ import {
                                                      <img src="./assets/img/otros/B.png"  alt="B" />
                         }
                     </IonAvatar> 
-
-              <IonButton size="default" color="secondary" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} fill="clear"><IonIcon color="medium" icon={create}></IonIcon></IonButton>
-              <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton> 
+              <IonButton size="default" fill="clear" routerLink={"/formotrosequipos/edit/"+this.props.id_equipo} color="secondary" ><IonIcon color="medium" icon={create}></IonIcon></IonButton>
+              {
+                this.props.estado_operativo === "B" ? <IonButton disabled size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>:
+                <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>
+              }                                           
             </IonItem>
 <IonModal
           isOpen={this.state.ventanaDetalle}

@@ -113,7 +113,14 @@ import {
 
 
               <IonButton size="default" fill="clear" routerLink={"/formimpresora/edit/"+this.props.id_impresora} color="secondary" ><IonIcon color="medium" icon={create}></IonIcon></IonButton>
-              <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>
+              {
+                this.props.estado_operativo === "B" ? <IonButton disabled size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>:
+                <IonButton size="default" color="primary" fill="clear" onClick={this._remove.bind(this)}><IonIcon color="medium" icon={trash}></IonIcon></IonButton>
+              }              
+              
+
+                                  
+
               {/*<IonButton size="large" color="warning" class="bp" fill="clear"><IonIcon icon={create}><Redirect to={"/FormImpresora/edit/"+this.props.id_equipo} /></IonIcon></IonButton>*/}
             </IonItem>
 

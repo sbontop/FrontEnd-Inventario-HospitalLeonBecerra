@@ -654,9 +654,9 @@ mostrar_empleados() {
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
-        <IonTitle >Registro Impresoras</IonTitle>
+        <IonTitle >  {this.id!==undefined?'Editar impresora':'Registrar impresora'} </IonTitle>
         <IonButtons slot="end">
-        <IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>
+        {/*<IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>*/}
         </IonButtons>
       </IonToolbar>
       <IonContent fullscreen>

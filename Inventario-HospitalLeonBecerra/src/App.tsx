@@ -52,36 +52,26 @@ import GlobalPC from './pages/InventarioPC/GlobalPC';
 
 const appPages: AppPage[] = [
     {
-        title: 'Menú principal',
-        url: '/home',
-        icon: home
+      title: 'Menú principal',
+      url: '/home',
+      icon: home
     },
     {
-        title: 'Inventario',
-        url: '/inventarios',
-        icon: list
+      title: 'Inventario',
+      url: '/inventarios',
+      icon: list
     },
     {
-        title: 'Registro de equipos',
-        url: '/tiposequiposinventario',
-        icon: desktop
+      title: 'Registro de equipos',
+      url: '/tiposequiposinventario',
+      icon: desktop
     },
     {
-        title: 'Registro de marcas',
-        url: '/homemarcas',
-        icon: pricetag
-    },
-    {
-        title: 'Registro de programas',
-        url: '/homeprograma',
-        icon: codeDownload
-    },
-    {
-        title: 'Cerrar sesión',
-        url: '/iniciarsesion',
-        icon: logOut
-    },
-];
+      title: 'Registro de Marcas',
+      url: '/homemarcas',
+      icon: pricetag
+    }
+  ];
 
 const App: React.FC = () => (
     <IonApp>

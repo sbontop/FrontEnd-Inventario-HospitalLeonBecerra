@@ -585,9 +585,9 @@ verificar2=()=>{
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
-        <IonTitle >Registro Otros Equipos</IonTitle>
+        <IonTitle >  {this.id!==undefined?'Editar otro equipo':'Registrar otros equipo'} </IonTitle>
         <IonButtons slot="end">
-        <IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>
+        {/*<IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>*/}
         </IonButtons>
       </IonToolbar>
       <IonContent fullscreen>
