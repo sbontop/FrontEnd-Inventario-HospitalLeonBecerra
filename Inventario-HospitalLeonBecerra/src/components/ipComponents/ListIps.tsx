@@ -54,11 +54,13 @@ class ListIps extends React.Component<IpInterface, estados, { history: any }>  {
         <IonItem className="ion-activatable" onClick={() => this.setState({ ventanaOpciones: true })}>
           <IonLabel key={this.props.id_ip}>
             <h2><b>{this.props.direccion_ip}</b></h2>
-            <h3>Estado: {this.props.estado}</h3>
+            <h3>Estado: { this.props.estado === 'L' ? " Libre" : " En uso" } </h3>
             <p>Usuario: {this.props.nombre_usuario}</p>
             <IonRippleEffect />
           </IonLabel>
-          <IonAvatar slot="start"><img src="./assets/img/wifi.png" alt="imagen" /></IonAvatar>
+          <IonAvatar slot="start"> 
+                { this.props.estado === 'L'  ? <img src="./assets/img/ip/L.png"  alt="L" /> : <img src="./assets/img/ip/EU.png"  alt="EU" /> }
+          </IonAvatar>
           {/* <IonButton onClick={() => console.log("Acción editar")} color="secondary" >
             <div><img src="./assets/icon/edit.png"  alt="" /></div>
           </IonButton> */}

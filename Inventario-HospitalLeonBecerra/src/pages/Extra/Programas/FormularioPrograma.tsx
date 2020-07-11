@@ -33,7 +33,6 @@ const FormularioPrograma: React.FC = () => {
                 setEditor(res.data.editor);
                 setNombre(res.data.nombre);
                 setVersion(res.data.version);
-                setEncargado_registro(res.data.encargado_registro);
                 setObservacion(res.data.observacion);
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
@@ -54,29 +53,29 @@ const FormularioPrograma: React.FC = () => {
                 editor: editor,
                 version: version,
                 observacion: observacion,
-                encargado_registro: encargado_registro
+                encargado_registro: "admin"
             }
             if (!editionMode) {
-                console.log("3",registro_programa)
+                // console.log("3",registro_programa)
                 AxiosPrograma.crear_programa(registro_programa).then(res => {
-                    setMensaje("Registro guardado satisfactoriamente")
                     setConfirmarRegistro(true);
+                    setMensaje("Registro guardado satisfactoriamente");
                     console.log(guardar);
-                    volver_principal();
+                    // volver_principal();
                 }).catch(err => {
-                    setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+                    //setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                     if (err.response) {
                        setMensaje(err.response.data.log)
                     }
                     setError(true);
                 });
             } else {
-                console.log(registro_programa)
+                // console.log(registro_programa)
                 AxiosPrograma.editar_programa(registro_programa).then(res => {
-                    console.log("act",res)
-                    setMensaje("Registro actualizado satisfactoriamente")                   
+                    // console.log("act",res)
                     setConfirmarEdicion(true);
-                    volver_principal();
+                    setMensaje("Registro actualizado satisfactoriamente")                   
+                    // volver_principal();
                 }).catch(_error => {
                     setError(true);
                 });

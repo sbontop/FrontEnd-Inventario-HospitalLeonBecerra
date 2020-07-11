@@ -69,6 +69,7 @@ const FormularioRouter: React.FC = () => {
                 setPuerta_enlace(res.data.puerta_enlace);
                 setEstado(res.data.estado_operativo);
                 setIp(res.data.ip);
+                setDescripcion(res.data.descripcion)
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
