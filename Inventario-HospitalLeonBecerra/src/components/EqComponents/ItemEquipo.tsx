@@ -87,7 +87,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
           </IonAvatar>
 
           <IonLabel onClick={() => { if (this.state.mounted) this.setState({ ventanaOptions: false, ventanaDetalle: true }) }} color="dark">
-            <IonText color={this.props.info.original.general.estado_operativo === "B" ? `danger` : `dark`}><h2><b>{this.props.info.original.general.tipo_equipo.toUpperCase() + ": " + this.props.info.original.general.codigo}</b></h2></IonText>
+            <IonText color={this.props.info.original.general.estado_operativo === "B" ? `danger` : `dark`}><h2><b>{this.props.info.original.general.codigo}</b></h2></IonText>
             <h3>{"Usuario Reg: " + this.props.info.original.general.encargado_registro}</h3>
             <p>{"Fecha. Reg: " + this.props.info.original.general.fecha_registro}</p>
           </IonLabel>

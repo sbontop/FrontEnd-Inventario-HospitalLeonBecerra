@@ -122,7 +122,7 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
             if (appPage.title === 'Cerrar sesión'){
               return (
                 <IonMenuToggle key={index} autoHide={false}>
-                  <IonItem routerLink={appPage.url} onClick ={ (e:any) => {localStorage.removeItem('usertoken')} } routerDirection="none">
+                  <IonItem routerLink={appPage.url} onClick ={(e:any) => {localStorage.removeItem('usertoken')}} routerDirection="none">
                     <IonIcon slot="start" icon={appPage.icon} />
                     <IonLabel>{appPage.title}</IonLabel>
                   </IonItem>
