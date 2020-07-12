@@ -54,12 +54,9 @@ static login = (user:any) => {
           return response.data.token
       })
       .catch(err => {
-        console.log("Respuesta: ",err.error);
-        console.log("Respuesta: ",(err+'').includes('400'));
-
+        //console.log("Respuesta: ",err.error);
+        //console.log("Respuesta: ",(err+'').includes('400'));
         return err;
-          
-          
         })
 }
 
@@ -82,7 +79,7 @@ static getProfile = () => {
       })
       .catch(err => {
           console.log(err)
-          console.log('Not function: ',err);
+          //console.log('Not function: ',err);
       })
 }
 }
