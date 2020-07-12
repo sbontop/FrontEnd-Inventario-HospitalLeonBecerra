@@ -35,25 +35,26 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
   function obtener_pefil(){
   
     AxiosAutenticacion.getProfile().then(  (res:any) => {
-      console.log("Función obtener 99");
-      console.log('In of method');
-      console.log("Read: ",res.status);
+      //console.log("Función obtener 99");
+      //console.log('In of method');
+      //console.log("Read: ",res.status);
       
       if (res.status === 'Token is Expired'){
-        console.log('En la condición');
+        //console.log('En la condición');
         localStorage.removeItem('usertoken');
         setRedireccionar(true);
       }else{
-        console.log('Part 6');
+        //console.log('Part 6');
         setUsername(res.user.username);
         AxiosAutenticacion.obtener_datos_usuario(res.user.username).then( (res:any) => {  
-          console.log('Into slide: ',res);
-          console.log('res.data.nombre',res.data[0].nombre);
+          //console.log('Into slide: ',res);
+          //console.log('res.data.nombre',res.data[0].nombre);
           setNombre(res.data[0].nombre);
           setApellido(res.data[0].apellido);
           setCedula(res.data[0].cedula)
         }).catch((err:any) => {
-          console.log('Eroor data');
+          console.log(err);
+          
         });
       }
       
@@ -63,13 +64,13 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
       //console.log(res.user.email);
       /* if (res) {
           console.log("Res: ",res);
-      }else{
+      }else{ 
           console.log("Error");
       } */
   }).catch((err:any) => {
-    console.log("Verificar 200");
+    //console.log("Verificar 200");
     //localStorage.removeItem('usertoken');
-    console.log("Veri: ",err);
+    console.log(err);
   });
     
   }
@@ -77,16 +78,8 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
 
 
   useEffect(() => {
-    console.log("execute");
-    //console.log("user: ",username);
-    //console.log("nombre: ", nombre);
-    //console.log("apellido: ",apellido);
-    //console.log("cedula: ",cedula);
-
-    obtener_pefil();
-
-     
-});
+    obtener_pefil();     
+  });
 
 
 

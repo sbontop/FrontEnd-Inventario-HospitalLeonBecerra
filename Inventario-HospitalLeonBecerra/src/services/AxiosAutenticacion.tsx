@@ -76,8 +76,8 @@ static getProfile = () => {
           headers: {Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.usertoken}` }
       })
       .then(response => {
-          console.log('Revisar 99: ',response);
-          console.log("res data: ", response.data);
+          console.log('response ',response);
+          console.log("response.data ", response.data);
           return response.data
       })
       .catch(err => {

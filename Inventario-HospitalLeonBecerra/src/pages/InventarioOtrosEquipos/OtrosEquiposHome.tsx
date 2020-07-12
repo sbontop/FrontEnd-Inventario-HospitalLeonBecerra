@@ -55,7 +55,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
   constructor(props: any) {
     super(props);
     this.state = {
-        estado: 'Disponible',
+        estado: 'Todas',
         size:10,
         confirmacion: false,
         redirectTo: false,
@@ -66,9 +66,9 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
         equipos:[],
         mostrando_datos:false,
         popOver:false,
-        filtro_marca: "Todos",
+        filtro_marca: "Todas",
         filtro_marca_anterior: "",
-        filtro_fecha: new Date().toISOString().substring(0, 10),
+        filtro_fecha: 'Todas',
         filtro_fecha_anterior: "",
         codigo: "",
         eliminar:false,
@@ -95,6 +95,13 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
   clearReload() {
     this.setState({ popOver: false});
     this.getOtrosEquipos(10);
+
+    this.setState({
+      estado: 'Todas',
+      filtro_marca: 'Todas',
+      filtro_fecha: 'Todas'
+    })
+
   }
   
   ionViewWillLeave() {
@@ -112,7 +119,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
     getMarcas=()=>{
     AxiosOtrosEquipos.mostrar_marcas().then((res:any) => {
       let marcas = res.data;
-      console.log("res.data: ",res.data);
+      //console.log("res.data: ",res.data);
       this.setState({
         marcas_equipos:marcas
       }); 
@@ -136,7 +143,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
 
     let info:any;
     if (this.state.opcion_buscar_general){
-      console.log('opcion_buscar_general');
+      //console.log('opcion_buscar_general');
       info = {"tipo":"general","size":(this.state.pageNumber)*10};
       this.setState({
         page_number_busqueda_codigo : 0,
@@ -147,7 +154,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
         codigo: ""
       })
     }else if(this.state.opcion_buscar_codigo){
-      console.log('opcion_buscar_codigo');
+      //console.log('opcion_buscar_codigo');
       info = {"tipo":"codigo","codigo":this.state.busqueda_codigo,"size":(this.state.page_number_busqueda_codigo)*10};
       this.setState({
         page_number_buscar_filtro:1,
@@ -156,7 +163,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
         opcion_buscar_filtro:false,
       })
     }else if(this.state.opcion_buscar_filtro){
-      console.log('opcion_buscar_filtro');
+      //console.log('opcion_buscar_filtro');
       info = {"tipo":"filtro","fecha":this.state.filtro_fecha,"marca":this.state.filtro_marca,"size":(this.state.opcion_buscar_filtro)*10};
       this.setState({
         page_number_busqueda_codigo:0,
@@ -231,8 +238,8 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
               equipos:[...this.state.equipos, ...res.data.data],
             })
           }
-          console.log('Find: ',res.data.data);
-          console.log('Resp: ',res.data);
+          //console.log('Find: ',res.data.data);
+          //console.log('Resp: ',res.data);
           this.setState({
             disable_Infinite_Scroll : res.data.total === this.state.equipos.length,
             codigo : this.state.busqueda_codigo
@@ -271,7 +278,7 @@ getOtrosEquipos=(size:any)=>{
 
   setTimeout(() => {
     AxiosOtrosEquipos.mostrar_equipos_paginado(this.state.size, this.state.pageNumber).then((res:any) => {
-      console.log('Opcion1');
+      //console.log('Opcion1');
       this.setState({
         equipos:res.data.data,
         mostrando_datos:false,
@@ -282,7 +289,7 @@ getOtrosEquipos=(size:any)=>{
       })
 
     }).catch((err:any) => {
-      console.log('Option2');
+      //console.log('Option2');
       this.setState({
         cargando:false,
         mostrando_datos:false,
@@ -299,10 +306,10 @@ getOtrosEquipos=(size:any)=>{
   })
   setTimeout(() => {
     if(this.state.opcion_buscar_codigo){
-      console.log('Buscar code');
+      //console.log('Buscar code');
       this.getConsultar();
     }else if (this.state.opcion_buscar_filtro){
-      console.log('Buscar filter ');
+      //console.log('Buscar filter ');
       this.setState({
         page_number_buscar_filtro : this.state.page_number_buscar_filtro + 1,
       })
@@ -310,7 +317,7 @@ getOtrosEquipos=(size:any)=>{
       this.aplicar_filtros(true,this.state.page_number_buscar_filtro);
     }else if (this.state.opcion_buscar_general){
       this.setState({codigo: ""});
-      console.log('Buscar default     ');
+      //console.log('Buscar default     ');
       AxiosOtrosEquipos.mostrar_equipos_paginado(this.state.size, this.state.pageNumber).then((res:any) => {
         this.setState({
           equipos:[...this.state.equipos, ...res.data.data]
@@ -390,13 +397,13 @@ getOtrosEquipos=(size:any)=>{
 
     AxiosOtrosEquipos.filtrar_equipos_paginado(page, this.state.filtro_marca, this.state.filtro_fecha, this.state.estado,10).then((res:any) => {
           if (page ===1){
-            console.log('Uno');
+            //console.log('Uno');
             this.setState({
               mostrando_datos:false,
               equipos : res.data.data,
             });
           }else{
-            console.log('Dos');
+            //console.log('Dos');
             this.setState({
               equipos:[...this.state.equipos, ...res.data.data],
               mostrando_datos:false,
@@ -426,7 +433,7 @@ getOtrosEquipos=(size:any)=>{
         page_number_buscar_filtro: 1
       })
     }
-    console.log('M:  ',this.state.filtro_marca);
+    //console.log('M:  ',this.state.filtro_marca);
   }
 
   change_fecha = (e:any) => {
@@ -439,7 +446,7 @@ getOtrosEquipos=(size:any)=>{
         page_number_buscar_filtro: 1
       })
     }
-    console.log('F:  ',this.state.filtro_fecha);
+    //console.log('F:  ',this.state.filtro_fecha);
   }
   
   handler =() =>{
@@ -471,8 +478,8 @@ getOtrosEquipos=(size:any)=>{
             
               <IonItem>
               <IonLabel>Marca</IonLabel>
-                <IonSelect name="printer.marca" onIonChange={this.change_marca } >
-                  <IonSelectOption selected = {this.state.filtro_marca==="Todos"?true:false} value = {"Todos"}>Todos</IonSelectOption>
+                <IonSelect name="marca" value ={this.state.filtro_marca} onIonChange={this.change_marca } >
+                  <IonSelectOption selected = {this.state.filtro_marca==="Todas"?true:false} value = {"Todas"}>Todas</IonSelectOption>
                 {this.state.marcas_equipos.map((object:any, i:any) => {
                   return (
                     <IonSelectOption key={object.marca} value={object.marca}>
@@ -485,7 +492,7 @@ getOtrosEquipos=(size:any)=>{
 
               <IonItem>
                 <IonLabel>Estado operativo</IonLabel>
-                  <IonSelect onIonChange={this.cambiar_estado }>
+                <IonSelect value ={this.state.estado} onIonChange={this.cambiar_estado }>
 
                   <SelectOptionEstado/>
 

@@ -58,20 +58,20 @@ class IniciarSesion extends Component<any , any> {
       //console.log('In of method');
       //console.log("Read ss : ",res.status);
 
-      console.log("Respuesta login: ",res.status);
+      //console.log("Respuesta login: ",res.status);
 
       if (res.status === 'Token is Expired'){
         //console.log('En la condición');
-        console.log("Perf 1");
+        //console.log("Perf 1");
         localStorage.removeItem('usertoken'); 
         //setRedireccionar(true);
       }else if (res.status === 'Token is Invalid'){
-        console.log("Perf 2");
+        //console.log("Perf 2");
         localStorage.removeItem('usertoken');
         //console.log('Not valid');
-        console.log("Al ultimooooooooo222222222222222222222222");
+        //console.log("Al ultimooooooooo222222222222222222222222");
       }else{
-        console.log("Perf 3");
+        //console.log("Perf 3");
         this.setState({
           redirect: true
         })
@@ -108,20 +108,15 @@ class IniciarSesion extends Component<any , any> {
 
   onSubmit() {
     //e.preventDefault()
-
     const user = {
         username: this.state.username,
         password: this.state.password
     }
-
-    console.log('user: ',user);
-
+    //console.log('user: ',user);
     this.setState({
       cargado : true
     })
-
     AxiosAutenticacion.login(user).then((res:any) => {
-
       this.setState({
         cargado : false
       })        
@@ -146,7 +141,7 @@ class IniciarSesion extends Component<any , any> {
           });
         }
     }).catch((err:any) => {
-      console.log("Verificar 100");
+      //console.log("Verificar 100");
       this.setState({
         cargando:false,
         error_servidor:true,

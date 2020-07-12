@@ -25,12 +25,10 @@ import AxiosAutenticacion from '../services/AxiosAutenticacion';
 const HomePage: React.FC<RouteComponentProps> = (props) => {
 
   if (localStorage.usertoken){
-    console.log('Existe');
-
+    //console.log('Existe');
   }else{
-    console.log('No existe');
+    //console.log('No existe');
     return (<Redirect to="/iniciarsesion" />);      
-
   }
 
   return (

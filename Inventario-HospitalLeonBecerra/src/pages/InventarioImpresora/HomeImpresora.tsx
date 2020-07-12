@@ -46,7 +46,8 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         size:10,
         confirmacion: false,
         redirectTo: false,
-        estado:'Disponible',
+        //estado:'Disponible',
+        estado:'Todas',
         cargando:false,
         error_servidor:false,
         aplicar: false,
@@ -54,8 +55,10 @@ class HomeImpresora extends Component<{lista:any}, IState> {
         impresoras:[],
         mostrando_datos:false,
         popOver:false,
-        filtro_marca: "Todos",
-        filtro_fecha: new Date().toISOString().substring(0, 10),
+        //filtro_marca: "Todos",
+        filtro_marca: 'Todas',
+        //filtro_fecha: new Date().toISOString().substring(0, 10),
+        filtro_fecha: 'Todas',
         codigo: "",
         eliminar:false,
         eliminando:false,
@@ -105,10 +108,17 @@ class HomeImpresora extends Component<{lista:any}, IState> {
     this.setState({eliminar:true})
   } 
 
-  clearReload() {
+  clearReload = () => {
     this.setState({ popOver: false});
     this.getImpresoras(10);
-  }
+
+    this.setState({
+      estado: 'Todas',
+      filtro_marca: 'Todas',
+      filtro_fecha: 'Todas'
+    })
+    
+  } 
 
   getMarcas=()=>{
     AxiosImpresora.mostrar_marcas().then((res:any) => {
@@ -355,6 +365,8 @@ getImpresorasNext=(e:any)=>{
       busqueda_codigo:""
     })
 
+  console.log("Elementos: ",this.state.filtro_marca, this.state.filtro_fecha, this.state.estado);
+
   AxiosImpresora.filtrar_impresoras_paginado(page, this.state.filtro_marca, this.state.filtro_fecha, this.state.estado,10).then((res:any) => {
         console.log('Respuest: ',res.data);
         console.log('Respuest: ',res.data.data);
@@ -441,8 +453,9 @@ getImpresorasNext=(e:any)=>{
             <IonList>
               <IonItem>
               <IonLabel>Marca</IonLabel>
-                <IonSelect name="printer.marca" onIonChange={this.change_marca } >
-                  <IonSelectOption selected = {this.state.filtro_marca==="Todos"?true:false} value = {"Todos"}>Todos</IonSelectOption>
+                <IonSelect name="printer.marca" value ={this.state.filtro_marca} onIonChange={this.change_marca } >
+                  <IonSelectOption selected>Todas</IonSelectOption>
+
                 {this.state.marcas_impresoras.map((object:any, i:any) => {
                   return (
                     <IonSelectOption key={object.marca} value={object.marca}>
@@ -455,12 +468,12 @@ getImpresorasNext=(e:any)=>{
 
               <IonItem>
                 <IonLabel>Estado operativo</IonLabel>
-                  <IonSelect onIonChange={this.cambiar_estado }>
+                  <IonSelect value ={this.state.estado} onIonChange={this.cambiar_estado }>
 
                   <SelectOptionEstado/>
 
                   
-                </IonSelect>   
+                </IonSelect>    
               </IonItem>
                 
 
