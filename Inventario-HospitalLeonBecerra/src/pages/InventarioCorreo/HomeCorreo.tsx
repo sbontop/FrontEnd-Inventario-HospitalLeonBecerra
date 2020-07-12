@@ -86,9 +86,9 @@ class HomeCorreo extends React.Component<any, any> {
    * Función para filtrar por nombre de empleados.
    */
   buscar_empleado = () => {
-    this.asignar_parametros("page_index", 0);
-    this.setState({ mostrar_load: true });
-    this.cargar_correos(true);
+      this.asignar_parametros("page_index", 0);
+     this.setState({ mostrar_load: true });
+     this.cargar_correos(true); 
   }
 
   /**
@@ -170,8 +170,8 @@ class HomeCorreo extends React.Component<any, any> {
             </IonRefresherContent>
           </IonRefresher>
 
-          <IonSearchbar placeholder={"Buscar por empleado"} onIonBlur={this.buscar_empleado} onIonChange={(e: any) => this.asignar_parametros("empleado", e.target.value)}
-            cancelButtonIcon="md-search" showCancelButton="never">
+          <IonSearchbar placeholder={"Buscar por empleado"}   onIonCancel={(e: any) => this.buscar_empleado()}  onIonChange={(e: any) =>  this.asignar_parametros("empleado", e.target.value)}
+            cancelButtonIcon="md-search" showCancelButton="focus">
           </IonSearchbar>
 
           <IonLoading
