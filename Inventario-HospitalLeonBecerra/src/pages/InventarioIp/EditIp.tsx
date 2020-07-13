@@ -104,8 +104,8 @@ const EditIp: React.FC = () => {
                         <IonItem>
                             <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
                             <IonSelect value={estado} onIonChange={(e) => setEstado(e.detail.value)}>
-                                <IonSelectOption value="EU" key="EU">EU</IonSelectOption>
-                                <IonSelectOption value="L" key="L">L</IonSelectOption>
+                                <IonSelectOption value="EU" key="EU">En uso</IonSelectOption>
+                                <IonSelectOption value="L" key="L">Libre</IonSelectOption>
                             </IonSelect>
                         </IonItem>
                         <IonItem>

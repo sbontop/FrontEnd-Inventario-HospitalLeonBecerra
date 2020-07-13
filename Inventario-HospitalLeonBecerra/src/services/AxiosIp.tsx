@@ -36,4 +36,9 @@ export default class AxiosIp {
     return AxiosIp.instanceAxios.put(`/editar_ip`, ip);
   }
 
+  static eliminar_ip = (id_ip: any) => {
+    console.log(id_ip);
+    return AxiosIp.instanceAxios.delete(`/eliminar_ip/${id_ip}`);
+  }
+
 }

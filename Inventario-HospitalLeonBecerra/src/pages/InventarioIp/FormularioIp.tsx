@@ -19,6 +19,7 @@ const FormularioIp: React.FC = () => {
     const [guardar, setGuardar] = useState(false);
     const [error, setError] = useState(false);
     const [redireccionar, setRedireccionar] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
 
 
     const registrar = () => {
@@ -38,10 +39,10 @@ const FormularioIp: React.FC = () => {
         }
 
         AxiosIp.crear_ip(registro_ip_obj).then(res => {
-            console.log(res);
             setGuardar(true);
         }).catch(err => {
-            console.log(err);
+            console.log(err.response);
+            setErrorMessage(err.response.data.log);
             setError(true);
         });
     }
@@ -71,13 +72,8 @@ const FormularioIp: React.FC = () => {
                         <IonItem>
                             <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
                             <IonSelect onIonChange={(e) => setEstado(e.detail.value)}>
-                                <IonSelectOption value="EU" key="EU">EU</IonSelectOption>
-                                <IonSelectOption value="L" key="L">L</IonSelectOption>
-                                <IonSelectOption value="O" key="O">O</IonSelectOption>
-                                <IonSelectOption value="ER" key="ER">ER</IonSelectOption>
-                                <IonSelectOption value="R" key="R">R</IonSelectOption>
-                                <IonSelectOption value="B" key="B">B</IonSelectOption>
-                                <IonSelectOption value="D" key="D">D</IonSelectOption>
+                                <IonSelectOption value="EU" key="EU">En Uso</IonSelectOption>
+                                <IonSelectOption value="L" key="L">Libre</IonSelectOption>
                             </IonSelect>
                         </IonItem>
                         <IonItem>
@@ -123,8 +119,8 @@ const FormularioIp: React.FC = () => {
                 />
                 <IonAlert
                     isOpen={error}
-                    header={'Se ha producido un error al realizar su solicitud'}
-                    message={'Asegurese de agregar un un registro que no exista'}
+                    header={'Error al guardar la IP'}
+                    message={errorMessage}
                     buttons={['Aceptar']}
                 />
             </IonContent>

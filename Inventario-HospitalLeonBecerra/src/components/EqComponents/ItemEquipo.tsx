@@ -75,7 +75,7 @@ export default class ItemEquipo extends React.Component<{ info: any, tipo: any, 
     return (
       <div key={this.props.info.original.general.id_equipo}>
         <IonItem >
-          <IonAvatar slot="start">
+          <IonAvatar slot="start" onClick={() => this.setState({ ventanaDetalle: true })}>
             {/* <img src={process.env.PUBLIC_URL + "/assets/img/" + this.props.tipo + ".png"} alt="" /> */}
             {
               this.props.info.original.general.estado_operativo === 'D' ? <img src={"./assets/img/" + this.props.tipo + "/D.png"} alt="D" /> :

@@ -36,8 +36,8 @@ class ListRouters extends React.Component<any, any>  {
     render(){
         return (
             <IonList>
-                <IonItem className = "ion-activatable">
-                    <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
+                <IonItem className = "ion-activatable" onClick={() => this.setState({ ventanaDetalle: true })}>
+                    <IonLabel key={this.props.id_router} >
                         <h2><b> {this.props.id_router}</b></h2>
                         <h3 color="secondary">Estado: 
                             { 
