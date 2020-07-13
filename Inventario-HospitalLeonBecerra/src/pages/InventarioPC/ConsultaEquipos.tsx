@@ -325,7 +325,7 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
                         <IonInfiniteScrollContent
                             loadingSpinner="bubbles"
-                            loadingText="Cargando mas registros">
+                            loadingText="Cargando más registros">
                         </IonInfiniteScrollContent>
                     </IonInfiniteScroll>
                 </IonContent >

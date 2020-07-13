@@ -119,7 +119,7 @@ class HomeRouter extends React.Component<any, any> {
                 />
                 <IonContent>
                     <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.doRefresh(e, 0)}>
-                        <IonRefresherContent refreshingSpinner="bubbles"></IonRefresherContent>
+                        <IonRefresherContent refreshingSpinner="circles"></IonRefresherContent>
                     </IonRefresher>
                     
                     <Respuesta informacion={this.state.routers.length}></Respuesta>
@@ -150,7 +150,7 @@ class HomeRouter extends React.Component<any, any> {
                     <IonInfiniteScroll disabled={this.state.disable_load} threshold="100px"
                         onIonInfinite={(e: any) =>  this.doRefresh(e, this.state.parametros.page_index + 1)}
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
-                        <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Cargando mas registros"></IonInfiniteScrollContent>
+                        <IonInfiniteScrollContent loadingSpinner="bubbles" loadingText="Cargando más registros"></IonInfiniteScrollContent>
                     </IonInfiniteScroll>
                </IonContent>
 

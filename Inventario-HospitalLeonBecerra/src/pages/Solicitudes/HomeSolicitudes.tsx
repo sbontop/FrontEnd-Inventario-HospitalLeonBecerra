@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
 import { time, globe, arrowBack, stats, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
@@ -30,6 +30,11 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.setState({ parametros: { ...this.state.parametros, [name]: value } });
     }
 
+    /**
+     * Función que permite cambiar el valor al parámetro "estado" 
+     * al utilizar el componente IonSegment
+     * @param valor, EP: En progreso, O: Otras solicitudes, P: Pendientes
+     */
     cambiar_estado(valor: any) {
         this.setState({ parametros: { page_size: 10, page_index: 0, estado: valor, filtro_estado: "C" } });
         console.log(this.state.parametros);
@@ -42,6 +47,10 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.solicitudes_pendientes();
     }
 
+    /**
+     * Función que permite obtener los datos desde la base de datos
+     * @param newLoad true si se trata de una búsqueda donde page_index debe ser 0.
+     */
     cargar_solicitudes(newLoad: boolean) {
         let parametros: any = {};
         parametros = this.state.parametros;
@@ -56,12 +65,14 @@ class HomeSolicitudes extends React.Component<any, any> {
         });
     }
 
+    /**
+     * Método que asigna la cantidad de solicitudes pendientes a la variable de estado "pendientes".
+     */
     solicitudes_pendientes() {
         AxiosSolicitudes.contar_solicitudes().then(res => {
             this.setState({ pendientes: res.data });
         })
     }
-
 
 
     /**
@@ -79,6 +90,7 @@ class HomeSolicitudes extends React.Component<any, any> {
             } else {
                 e.target.complete();
             }
+            this.solicitudes_pendientes();
         }, 1000);
     }
 
@@ -89,6 +101,10 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.setState({ parametros: { page_size: 10, page_index: 0, estado: "O", filtro_estado: "C" } });
     }
 
+    /**
+     * Función que permite cambiar el título de la página de acuerdo al segmento
+     * en que se encuentre el usuario.
+     */
     cambiar_titulo() {
         let titulo = "Pendientes";
         if (this.state.parametros.estado === "EP")
@@ -111,7 +127,9 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.cargar_solicitudes(true);
     }
 
-
+    /**
+     * Función que retorna un conjunto de componentes de tipo "ListaSolicitudes"
+     */
     generar_lista = () => {
         return (this.state.datos.map((dato: any) => {
             return (
@@ -148,6 +166,12 @@ class HomeSolicitudes extends React.Component<any, any> {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent>
+
+                    <IonRefresher slot="fixed" onIonRefresh={(e: any) => this.refrescar(e, 0)}>
+                        <IonRefresherContent refreshingSpinner="circles">
+                        </IonRefresherContent>
+                    </IonRefresher>
+
                     <IonItem lines="none">
                         {this.cambiar_titulo()}
                         {this.state.parametros.estado === "O" ? <IonIcon slot="end" color="medium"
