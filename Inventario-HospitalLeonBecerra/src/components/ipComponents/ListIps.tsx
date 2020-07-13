@@ -169,7 +169,7 @@ class ListIps extends React.Component<IpInterface, estados, { history: any }>  {
           />
           <IonAlert
             isOpen={this.state.showAlertConfirm}
-            header={"Eliminar Router"}
+            header={"Eliminar IP"}
             message={'¿Esta seguro de eliminar esta IP?'}
             buttons={[
                 {
