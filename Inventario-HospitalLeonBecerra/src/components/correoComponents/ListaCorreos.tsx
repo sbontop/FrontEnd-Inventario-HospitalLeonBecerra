@@ -62,7 +62,7 @@ class ListaCorreos extends React.Component<any, any>  {
           </IonLabel>
           <IonAvatar slot="start"><img src={this.icono_estado(this.props.estado)} alt="imagen" /></IonAvatar>
          <IonButton  size="default" fill="clear" routerLink={"/formularioCorreo/edit/" + this.props.id_correo}><IonIcon slot="end" color="medium"  icon={create} ></IonIcon> </IonButton> 
-         <IonButton  size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })}><IonIcon slot="end" color="medium" icon={trash} ></IonIcon> </IonButton>
+         <IonButton  size="default" disabled={this.props.estado === "I" ? true: false} fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })}><IonIcon slot="end" color="medium" icon={trash} ></IonIcon> </IonButton>
         </IonItem>
 
         <IonModal
