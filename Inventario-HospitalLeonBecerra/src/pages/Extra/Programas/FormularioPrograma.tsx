@@ -10,7 +10,6 @@ const FormularioPrograma: React.FC = () => {
     let { id } = useParams();
     const [nombre, setNombre] = useState("");
     const [version, setVersion] = useState("");
-    const [encargado_registro, setEncargado_registro] = useState("");
     const [codigo, setCodigo] = useState("");
     const [editor, setEditor] = useState("");
     const [observacion, setObservacion] = useState("");
