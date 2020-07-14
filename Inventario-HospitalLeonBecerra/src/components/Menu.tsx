@@ -11,7 +11,7 @@ import {
   IonToolbar,
   IonAvatar
 } from '@ionic/react';
-import { home, desktop, logOut, list, pricetag, codeDownload } from 'ionicons/icons';
+import { home, desktop, logOut, list, pricetag } from 'ionicons/icons';
 
 import React, {useState, useEffect} from 'react';
 import { RouteComponentProps, withRouter,Redirect } from 'react-router-dom';
@@ -46,12 +46,12 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
       }else{
         //console.log('Part 6');
         setUsername(res.user.username);
-        AxiosAutenticacion.obtener_datos_usuario(res.user.username).then( (res:any) => {  
+        AxiosAutenticacion.obtener_datos_usuario(res.user.username).then( (resp:any) => {  
           //console.log('Into slide: ',res);
           //console.log('res.data.nombre',res.data[0].nombre);
-          setNombre(res.data[0].nombre);
-          setApellido(res.data[0].apellido);
-          setCedula(res.data[0].cedula)
+          setNombre(resp.data[0].nombre);
+          setApellido(resp.data[0].apellido);
+          setCedula(resp.data[0].cedula)
         }).catch((err:any) => {
           console.log(err);
           

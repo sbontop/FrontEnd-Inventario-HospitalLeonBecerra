@@ -79,10 +79,10 @@ const FormularioCorreo: React.FC = () => {
     AxiosCorreo.crear_correo(registro_correo).then(res => {
       setMensaje("Registro guardado satisfactoriamente")
       setAlerta(true);
-    }).catch(error => {
+    }).catch(err => {
       setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-      if (error.response) {
-        setMensaje(error.response.data.log)
+      if (err.response) {
+        setMensaje(err.response.data.log)
       }
       setError(true);
     });
@@ -96,10 +96,10 @@ const FormularioCorreo: React.FC = () => {
     AxiosCorreo.editar_correo(registro_correo).then(res => {
       setMensaje("Registro actualizado satisfactoriamente")
       setAlerta(true);
-    }).catch(error => {
+    }).catch(err => {
       setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-      if (error.response) {
-        setMensaje(error.response.data.log)
+      if (err.response) {
+        setMensaje(err.response.data.log)
       }
       setError(true);
     });
