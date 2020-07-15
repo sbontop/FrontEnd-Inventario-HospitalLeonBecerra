@@ -9,17 +9,17 @@ import { Redirect } from 'react-router';
 // IMPORTANTE: La IP no se debe guardar en equipo, 
 // lo que se debe guardar es la relacion de ip con routers
 const FormularioIp: React.FC = () => {
-    const [estado, setEstado] = useState();
-    const [direccion_ip, setDireccion_ip] = useState();
-    const [hostname, setHostname] = useState();
-    const [subred, setSubred] = useState();
-    const [fortigate, setFortigate] = useState();
-    const [observacion, setObservacion] = useState();
-    const [maquinas_adicionales, setMaquinas_adicionales] = useState();
+    const [estado, setEstado] = useState("");
+    const [direccion_ip, setDireccion_ip] = useState("");
+    const [hostname, setHostname] = useState("");
+    const [subred, setSubred] = useState("");
+    const [fortigate, setFortigate] = useState("");
+    const [observacion, setObservacion] = useState("");
+    const [maquinas_adicionales, setMaquinas_adicionales] = useState("");
     const [guardar, setGuardar] = useState(false);
     const [error, setError] = useState(false);
     const [redireccionar, setRedireccionar] = useState(false);
-    const [errorMessage, setErrorMessage] = useState();
+    const [errorMessage, setErrorMessage] = useState("");
 
 
     const registrar = () => {

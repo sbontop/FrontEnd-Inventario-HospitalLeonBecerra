@@ -2,23 +2,20 @@ import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
     IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, 
-
     useIonViewDidEnter,
     useIonViewDidLeave,
     useIonViewWillEnter,
     useIonViewWillLeave,
-
     IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
 import { add, options } from 'ionicons/icons';
 import AxiosIp from '../../services/AxiosIp';
 import { RefresherEventDetail } from '@ionic/core';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 const HomeIp: React.FC = () => {
     const [ips, setIps] = useState([] as any);
-    const [marcas, setMarcas] = useState([] as any);
     const [showPopover, setShowPopover] = useState<{ open: boolean }>({ open: false });
     const [showLoading, setShowLoading] = useState(false);
     const [marca, setMarca] = useState([] as any);

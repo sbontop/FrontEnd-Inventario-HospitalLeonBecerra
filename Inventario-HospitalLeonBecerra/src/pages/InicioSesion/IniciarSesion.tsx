@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
-import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, 
-  IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter,
-   IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading, IonIcon} from '@ionic/react';
+import { IonContent, IonToolbar, IonGrid, IonRow, IonCol, 
+  IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, /*, IonFooter,
+   IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/ IonButton, IonLoading, IonIcon} from '@ionic/react';
 import { Redirect, /*RouteProps*/ } from 'react-router';
 //import { RouteComponentProps } from 'react-router-dom';
 import { withIonLifeCycle } from '@ionic/react';
@@ -212,11 +212,11 @@ mostrar_empleados() {
     let lista_valores_imgresados:any = [this.state.username, this.state.password];
 
     //console.log("Verificar input  ");
-    let texto:String="";
+    let texto:string="";
       let valor_indice:number;
-      let campo:String="";
-      let campo_nombre_completo:String="";
-      let valor_vacio: String="";
+      let campo:string="";
+      let campo_nombre_completo:string="";
+      let valor_vacio: string="";
 
     if( this.state.hasOwnProperty('username')!==true || (this.state.username+'').trim()=== '' || this.state.username === undefined || this.state.username === '' ||
         this.state.hasOwnProperty('password')!==true || (this.state.password+'').trim()=== '' || this.state.password === undefined || this.state.password === ''){

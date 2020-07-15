@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import './style.css';
 import ItemEquipo from "../../components/EqComponents/ItemEquipo"
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
-import GlobalPC from './GlobalPC';
+
 interface IStateEq {
     equipos: any;
     marcas: any;

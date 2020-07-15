@@ -18,12 +18,11 @@ import FormularioIp from './pages/InventarioIp/FormularioIp';
 import FormPCLaptop from "./pages/InventarioPC/FormLaptop";
 import Menu from './components/Menu';
 import Home from './pages/Home';
-import { home, desktop, logOut, list, pricetag, codeDownload } from 'ionicons/icons';
+import { home, desktop, list, pricetag } from 'ionicons/icons';
 import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
 import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
 import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
-import AxiosAutenticacion from './services/AxiosAutenticacion';
 import IniciarSesion from './pages/InicioSesion/IniciarSesion';
 import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 /* Core CSS required for Ionic components to work properly */

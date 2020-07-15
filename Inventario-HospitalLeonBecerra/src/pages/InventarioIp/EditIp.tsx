@@ -1,12 +1,7 @@
 import {
     IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert,
     IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonRow, IonCol,
-
-    useIonViewDidEnter,
-    useIonViewDidLeave,
     useIonViewWillEnter,
-    useIonViewWillLeave,
-
 } from '@ionic/react';
 import React, { useState } from 'react';
 import AxiosIp from '../../services/AxiosIp';
@@ -15,13 +10,13 @@ import { useParams, Redirect } from 'react-router';
 // IMPORTANTE: La IP no se debe guardar en equipo, 
 // lo que se debe guardar es la relacion de ip con routers
 const EditIp: React.FC = () => {
-    const [estado, setEstado] = useState();
-    const [direccion_ip, setDireccion_ip] = useState();
-    const [hostname, setHostname] = useState();
-    const [subred, setSubred] = useState();
-    const [fortigate, setFortigate] = useState();
-    const [observacion, setObservacion] = useState();
-    const [maquinas_adicionales, setMaquinas_adicionales] = useState();
+    const [estado, setEstado] = useState("");
+    const [direccion_ip, setDireccion_ip] = useState("");
+    const [hostname, setHostname] = useState("");
+    const [subred, setSubred] = useState("");
+    const [fortigate, setFortigate] = useState("");
+    const [observacion, setObservacion] = useState("");
+    const [maquinas_adicionales, setMaquinas_adicionales] = useState("");
     const [guardar, setGuardar] = useState(false);
     const [error, setError] = useState(false);
     const [redireccionar, setRedireccionar] = useState(false);

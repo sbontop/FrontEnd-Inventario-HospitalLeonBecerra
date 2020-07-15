@@ -19,14 +19,14 @@ import {
   id_marca: string,
   encargado_registro:string,
   componente_principal:string,
-  ip: String,
+  ip: string,
   asignado: string,
   marca: string;
   empleado: string,
-  apellido: String,
+  apellido: string,
   encargado: string,
   principal: string,
-  direccion_ip:String,
+  direccion_ip:string,
   onRemove: any
  }
 
@@ -381,6 +381,6 @@ import {
             </IonList>
    );
  }
- };
+ }
 
  export default ListaOtrosEquipos;

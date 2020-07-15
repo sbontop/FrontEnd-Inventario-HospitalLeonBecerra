@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
-import { IonContent, IonToolbar, IonSelect, IonHeader, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage,IonAvatar, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading, IonIcon} from '@ionic/react';
+import { IonContent, IonToolbar, IonSelect, IonHeader, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton} from '@ionic/react';
 import { Redirect, /*RouteProps*/ } from 'react-router';
 //import { RouteComponentProps } from 'react-router-dom';
 import { withIonLifeCycle } from '@ionic/react';
 import AxiosAutenticacion from '../../services/AxiosAutenticacion';
-import SelectOptionDepartamento from '../../components/correoComponents/SelectOptionDepartamento';
-
-import {trash} from 'ionicons/icons';
-
 
 
 class RegistrarUsuario extends Component<any , any> {
@@ -182,11 +178,11 @@ mostrar_empleados() {
    let lista_valores_imgresados:any = [this.state.nombre, this.state.apellido, this.state.cedula, this.state.id_departamento, this.state.id_rol, this.state.username, this.state.password];
 
    console.log("Verificar input  ");
-   let texto:String="";
+   let texto:string="";
      let valor_indice:number;
-     let campo:String="";
-     let campo_nombre_completo:String="";
-     let valor_vacio: String="";
+     let campo:string="";
+     let campo_nombre_completo:string="";
+     let valor_vacio: string="";
 
    if( this.state.hasOwnProperty('nombre')!==true || (this.state.nombre+'').trim()=== '' || this.state.nombre === undefined || this.state.nombre === '' || 
        this.state.hasOwnProperty('apellido')!==true || (this.state.apellido+'').trim()=== '' || this.state.apellido === undefined || this.state.apellido === '' ||

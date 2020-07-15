@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, {Component } from 'react';
-import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading, IonIcon} from '@ionic/react';
+import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonTextarea, IonButtons, IonBackButton,/*, IonFooter, IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/IonList, IonButton, IonLoading} from '@ionic/react';
 import { Redirect, /*RouteProps*/ } from 'react-router';
 //import { RouteComponentProps } from 'react-router-dom';
 import { withIonLifeCycle } from '@ionic/react';
-import {trash} from 'ionicons/icons';
 //import {  InputNumber } from 'antd';
 
 
@@ -303,11 +302,11 @@ verificar2=()=>{
     if(json!==undefined){
       let lista_campos_ingresados: any=Object.keys(json);
       let lista_valores_imgresados: any=Object.values(json);
-      let texto:String="";
+      let texto:string="";
       let valor_indice:number;
-      let campo:String="";
-      let campo_nombre_completo:String="";
-      let valor_vacio: String="";
+      let campo:string="";
+      let campo_nombre_completo:string="";
+      let valor_vacio: string="";
       if(this.state.data_equipo_by_id.tipo_equipo!=="disco_duro" && this.state.data_equipo_by_id.tipo_equipo!=="memoria_ram" && this.state.data_equipo_by_id.tipo_equipo!=="Otro"){
           // 8!==8 cantidad: 8         9-1!==8 cantidad: 9
           if ((json.hasOwnProperty('tipo_equipo')!==true || (json.tipo+'').trim()==='') ||

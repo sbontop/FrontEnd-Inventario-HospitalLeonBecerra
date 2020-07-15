@@ -18,14 +18,14 @@ import {
   tinta: string,
   cartucho: string,
   toner: string,
-  cinta: String,
-  rollo: String,
-  rodillo: String,
-  ip: String,
-  asignado: String,
-  direccion_ip:String,
-  nombre: String,
-  apellido: String,
+  cinta: string,
+  rollo: string,
+  rodillo: string,
+  ip: string,
+  asignado: string,
+  direccion_ip:string,
+  nombre: string,
+  apellido: string,
   descripcion: string,
   id_equipo: string,
   onRemove: any
@@ -386,7 +386,7 @@ import {
             </IonList>
    );
  }
- };
+ }
  
 
  export default ListaImpresoras;

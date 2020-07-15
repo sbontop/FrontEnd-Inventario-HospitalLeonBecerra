@@ -1,8 +1,8 @@
 import React from 'react';
-import { trash, create, eye, key, locate, pricetag, medical, business, person, speedometer, informationCircle, barcode, reorder, globe, logIn, card, keypad, calendar, laptop, gitNetwork, cloudy } from 'ionicons/icons';
+import { trash, create, eye, person, speedometer, globe, logIn, laptop, gitNetwork, cloudy } from 'ionicons/icons';
 import {
   IonItem, IonLabel, IonRippleEffect,
-  IonPopover, IonTitle, IonAvatar,
+  IonTitle, IonAvatar,
   IonList, IonIcon, IonButton,
   IonContent, IonModal, IonToolbar, IonButtons, IonListHeader, IonLoading, IonAlert, IonNote
 } from '@ionic/react';

@@ -17,8 +17,6 @@ import './Home.css';
 import {
   RouteComponentProps,Redirect
 } from 'react-router';
-
-import AxiosAutenticacion from '../services/AxiosAutenticacion';
 //import MenuLateral from '../components/Menu_Lateral';
 
 
