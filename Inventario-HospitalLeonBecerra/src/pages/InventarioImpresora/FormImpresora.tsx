@@ -264,8 +264,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          //this.setState({guardar:true})
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Matricial"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -291,8 +291,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          //this.setState({guardar:true})
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Brazalete"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -321,8 +321,8 @@ mostrar_empleados() {
               incompleto:true
             })  
           }else{
-          //this.setState({guardar:true})
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Multifuncional"){
         
@@ -458,7 +458,8 @@ mostrar_empleados() {
             data_impresora_by_id:json_datos_editados
           });
           console.log("Edit: ",json_datos_editados);
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
         }
       }else if(this.state.data_impresora_by_id.tipo==="Escáner"){
         if ((json.hasOwnProperty('numero_serie')!==true || (json.numero_serie+'').trim()==='' || json.numero_serie=== undefined) || (json.hasOwnProperty('tipo')!==true || (json.tipo+'').trim()==='') || 
@@ -489,8 +490,8 @@ mostrar_empleados() {
             incompleto:true
           })
         }else{
-          //this.setState({guardar:true})
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
           //console.log('Función: ', this.state.data.printer.numero_serie);
         }
       }else{        
@@ -518,8 +519,8 @@ mostrar_empleados() {
               incompleto:true
             })
           }else{
-          //this.setState({guardar:true})
-          this.enviar();
+          this.setState({guardar:true})
+          //this.enviar();
         }
       }
     }else{
@@ -573,10 +574,10 @@ mostrar_empleados() {
 
   enviar=()=> {
     console.log("A: ",this.state.data_impresora_by_id);
-    /*this.setState({
+    this.setState({
       guardar:false,
       cargando:true
-    });*/
+    });
     let json = this.state.data_impresora_by_id;
     let json_datos_editados = this.copiar_json(json);
     console.log('Before: ',json_datos_editados);
@@ -607,13 +608,13 @@ mostrar_empleados() {
           });          
         }
         this.setState({
-          //cargando:false,
+          cargando:false,
           confirmacion:true,
         });
       }else if (res.data.log === -1){
         console.log('Condicion -1');
         this.setState({
-          //cargando:false,
+          cargando:false,
           existe_repetido:true,
         });
       }
@@ -621,7 +622,7 @@ mostrar_empleados() {
     }).catch(err => {
       //console.log(err);
       this.setState({
-        //cargando:false,
+        cargando:false,
         error_servidor:true,
       });
       console.log('Error 2');
@@ -632,7 +633,7 @@ mostrar_empleados() {
     json_datos_editados.key = json.id_impresora;
     console.log('Actualizar: ',json_datos_editados);
     this.setState({
-      //cargando:false,
+      cargando:true,
       confirmacion:false,
     });
     AxiosImpresora.editar_impresora(json_datos_editados).then(res => {  
@@ -740,6 +741,9 @@ mostrar_empleados() {
             cssClass: 'success',
             text: 'Aceptar',
             handler: () => {
+              this.setState({
+                cargando:false
+              });
               console.log('Aceptar');
               this.enviar();              
             }
@@ -749,7 +753,7 @@ mostrar_empleados() {
       <IonAlert
         isOpen={this.state.error_servidor}
         subHeader={'Error en el servidor'}
-        message={'Intente de nuevo o más trade'}
+        message={'Intente de nuevo o más tarde'}
         buttons={[
           {
             cssClass: 'success',

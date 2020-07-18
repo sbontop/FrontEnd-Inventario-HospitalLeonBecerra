@@ -281,7 +281,7 @@ mostrar_empleados() {
                 <IonInput required type="text" name="apellido"  onIonChange={this.onChange} ></IonInput>
               </IonItem>
               <IonItem>
-                <IonLabel position="stacked">Cedula <IonText color="danger"></IonText></IonLabel>
+                <IonLabel position="stacked">Cédula <IonText color="danger"></IonText></IonLabel>
                 <IonInput required type="text" name="cedula"  onIonChange={this.onChange} ></IonInput>
               </IonItem>
 
