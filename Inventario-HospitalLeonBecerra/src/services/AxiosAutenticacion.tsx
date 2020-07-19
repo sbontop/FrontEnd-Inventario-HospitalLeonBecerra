@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+const base_url_register:any= 'http://localhost:8000/api/register'
+const base_url_login:any= 'http://localhost:8000/api/login'
+const base_url_profile:any= 'http://localhost:8000/api/user'
+
 export default class AxiosAutenticacion {
   static instanceAxios = axios.create({
     //baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
@@ -10,7 +14,7 @@ export default class AxiosAutenticacion {
 
 static register = (newUser: any) => {
   return axios
-      .post('http://localhost:8000/api/register', newUser, {
+      .post(base_url_register, newUser, {
           headers: { 'Content-Type': 'application/json' }
       })
       .then(response => {
@@ -40,7 +44,7 @@ static mostrar_departamentos = () => {
 static login = (user:any) => {
   return axios
       .post(
-          'http://localhost:8000/api/login',
+            base_url_login,
           {
               username: user.username,
               password: user.password
@@ -69,7 +73,7 @@ static obtener_datos_usuario = (username:any) => {
 
 static getProfile = () => {
   return axios
-      .get('http://localhost:8000/api/user', {
+      .get(base_url_profile, {
           headers: {Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.usertoken}` }
       })
       .then(response => {
