@@ -1,43 +1,32 @@
 import React from 'react';
-import { IonItem,  IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote, IonAlert, IonLoading} from '@ionic/react';
+import { IonItem,  IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote } from '@ionic/react';
 import { trash, create, key, locate, pricetag, medical, business, person, speedometer, informationCircle, barcode, reorder, globe, logIn, card, keypad, calendar } from 'ionicons/icons';
-import AxiosRouter from '../../services/AxiosRouter';
 
 class ListRouters extends React.Component<any, any>  {
     constructor(props: any) {
         super(props);
         this.state = {
             ventanaDetalle: false,
-            alerta: false,
-            mensaje: "",
-            showAlertConfirm: false,
-            showLoading: false
+            esDadoDeBaja: false,
+            eliminar: Function.prototype.bind,
         }
     }
 
-    handle_eliminar() {
-        this.setState({
-            showLoading: true,
-            showAlertConfirm: false
-        })
-        AxiosRouter.eliminar_router(this.props.id_equipo).then(res => {    
-            this.setState({
-                showLoading: false,
-                mensaje: "Registro eliminado satisfactoriamente",
-                alerta: true
-            })
-           this.props.handle.cargar_routers(true);
-        }).catch(error => {
-            console.log(error)
-            this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
-        }); 
-    } 
+    estado() {
+        this.props.estado === "B" ? this.setState({ esDadoDeBaja: true }) : this.setState({ esDadoDeBaja: false }) 
+        return this.state.esDadoDeBaja;
+    }
+
+    _eliminar(){
+        if(this.props.eliminar)
+            this.props.eliminar();
+    }
       
-    render(){
+    render(){  
         return (
             <IonList>
-                <IonItem className = "ion-activatable" onClick={() => this.setState({ ventanaDetalle: true })}>
-                    <IonLabel key={this.props.id_router} >
+                <IonItem className = "ion-activatable" >
+                    <IonLabel key={this.props.id_router} onClick={() => this.setState({ ventanaDetalle: true })}>
                         <h2><b> {this.props.id_router}</b></h2>
                         <h3 color="secondary">Estado: 
                             { 
@@ -61,16 +50,16 @@ class ListRouters extends React.Component<any, any>  {
                                                      <img src="./assets/img/router/B.png"  alt="B" />
                         }
                     </IonAvatar> 
-
-                    <IonButton size="default"  fill="clear" onClick={() => console.log("Acción editar")} routerLink={"/formulariorouter/edit/"+this.props.id_equipo} color="secondary" >
-                        <IonIcon color="medium" icon={create}></IonIcon>
-                    </IonButton>
-
-                    {this.props.estado === "B" ? <IonButton disabled size="default" fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary" >
-                        <IonIcon color="medium" icon={trash}></IonIcon>
-                    </IonButton> :
-                    <IonButton size="default"  fill="clear" onClick={() => this.setState({ showAlertConfirm: true })} color="primary" >
-                    <IonIcon color="medium" icon={trash}></IonIcon></IonButton>}
+                    
+                    <>
+                        <IonButton size="default" disabled={this.props.estado === "B"} fill="clear" onClick={() => console.log("Acción editar")} routerLink={"/formulariorouter/edit/"+this.props.id_equipo} color="secondary" >
+                            <IonIcon color="medium" icon={create}></IonIcon>
+                        </IonButton>
+                        <IonButton size="default" disabled={this.props.estado === "B"} fill="clear" onClick={this._eliminar.bind(this)} color="primary" >
+                            <IonIcon color="medium" icon={trash}></IonIcon>
+                        </IonButton>
+                    </>
+                   
                 </IonItem>
         
                 <IonContent>      
@@ -166,37 +155,6 @@ class ListRouters extends React.Component<any, any>  {
                             </IonList> 
                         </IonContent>
                     </IonModal>
-                    <IonLoading
-                    isOpen={this.state.showLoading}
-                    message={'Eliminando router. Espere por favor...'}
-                    />
-                    <IonAlert
-                    isOpen={this.state.showAlertConfirm}
-                    header={"Eliminar Router"}
-                    message={'¿Esta seguro de eliminar este router?'}
-                    buttons={[
-                        {
-                        text: 'No',
-                        role: 'cancel',
-                        cssClass: 'secondary',
-                            handler: () => {
-                                this.setState({ showAlertConfirm: false });
-                            }
-                        },
-                        {
-                        text: 'Si',
-                            handler: () => {
-                                this.handle_eliminar()
-                            }
-                        }
-                    ]}
-                    />
-                    <IonAlert
-                    isOpen={this.state.alerta}
-                    onDidDismiss={() => { this.setState({ alerta: false }) }}
-                    header={this.state.mensaje}
-                    buttons={['Aceptar']}
-                    />
                 </IonContent>
             </IonList> 
         );

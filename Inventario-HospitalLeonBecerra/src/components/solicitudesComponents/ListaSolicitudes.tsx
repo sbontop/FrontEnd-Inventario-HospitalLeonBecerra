@@ -5,11 +5,31 @@ import { trendingDown, trendingUp, flash, remove } from 'ionicons/icons';
 import React from 'react';
 /* import Axios from '../../services/Axios.services'; */
 
+
 class ListaSolicitudes extends React.Component<any, any>  {
     constructor(props: any) {
         super(props);
         this.state = {
 
+        }
+    }
+
+    static transformar_tipo(tipo: string) {
+        return tipo === "ST" ? "Servicio Técnico" : "Asignación de equipo";
+    }
+
+    static transformar_prioridad(prioridad: string) {
+        if (prioridad === 'A') {
+            return "Alta";
+        }
+        if (prioridad === 'B') {
+            return "Baja";
+        }
+        if (prioridad === 'M') {
+            return "Media";
+        }
+        if (prioridad === 'CT') {
+            return "Crítica";
         }
     }
 
@@ -33,22 +53,6 @@ class ListaSolicitudes extends React.Component<any, any>  {
         }
     }
 
-    transformar_prioridad(prioridad: string) {
-        if (prioridad === 'A') {
-            return "Alta";
-        }
-        if (prioridad === 'B') {
-            return "Baja";
-        }
-        if (prioridad === 'M') {
-            return "Media";
-        }
-        if (prioridad === 'CT') {
-            return "Crítica";
-        }
-    }
-
-
     transformar_estado(estado: string) {
         if (estado === 'EP') {
             return <IonChip color="secondary">En progreso</IonChip>
@@ -64,20 +68,14 @@ class ListaSolicitudes extends React.Component<any, any>  {
         }
     }
 
-
-    transformar_tipo(tipo: string) {
-        return tipo === "ST" ? "Servicio Técnico" : "Asignación de equipo";
-    }
-
-
     render() {
         return (
-            <IonItem>
+            <IonItem routerLink={"/formsolicitudes/edit/"+this.props.id_solicitud}>
                 {this.icono_prioridad(this.props.prioridad)}
-                <IonLabel>
+                <IonLabel  >
                     <IonText><h2><b>{this.props.usuario}</b></h2></IonText>
-                    <h3>Prioridad: {this.transformar_prioridad(this.props.prioridad)}</h3>
-                    <h3>Tipo: {this.transformar_tipo(this.props.tipo)}</h3>
+                    <h3>Prioridad: {ListaSolicitudes.transformar_prioridad(this.props.prioridad)}</h3>
+                    <h3>Tipo: {ListaSolicitudes.transformar_tipo(this.props.tipo)}</h3>
                     <small>{this.props.fecha_realizacion}  {this.props.hora_realizacion}</small>
                 </IonLabel>
                 {this.transformar_estado(this.props.estado)}

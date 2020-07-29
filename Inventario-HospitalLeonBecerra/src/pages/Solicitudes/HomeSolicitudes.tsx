@@ -1,6 +1,6 @@
 import React from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
-import { time, globe, arrowBack, stats, options } from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
+import { time, globe, arrowBack, sync, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
 import Respuesta from '../../components/Respuesta';
@@ -133,7 +133,7 @@ class HomeSolicitudes extends React.Component<any, any> {
     generar_lista = () => {
         return (this.state.datos.map((dato: any) => {
             return (
-                <ListaSolicitudes key={dato.id_solicitud} usuario={dato.id_usuario} prioridad={dato.prioridad}
+                <ListaSolicitudes key={dato.id_solicitud} id_solicitud={dato.id_solicitud} usuario={dato.id_usuario} prioridad={dato.prioridad}
                     estado={dato.estado} fecha_realizacion={dato.fecha_realizacion} hora_realizacion={dato.hora_realizacion}
                     tipo={dato.tipo} />
             )
@@ -154,10 +154,10 @@ class HomeSolicitudes extends React.Component<any, any> {
                         <IonSegment value={this.state.parametros.estado} onIonChange={(e: any) => this.cambiar_estado(e.detail.value)}>
                             <IonSegmentButton value="P" layout="icon-start"> {/*Pendientes */}
                                 <IonIcon icon={time} />
-                                <IonBadge color="light">{this.state.pendientes === 0 ? "" : this.state.pendientes}</IonBadge>
+                                <IonBadge style={{marginBottom: 10, marginLeft:3}} color="light">{this.state.pendientes === 0 ? "" : this.state.pendientes}</IonBadge>
                             </IonSegmentButton>
                             <IonSegmentButton value="EP">  {/*En progreso */}
-                                <IonIcon icon={stats} />
+                                <IonIcon icon={sync} />
                             </IonSegmentButton>
                             <IonSegmentButton value="O">  {/*Otras solicitudes: Completadas y rechazadas */}
                                 <IonIcon icon={globe} />
@@ -166,7 +166,10 @@ class HomeSolicitudes extends React.Component<any, any> {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent>
-
+                <IonLoading
+                        isOpen={this.state.mostrar_load}
+                        message={'Cargando datos, espere por favor...'}
+                    />
                     <IonRefresher slot="fixed" onIonRefresh={(e: any) => this.refrescar(e, 0)}>
                         <IonRefresherContent refreshingSpinner="circles">
                         </IonRefresherContent>
@@ -221,6 +224,7 @@ class HomeSolicitudes extends React.Component<any, any> {
                         {this.generar_lista()}
                     </IonList>
 
+                    
                     <IonInfiniteScroll disabled={this.state.mostrar_scroll} threshold="100px"
                         onIonInfinite={(e: any) => this.refrescar(e, this.state.parametros.page_index + 1)}
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>

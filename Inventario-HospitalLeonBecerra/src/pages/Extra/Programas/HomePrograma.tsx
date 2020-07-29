@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonButton, IonPopover, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, 
-         IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent} from '@ionic/react';
+    IonAlert,IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent, withIonLifeCycle} from '@ionic/react';
 import ListRouters from '../../../components/ProgramaComponents/ListProgramas';
 import { add, options, arrowBack } from 'ionicons/icons';
 import AxiosPrograma from '../../../services/AxiosPrograma';
@@ -12,9 +12,13 @@ class HomePrograma extends React.Component<any, any> {
     this.state = 
         {
             programas: [] as any,
+            id_programa_equipo: "",
             editores: [] as any,
             showPopover: false,
             showLoading: false,
+            alerta: false,
+            mensaje: "",
+            showAlertConfirm: false,
             disable_load: false,
             parametros: { page_size: 10, page_index: 0 }
         }
@@ -30,8 +34,8 @@ class HomePrograma extends React.Component<any, any> {
         this.cargar_editores();
     }
 
-    componentDidMount = () => {
-        this.setState({ showLoading: true })
+    ionViewWillEnter = () => {
+        this.setState({ showLoading: true, mensaje:"Cargando datos, espere por favor..." })
         this.cargar_programas(true);
         this.cargar_editores();
     }
@@ -46,6 +50,32 @@ class HomePrograma extends React.Component<any, any> {
             });
         }
     }
+
+    _eliminar(position:any){
+        this.setState({
+          id_programa_equipo: position
+        })
+        this.setState({showAlertConfirm:true})
+    }
+
+    eliminar() {
+        this.setState({
+            showLoading: true,
+            showAlertConfirm: true,
+            mensaje: "Eliminando registro, espere un momento...",
+        })
+        AxiosPrograma.eliminar_programa(this.state.id_programa_equipo).then(() => {    
+            this.setState({
+                showLoading: false,
+                mensaje: "Registro eliminado satisfactoriamente",
+                alerta: true
+            })
+            this.cargar_programas(true);
+        }).catch(error => {
+            console.log(error)
+            this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+        }); 
+    } 
 
     onClear = (e: any) => {
         this.cargar_programas(true);
@@ -67,9 +97,9 @@ class HomePrograma extends React.Component<any, any> {
         console.log("Parametros dentro de cargar routers", parametros)
         AxiosPrograma.filtrar_programas(parametros).then(res => {
             this.setState({ programas: newLoad ? res.data.resp : [...this.state.programas, ...res.data.resp]});
-            this.setState({ showLoading: false, disable_load: this.state.programas.length === res.data.itemSize }); 
+            this.setState({ showLoading: false, mensaje:"Cargando datos, espere por favor", disable_load: this.state.programas.length === res.data.itemSize }); 
         }).catch(err => {
-            this.setState({ showLoading: false });
+            this.setState({ showLoading: false, mensaje:"Cargando datos, espere por favor" });
             console.log(err);
         }); 
     }
@@ -89,8 +119,7 @@ class HomePrograma extends React.Component<any, any> {
 
     handle_aplicar = () => {
         this.asignar_parametros("page_index", 0);
-        this.setState({ showPopover: false, showLoading: true })
-        console.log("parametros dentro de handle aplicar", this.state.parametros)
+        this.setState({ showPopover: false, showLoading: true, mensaje: "Cargando datos, espere por favor..."  })
         this.cargar_programas(true);
     }
 
@@ -102,7 +131,7 @@ class HomePrograma extends React.Component<any, any> {
                         <IonButtons slot="start">
                             <IonButton routerLink="/inventarios"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
-                        <IonTitle>Inventario de programas</IonTitle>
+                        <IonTitle>Programas</IonTitle>
                         <IonButtons slot="end">
                             <IonButton routerLink="/formularioprograma"><IonIcon icon={add}></IonIcon></IonButton>
                             <IonButton onClick={(e) => this.setState({showPopover: true})}><IonIcon icon={options}></IonIcon></IonButton>
@@ -121,7 +150,7 @@ class HomePrograma extends React.Component<any, any> {
                     </IonRefresher>
                     <IonLoading
                         isOpen={this.state.showLoading}
-                        message={'Cargando datos, espere por favor...'}
+                        message={this.state.mensaje}
                     />
                     <Respuesta informacion={this.state.programas.length}></Respuesta>
                     <IonList>{this.state.programas.map((r: any)=>{
@@ -134,7 +163,7 @@ class HomePrograma extends React.Component<any, any> {
                             editor={r.editor}
                             encargado_registro={r.encargado_registro}
                             observacion={r.observacion === null ? 'Ninguna' : r.observacion}
-                            />
+                            eliminar = {() =>this._eliminar(r.id_programa)} />
                         )
                         })}
                     </IonList>
@@ -145,9 +174,36 @@ class HomePrograma extends React.Component<any, any> {
                     </IonInfiniteScroll>
                 </IonContent>
 
+                    <IonAlert
+                    isOpen={this.state.showAlertConfirm}
+                    header={"Eliminar Programa"}
+                    message={'¿Esta seguro de eliminar este programa?'}
+                    buttons={[
+                        {
+                        text: 'No',
+                        role: 'cancel',
+                        cssClass: 'secondary',
+                            handler: () => {
+                                this.setState({ showAlertConfirm: false });
+                            }
+                        },
+                        {
+                        text: 'Si',
+                            handler: () => {
+                                this.eliminar()
+                            }
+                        }
+                    ]}
+                    />
+                    <IonAlert
+                    isOpen={this.state.alerta}
+                    onDidDismiss={() => { this.setState({ alerta: false, showAlertConfirm:false  }) }}
+                    header={this.state.mensaje}
+                    buttons={['Aceptar']}
+                    />
                 <IonPopover      
                     isOpen={this.state.showPopover}
-                    onDidDismiss={e => this.setState({ showPopover: false})}>
+                    onDidDismiss={() => this.setState({ showPopover: false})}>
                     <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                     <IonList>
                         <IonItem>
@@ -177,4 +233,4 @@ class HomePrograma extends React.Component<any, any> {
     }
 }
 
-export default HomePrograma;
+export default withIonLifeCycle(HomePrograma);

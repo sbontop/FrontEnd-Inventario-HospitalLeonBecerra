@@ -1,6 +1,6 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, 
-         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon} from '@ionic/react';
-import React, { useState, useEffect } from 'react';
+         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter } from '@ionic/react';
+import React, { useState } from 'react';
 import AxiosRouter from '../../services/AxiosRouter';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
@@ -29,6 +29,8 @@ const FormularioRouter: React.FC = () => {
     const [descripcion, setDescripcion] = useState("");
     const [guardar, setGuardar] = useState(false);
     const [alerta, setAlerta] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [accionLoading, setAccionLoading] = useState("");
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
@@ -37,24 +39,26 @@ const FormularioRouter: React.FC = () => {
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
     
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         AxiosRouter.marcas_routers().then(res => {
             setMarcas(res.data); });    
     }, []);
   
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         AxiosRouter.empleados().then(res => {
             setEmpleados(res.data); });    
     }, []);
   
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         AxiosRouter.ips().then(res => {
             setIps(res.data); });    
     }, []);
 
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         if (id !== undefined){
             setEditionMode(true);
+            setAccionLoading("Cargando");
+            setLoading(true);
             AxiosRouter.datos_router(id).then(res => {
                 console.log("edición:", res.data)
                 setCodigo(res.data.codigo);
@@ -69,7 +73,8 @@ const FormularioRouter: React.FC = () => {
                 setPuerta_enlace(res.data.puerta_enlace);
                 setEstado(res.data.estado_operativo);
                 setIp(res.data.ip);
-                setDescripcion(res.data.descripcion)
+                setDescripcion(res.data.descripcion);
+                setLoading(false);
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
@@ -127,8 +132,10 @@ const FormularioRouter: React.FC = () => {
                 console.log(registro_equipo_router)
                 AxiosRouter.editar_router(registro_equipo_router).then(res => {
                     console.log(res)
-                    setMensaje("Registro actualizado satisfactoriamente")                   
                     setConfirmarEdicion(true);
+
+                    setMensaje("Registro actualizado satisfactoriamente")                   
+                    
                 }).catch(() => {
                     setError(true);
                 });
@@ -155,7 +162,12 @@ const FormularioRouter: React.FC = () => {
                     <IonTitle>{!editionMode ? "Agregar router" : "Editar router"}</IonTitle>
                 </IonToolbar>
             </IonHeader>
+            <IonLoading 
+                isOpen={loading}
+                message={accionLoading+' datos, espere por favor...'}
+            />
             <IonContent className="ion-padding">
+            
                 {/* <IonTitle className="ion-text-center">{!editionMode ? "Nuevo router" : "Editar router"}</IonTitle> */}
                 {/* <p className="ion-text-center">
                     <img src="./assets/img/router/routerR3.png" alt="Usuario" />
@@ -324,7 +336,8 @@ const FormularioRouter: React.FC = () => {
                             text: 'Aceptar',
                             handler: () => {
                                 setAlerta(true)
-                                setGuardar(true)              
+                                setGuardar(true)  
+                                setAccionLoading("Guardando")             
                             }
                         }        
                     ]}
@@ -348,7 +361,7 @@ const FormularioRouter: React.FC = () => {
                         text: 'Aceptar',
                             handler: () => {
                                 setAlerta(true)
-                                setGuardar(true)              
+                                setGuardar(true)             
                             }
                         }        
                     ]}

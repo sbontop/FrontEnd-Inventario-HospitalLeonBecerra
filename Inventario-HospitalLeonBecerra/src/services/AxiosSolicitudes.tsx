@@ -1,9 +1,10 @@
 import axios from 'axios';
 export default class AxiosSolicitudes {
   static instanceAxios = axios.create({
-    /* baseURL: 'http://localhost:8000/api https://backend-hlb.herokuapp.com/api', 
-    */
-    baseURL: 'http://localhost:8000/api',
+     baseURL: 'http://localhost:8000/api'
+    //   https://backend-hlb.herokuapp.com/api', 
+    
+    // baseURL: 'https://backend-hlb.herokuapp.com/api',
   });
 
   static filtrar_solicitudes = (filtros: any) => {
@@ -13,4 +14,13 @@ export default class AxiosSolicitudes {
   static contar_solicitudes = () => {
     return AxiosSolicitudes.instanceAxios.get(`/contar_solicitudes`);
   }
+
+  static info_solicitud_id = (id:any) => {
+    return AxiosSolicitudes.instanceAxios.get(`/info_solicitud_id/${id}`);
+  }
+
+  static cambiar_estado_solicitud = (id: any, codigo: any) => {
+    return AxiosSolicitudes.instanceAxios.put(`/cambiar_estado_solicitud/${id}/${codigo}`);
+  }
+
 }

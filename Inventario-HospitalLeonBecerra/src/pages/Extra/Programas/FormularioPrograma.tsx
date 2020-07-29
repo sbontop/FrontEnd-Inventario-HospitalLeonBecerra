@@ -1,6 +1,6 @@
 import { IonContent, IonToolbar, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, 
-         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon} from '@ionic/react';
-import React, { useState, useEffect } from 'react';
+         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter} from '@ionic/react';
+import React, { useState } from 'react';
 import AxiosPrograma from '../../../services/AxiosPrograma';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
@@ -18,14 +18,18 @@ const FormularioPrograma: React.FC = () => {
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [editionMode, setEditionMode] = useState(false);
     const [error, setError] = useState(false);
     const [mensaje, setMensaje] = useState("");
+    const [accionLoading, setAccionLoading] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
 
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         if (id !== undefined){
-            setEditionMode(true);
+            setEditionMode(true); 
+            setAccionLoading("Cargando");
+            setLoading(true);
             AxiosPrograma.datos_programa(id).then(res => {
                 console.log("edición:", id, res.data)
                 setCodigo(res.data.codigo);
@@ -33,6 +37,7 @@ const FormularioPrograma: React.FC = () => {
                 setNombre(res.data.nombre);
                 setVersion(res.data.version);
                 setObservacion(res.data.observacion);
+                setLoading(false);
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
@@ -101,6 +106,10 @@ const FormularioPrograma: React.FC = () => {
                     <IonTitle>Inventario de programas</IonTitle>
                 </IonToolbar>
             </IonHeader>
+            <IonLoading 
+                isOpen={loading}
+                message={accionLoading +' datos, espere por favor...'}
+            />
             <IonContent className="ion-padding">
                 <IonTitle className="ion-text-center">{!editionMode ? "Nuevo programa" : "Editar programa"}</IonTitle>
                 <p className="ion-text-center">
@@ -179,7 +188,8 @@ const FormularioPrograma: React.FC = () => {
                             text: 'Aceptar',
                             handler: () => {
                                 setAlerta(true)
-                                setGuardar(true)              
+                                setGuardar(true)   
+                                setAccionLoading("Guardando")             
                             }
                         }        
                     ]}
@@ -203,7 +213,8 @@ const FormularioPrograma: React.FC = () => {
                         text: 'Aceptar',
                             handler: () => {
                                 setAlerta(true)
-                                setGuardar(true)              
+                                setGuardar(true)  
+                                setAccionLoading("Actualizando")            
                             }
                         }        
                     ]}

@@ -23,6 +23,7 @@ import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
 import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
 import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
+import FormularioSolicitudes from './pages/Solicitudes/FormularioSolicitudes';
 import IniciarSesion from './pages/InicioSesion/IniciarSesion';
 import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 /* Core CSS required for Ionic components to work properly */
@@ -113,7 +114,8 @@ const App: React.FC = () => (
                     <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
 
                     <Route path="/homesolicitudes" component={HomeSolicitudes} exact={true} />
-
+                    <Route path="/formsolicitudes" component={FormularioSolicitudes} exact={true} />
+                    <Route path="/formsolicitudes/edit/:id" component={FormularioSolicitudes} exact={true} />
                     <Route path="/homemarcas" component={HomeMarcas} exact={true} />
                 </IonRouterOutlet>
             </IonSplitPane>

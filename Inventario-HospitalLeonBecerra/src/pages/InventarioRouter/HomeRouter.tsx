@@ -1,6 +1,6 @@
 import React from 'react';
-import { IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonButton, IonPopover, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, 
-         IonList, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent} from '@ionic/react';
+import { IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonButton, IonPopover, IonAlert, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, 
+         IonList, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent, withIonLifeCycle} from '@ionic/react';
 import ListRouters from '../../components/RouterComponents/ListRouters';
 import { add, options, arrowBack } from 'ionicons/icons';
 import AxiosRouter from '../../services/AxiosRouter';
@@ -13,9 +13,13 @@ class HomeRouter extends React.Component<any, any> {
     this.state = 
         {
             routers: [] as any,
+            id_equipo_router: "",
             marcas: [] as any,
             showPopover: false,
             showLoading: false,
+            alerta: false,
+            mensaje: "",
+            showAlertConfirm: false,
             disable_load: false,
             parametros: { page_size: 10, page_index: 0, estado:"" }
         }
@@ -30,8 +34,8 @@ class HomeRouter extends React.Component<any, any> {
         this.cargar_routers(true);
     }
 
-    componentDidMount = () => {
-        this.setState({ showLoading: true })
+    ionViewWillEnter() {
+        this.setState({ showLoading: true, mensaje:"Cargando datos, espere por favor..." })
         this.cargar_routers(true);
         this.cargar_marcas();
     }
@@ -46,6 +50,32 @@ class HomeRouter extends React.Component<any, any> {
             });
         }
     }
+
+    _eliminar(position:any){
+        this.setState({
+          id_equipo_router:position
+        })
+        this.setState({showAlertConfirm:true})
+    }
+
+    eliminar() {
+        this.setState({
+            showAlertConfirm: true,
+            showLoading: true,
+            mensaje: "Eliminando registro, espere un momento...",
+        })
+        AxiosRouter.eliminar_router(this.state.id_equipo_router).then(res => {    
+            this.setState({
+                showLoading: false,
+                mensaje: "Registro eliminado satisfactoriamente",
+                alerta: true
+            })
+           this.cargar_routers(true);
+        }).catch(error => {
+            console.log(error)
+            this.setState({ showLoading: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
+        }); 
+    } 
 
     onClear = (e: any) => {
         this.cargar_routers(true);
@@ -66,9 +96,9 @@ class HomeRouter extends React.Component<any, any> {
         // console.log("Parametros dentro de cargar routers", parametros)
         AxiosRouter.filtrar_routers(parametros).then(res => {
             this.setState({ routers: newLoad ? res.data.resp : [...this.state.routers, ...res.data.resp]});
-            this.setState({ showLoading: false, disable_load: this.state.routers.length === res.data.itemSize }); 
+            this.setState({ showLoading: false, mensaje:"Cargando datos, espere por favor", disable_load: this.state.routers.length === res.data.itemSize }); 
         }).catch(err => {
-            this.setState({ showLoading: false });
+            this.setState({ showLoading: false, mensaje:"Cargando datos, espere por favor" });
             console.log(err);
         }); 
     }
@@ -88,7 +118,7 @@ class HomeRouter extends React.Component<any, any> {
 
     handle_aplicar = () => {
         this.asignar_parametros("page_index", 0);
-        this.setState({ showPopover: false, showLoading: true })
+        this.setState({ showPopover: false, showLoading: true, mensaje: "Cargando datos, espere por favor" })
         // console.log("parametros dentro de handle aplicar", this.state.parametros)
         this.cargar_routers(true);
     }
@@ -101,7 +131,7 @@ class HomeRouter extends React.Component<any, any> {
                         <IonButtons slot="start">
                             <IonButton routerLink="/tiposequiposinventario"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
-                        <IonTitle>Inventario de routers</IonTitle>
+                        <IonTitle>Routers</IonTitle>
                         <IonButtons slot="end">
                             <IonButton routerLink="/formulariorouter"><IonIcon icon={add}></IonIcon></IonButton>
                             <IonButton onClick={(e) => this.setState({showPopover: true})}><IonIcon icon={options}></IonIcon></IonButton>
@@ -115,7 +145,7 @@ class HomeRouter extends React.Component<any, any> {
                 </IonSearchbar>  
                 <IonLoading
                     isOpen={this.state.showLoading}
-                    message={'Cargando datos, espere por favor...'}
+                    message={this.state.mensaje}
                 />
                 <IonContent>
                     <IonRefresher slot="fixed" onIonRefresh={(e: any) =>  this.doRefresh(e, 0)}>
@@ -142,7 +172,8 @@ class HomeRouter extends React.Component<any, any> {
                             descripcion={r.descripcion === null ? 'Ninguna' : r.descripcion}
                             usuario={r.usuario} 
                             clave={r.clave} 
-                            id_equipo={r.id_equipo} />
+                            id_equipo={r.id_equipo}    
+                            eliminar = {() =>this._eliminar(r.id_equipo)} />
                         )
                         })}
                     </IonList>
@@ -154,9 +185,37 @@ class HomeRouter extends React.Component<any, any> {
                     </IonInfiniteScroll>
                </IonContent>
 
+               <IonAlert
+                    isOpen={this.state.showAlertConfirm}
+                    header={"Eliminar Router"}
+                    message={'¿Esta seguro de eliminar este router?'}
+                    buttons={[
+                        {
+                        text: 'No',
+                        role: 'cancel',
+                        cssClass: 'secondary',
+                            handler: () => {
+                                this.setState({ showAlertConfirm: false });
+                            }
+                        },
+                        {
+                        text: 'Si',
+                            handler: () => {
+                                this.eliminar();
+                            }
+                        }
+                    ]}
+                    />
+                    <IonAlert
+                    isOpen={this.state.alerta}
+                    onDidDismiss={() => { this.setState({ alerta: false, showAlertConfirm:false }) }}
+                    header={this.state.mensaje}
+                    buttons={['Aceptar']}
+                    />
+
                 <IonPopover      
                     isOpen={this.state.showPopover}
-                    onDidDismiss={e => this.setState({ showPopover: false})}>
+                    onDidDismiss={() => this.setState({ showPopover: false})}>
                     <IonTitle className="ion-margin-top">Filtro de búsqueda</IonTitle>
                     <IonList>
                         <IonItem>
@@ -199,4 +258,4 @@ class HomeRouter extends React.Component<any, any> {
     }
 }
 
-export default HomeRouter;
+export default withIonLifeCycle(HomeRouter);
