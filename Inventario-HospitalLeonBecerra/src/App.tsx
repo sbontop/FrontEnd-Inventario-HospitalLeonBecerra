@@ -26,6 +26,8 @@ import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
 import FormularioSolicitudes from './pages/Solicitudes/FormularioSolicitudes';
 import IniciarSesion from './pages/InicioSesion/IniciarSesion';
 import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
+import FirmaElectronica from './pages/FirmaElectronica/FirmaElectronica';
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -89,6 +91,7 @@ const App: React.FC = () => (
                     <Route path="/formlaptop" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
                     <Route path="/form-laptop/edit/:id" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
                     <Route path="/consultaOtrosEquiposHome" component={OtrosEquiposHome} exact={true} />
+                    <Route path="/firmaelectronica" component={FirmaElectronica} exact={true} />
 
                     <Route path="/form-laptop-2/edit-2/:id/:ip" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
                     <Route path="/inventarios" component={Inventarios} exact={true} />

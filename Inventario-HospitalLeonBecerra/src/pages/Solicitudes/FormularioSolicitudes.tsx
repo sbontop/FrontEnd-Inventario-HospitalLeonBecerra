@@ -1,11 +1,14 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, 
-    IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonFooter, IonLoading, useIonViewWillEnter, withIonLifeCycle} from '@ionic/react';
+    IonButtons, IonHeader, IonList, IonModal, IonNote, IonButton, IonRow, IonCol, IonGrid, IonTextarea, IonIcon, IonFooter, IonLoading, useIonViewWillEnter, withIonLifeCycle} from '@ionic/react';
 import React, { useState, useEffect } from 'react';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { arrowBack, trendingDown, trendingUp, remove, flash , time, calendar, checkmarkCircle, checkboxOutline} from 'ionicons/icons';
+import { arrowBack, trendingDown, trendingUp, remove, flash , time, calendar, close, checkmarkCircle, checkboxOutline} from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
+import SignaturePad from 'react-signature-canvas'
+import AxiosFirma from '../../services/AxiosFirma';
+import styles from './styles.module.css'   
 
 const FormularioSolicitudes: React.FC = () => {
     let { id } = useParams();
@@ -29,8 +32,14 @@ const FormularioSolicitudes: React.FC = () => {
     const [alerta, setAlerta] = useState(false);
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
-    
+    const [confirmarEdicion6, setConfirmarEdicion6] = useState(false);
+    const [vistaPrevia, setVistaPrevia] = useState(true);
+
+
+
+    const [trimmedDataURL, settrimmedDataURL] = useState(null);
     const [confirmarSolicitud, setConfirmarSolicitud] = useState(false);
+    const [mostrarVentanaFirma, setmostrarVentanaFirma] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
     const [editionMode, setEditionMode] = useState(false);
     const [mostrarFooter, setMostrarFooter] = useState(true); 
@@ -39,6 +48,8 @@ const FormularioSolicitudes: React.FC = () => {
     const [error, setError] = useState(false);
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
+    let [sigPad, setSigPad] = useState({} as any);
+
 
     useEffect(() => {
     if (id !== undefined){
@@ -192,6 +203,67 @@ const FormularioSolicitudes: React.FC = () => {
     return (<Redirect to="/homesolicitudes" />);
     }
 
+    //let sigPad:any = {};
+
+    const clear = () => {
+        sigPad.clear()
+    }
+
+
+    const dibujar = () => {
+        sigPad[0].toDataURL(trimmedDataURL);
+    }
+
+
+    const guardar_url = () =>{
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+    }
+
+
+    const trim = () => {
+        //this.cargando = true;
+        
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        setmostrarVentanaFirma(false);
+        /*
+        let image = new Image();
+        image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
+        //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        guardar_url();
+        console.log("Recort: ",trimmedDataURL);
+        const canvas = sigPad.getTrimmedCanvas();
+        canvas.toBlob((blob:any) => {
+        const formData = new FormData();
+        formData.append('image_name', blob);
+        AxiosFirma.almacenar_firma(formData).then(res => {   
+          //this.cargando = false;
+                
+          console.log("Upload44");
+          console.log("Data: ",res);
+        }).catch(err => {
+          console.log(err);      
+          console.log('Error 2');
+        });
+      });*/
+    
+      /*this.cargar();*/
+      //this.cargar2();
+      //var base64:any = this.getBase64Image(document.getElementById("imageid"));
+      //console.log("Base: "); 
+    
+      //this.obtener_imagen_firma_electronica();
+       
+    
+    }
+
+    const vista_previa = () => {
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        setVistaPrevia(false);
+        console.log("Data: ",trimmedDataURL);
+        /*this.getBase64Image(this.state.url_cargada, function(base64image:any){
+          console.log('vista_previa',base64image);
+        });*/
+      }
 
 
     return (
@@ -341,11 +413,128 @@ const FormularioSolicitudes: React.FC = () => {
                         <IonLabel position="floating">Observaciones</IonLabel>
                         <IonTextarea disabled= {habilitarCampos} name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)}></IonTextarea>
                     </IonItem>             
+        <IonModal
+          isOpen={mostrarVentanaFirma}
+          onDidDismiss={e => setmostrarVentanaFirma(false)}>
+          <IonToolbar color="primary">
+            <IonTitle>Solicitud</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={() =>setmostrarVentanaFirma(false)}><IonIcon icon={close}></IonIcon></IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonContent>
+
+          <IonGrid>
+            <IonRow class="ion-text-center">
+              <IonCol>
+                
+                <h2>
+                    <b>
+                        Firma electrónica
+                    </b>
+                </h2>
+                
+              </IonCol>
+            </IonRow>
+            
+
+            <IonRow class="ion-text-center" className={styles.fondo}>
+              <IonCol >
+              <IonNote>Al realizar la firma de esta solicitud usted acepta que se ha realizado de manera satisfactoria el servicio brindado en esta solicitud.</IonNote>
+                
+              </IonCol>
+            </IonRow>
+            
+            <br/>
+            <IonRow class="ion-text-center">
+                <SignaturePad clearOnResize={true}
+                    canvasProps={{width: 390, height: 300, className: 'sigCanvas', style:{ "height": "100%", "width": "100%", "background":"#EEEDE8"} }}
+                    ref={(ref) => { sigPad = ref }}
+                />
+            </IonRow> 
+
+            {/*<IonRow class="ion-text-center">
+              {<SignaturePad penColor='green'
+                  canvasProps={{width: 500, height: 200, className: 'sigCanvas' }}
+                  ref={(ref2) => { this.sigPad2 = ref2 }}
+                    />}
+                    </IonRow>*/}
+
+
+            <IonRow class="ion-text-end">
+              <IonCol>
+                <IonButton color="dark" onClick={clear}>Volver a firma</IonButton>
+              </IonCol>              
+            </IonRow>
+            <IonRow class="ion-text-end">
+                        <IonCol>
+                            <IonButton color="dark" onClick={vista_previa}>Vista Previa</IonButton>
+                        </IonCol>
+                        </IonRow>
+            <IonRow class="ion-text-end">  
+              <IonCol>
+                    <IonButton color="dark" onClick={trim}>
+                    Guardar</IonButton>
+              </IonCol>
+            </IonRow>
+
+            
+
+
+            {/*<img alt="prueba" src={trimmedDataURL} />*/}
+
+            <br/>
+
+            <IonRow hidden={vistaPrevia}>
+              <IonCol class="ion-text-center">
+                <h2>
+                    <b>
+                        Vista Previa
+                    </b>
+                </h2>
+              </IonCol>
+            </IonRow>
+
+
+            <IonRow hidden={vistaPrevia}>
+              <IonCol class="ion-text-center">
+                <img id="imageid" alt="" src ={trimmedDataURL+''} />
+              </IonCol>
+            </IonRow>
+
+
+
+            
+
+
+
+          </IonGrid>                
+          </IonContent>
+        </IonModal>
+
+        
+
+        <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <h2>
+                    <b>
+                        Firma
+                    </b>
+                </h2>
+              </IonCol>
+            </IonRow>
+
+
+            <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <img id="imageid" alt="" src ={trimmedDataURL+''} />
+              </IonCol>
+            </IonRow>
 
                     <p className="ion-text-center">                 
                             <IonRow class="ion-text-center">
                                 <IonCol class="ion-no-padding">
-                                    <IonButton  disabled= {habilitarCampos} expand="full" color="medium" routerLink="/path" class="ion-no-margin">Registrar firma</IonButton>          
+                <IonButton  disabled= {habilitarCampos} expand="full" color="medium" onClick={() => {setmostrarVentanaFirma(true)/*;dibujar()*/}} class="ion-no-margin">{trimmedDataURL===null?'Registrar firma':'Volver a firmar'}</IonButton>          
                                 </IonCol>
                             </IonRow> 
                             <IonRow style={{paddingTop: 10}} >
