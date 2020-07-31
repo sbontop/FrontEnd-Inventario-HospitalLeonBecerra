@@ -1,5 +1,5 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, 
-         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter } from '@ionic/react';
+         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter,useIonViewWillLeave } from '@ionic/react';
 import React, { useState } from 'react';
 import AxiosRouter from '../../services/AxiosRouter';
 import { Redirect } from 'react-router';
@@ -53,6 +53,26 @@ const FormularioRouter: React.FC = () => {
         AxiosRouter.ips().then(res => {
             setIps(res.data); });    
     }, []);
+
+    useIonViewWillLeave(()=>{
+        setIps([] as any);
+        setMarcas([] as any);
+        setEmpleados([]);
+        setCodigo("");
+        setEmpleado("");
+        setNombre("");
+        setPass("");
+        setUsuario("");
+        setClave("");
+        setId_marca("");
+        setModelo("");
+        setNumero_serie("");
+        setPuerta_enlace("");
+        setEstado("");
+        setIp("");
+        setDescripcion("");
+        setDescripcion("");
+    });
 
     useIonViewWillEnter(() => {
         if (id !== undefined){

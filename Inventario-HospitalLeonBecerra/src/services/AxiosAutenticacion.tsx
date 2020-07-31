@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const base_url_register:any= 'http://localhost:8000/api/register'
-const base_url_login:any= 'http://localhost:8000/api/login'
-const base_url_profile:any= 'http://localhost:8000/api/user'
+const base_url_register:any= 'https://backend-hlb.herokuapp.com/api/register'
+const base_url_login:any= 'https://backend-hlb.herokuapp.com/api/login'
+const base_url_profile:any= 'https://backend-hlb.herokuapp.com/api/user'
 
 export default class AxiosAutenticacion {
   static instanceAxios = axios.create({
     //baseURL: 'https://app-hlb-api-rest.herokuapp.com/api',
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://backend-hlb.herokuapp.com/api',
 
   });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton,withIonLifeCycle, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
 import { time, globe, arrowBack, sync, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
@@ -41,7 +41,7 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.cargar_solicitudes(true);
     }
 
-    componentDidMount = () => {
+    ionViewWillEnter() {
         this.setState({ mostrar_load: true })
         this.cargar_solicitudes(true);
         this.solicitudes_pendientes();
@@ -238,7 +238,7 @@ class HomeSolicitudes extends React.Component<any, any> {
         )
     }
 }
-export default HomeSolicitudes;
+export default withIonLifeCycle(HomeSolicitudes);
 
 
 

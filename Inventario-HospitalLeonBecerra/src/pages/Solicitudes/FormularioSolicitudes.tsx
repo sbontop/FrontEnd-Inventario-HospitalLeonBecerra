@@ -1,10 +1,10 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, 
-    IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonFooter, IonLoading, useIonViewWillEnter, withIonLifeCycle} from '@ionic/react';
+    IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonNote, IonTextarea, IonIcon, IonListHeader, IonFooter, IonLoading, useIonViewWillEnter, useIonViewWillLeave} from '@ionic/react';
 import React, { useState, useEffect } from 'react';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { arrowBack, trendingDown, trendingUp, remove, flash , time, calendar, checkmarkCircle, checkboxOutline} from 'ionicons/icons';
+import { arrowBack, trendingDown, trendingUp, remove, flash , time, calendar, checkmarkCircle, checkboxOutline, save, build, person, man, card, business, locate, information, informationCircleOutline, desktop} from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 
 const FormularioSolicitudes: React.FC = () => {
@@ -15,11 +15,13 @@ const FormularioSolicitudes: React.FC = () => {
     const [punto, setPunto] = useState("");
     const [departamento, setDepartamento] = useState("");
     const [prioridad, setPrioridad] = useState("");
-    const [equipos, setEquipos] = useState("");
+    const [equipos, setEquipos] = useState([] as any);
+    const [equipo, setEquipo] = useState([] as any);
     const [empleado, setEmpleado] = useState("");
+    const [empleados, setEmpleados] = useState([] as any);
     const [estado, setEstado] = useState("");
     const [responsable, setResponsable] = useState("");
-    const [estados] = useState([{id:"D", estado: "Disponible"},{id:"O", estado: "Operativo"},{id:"ER", estado: "En revisión"}, {id:"R", estado: "Reparado"}] as any);
+    const [estados] = useState([{id:"P", estado: "Pendiente"},{id:"R", estado: "Rechazada"},{id:"C", estado: "Completada"}, {id:"EP", estado: "En progreso"}] as any);
     const [fecha, setFecha] = useState("");
     const [hora, setHora] = useState("");
     const [tipo, setTipo] = useState("");
@@ -40,48 +42,59 @@ const FormularioSolicitudes: React.FC = () => {
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
 
-    useEffect(() => {
-    if (id !== undefined){
-        setEditionMode(true);
-        setMostrarLoad(true);
-        setMostrarFooter(true);
-        setConfirmarSolicitud(false);
-        AxiosSolicitudes.info_solicitud_id(id).then(res => {
-            let prioridad= res.data.prioridad;
-            transformar_prioridad(prioridad)
-            console.log("edición:",id, res.data);
-            //setPrioridad(prioridad);
-            setEmpleado(res.data.nombre);
-            setFecha(res.data.fecha_realizacion);
-            setHora(res.data.hora_realizacion);
-            setTipo(res.data.tipo);
-            setCedula(res.data.cedula);
-            setUsuarioSolicitante(res.data.id_usuario);
-            setNombreSolicitante(res.data.nombre+" "+res.data.apellido);
-            setPunto(res.data.bspi_punto);
-            setDepartamento(res.data.dpto);
-            setEstado(res.data.estado);
-            setObservacion(res.data.observacion);
-            res.data.estado!=="P"?setHabilitarCampos(false):setHabilitarCampos(true);
+    useIonViewWillEnter(() => {
+        cargar_empleados(); 
+        cargar_equipos();                               
+    });
+
+    const cargar_empleados = () => { 
+        let emp = [] as any;
+        AxiosSolicitudes.empleados_sistemas().then(res=>{
+            res.data.forEach((e: any ) => {
+                let datos_empleado = {"cedula":e.cedula, "nombres": e.nombre + " "+ e.apellido};
+                emp.push(datos_empleado);
+            }); 
+            setEmpleados(emp);
         }).catch(err => {
             setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
             setError(true);
         });
-        setMostrarLoad(false);
-    }                                    
-    }, [id]);
+    }
+
+    const cargar_equipos = () => { 
+        let eq = [] as any;
+        AxiosSolicitudes.mostrar_codigos().then(res=>{
+            res.data.map((e: any, index: any) =>{
+                eq.push(e);
+            })
+            setEquipos(eq); 
+            console.log("equipos", equipos)
+        }).catch(err => {
+            setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+            setError(true);
+        });
+    }
+
+    useIonViewWillLeave(()=>{
+        setEmpleados([] as any);
+        setMensaje("");
+        setMostrarFooter(true);
+        setEstado("");
+        setEditionMode(false)
+    })
 
     useIonViewWillEnter(() => {
         if (id !== undefined){
             setEditionMode(true);
             setMostrarLoad(true);
-            setMostrarFooter(true);
+            // setMostrarFooter(true);
             setConfirmarSolicitud(false);
             AxiosSolicitudes.info_solicitud_id(id).then(res => {
                 let prioridad= res.data.prioridad;
-                transformar_prioridad(prioridad)
+                let estado = res.data.estado;
+                transformar_prioridad(prioridad);
+                transformar_estado(estado);
                 console.log("edición:",id, res.data);
-                //setPrioridad(prioridad);
                 setEmpleado(res.data.nombre);
                 setFecha(res.data.fecha_realizacion);
                 setHora(res.data.hora_realizacion);
@@ -91,9 +104,8 @@ const FormularioSolicitudes: React.FC = () => {
                 setNombreSolicitante(res.data.nombre+" "+res.data.apellido);
                 setPunto(res.data.bspi_punto);
                 setDepartamento(res.data.dpto);
-                setEstado(res.data.estado);
-                setObservacion(res.data.observacion);
-                res.data.estado!=="P"?setHabilitarCampos(false):setHabilitarCampos(true);
+                setDescripcion(res.data.observacion);
+                res.data.estado==="P"?setHabilitarCampos(true):setHabilitarCampos(false);
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
@@ -101,18 +113,18 @@ const FormularioSolicitudes: React.FC = () => {
             setMostrarLoad(false);
         }                                    
         }, [id]
-      );
+    );
 
     const aceptarSolicitud = (mensaje: any) => {
         setMensaje(mensaje);
         setConfirmarSolicitud(true);
         try {
             if (mensaje === "aceptar"){
-                //setMostrarFooter(false)// AxiosSolicitudes.cambiar_estado_solicitud(id,"EP");
+                 AxiosSolicitudes.cambiar_estado_solicitud(id,"EP");
             } else {
-                // AxiosSolicitudes.cambiar_estado_solicitud(id,"R");
+                AxiosSolicitudes.cambiar_estado_solicitud(id,"R");
             }
-            
+            // setMostrarFooter(false)//
         } catch (error) {
             setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde");
             setError(true);
@@ -130,6 +142,19 @@ const FormularioSolicitudes: React.FC = () => {
             setPrioridad("Crítica");
         }
     }
+
+    const transformar_estado = (estado: string) =>{
+        if (estado === 'P') {
+            setEstado("Pendiente");
+        }else if (estado === 'EP') {
+            setEstado("En progreso");
+        }else if (estado === 'C') {
+            setEstado("Completado");
+        }else if (estado === 'R') {
+            setEstado("Rechazado");
+        }
+    }
+
     const registrar = () => { 
     if (true
         // prioridad === undefined || nombre === undefined || pass === undefined || usuario === undefined || clave === undefined
@@ -184,15 +209,25 @@ const FormularioSolicitudes: React.FC = () => {
     } 
 
     const volver_principal = () => {
-        setGuardar(false);
-        setRedireccionar(true);
+        // setGuardar(false);
+        
+        // setMostrarFooter(false)
+        // if(mensaje==="rechazar"){
+            setRedireccionar(true);
+        // }
+        
     }
 
     if (redireccionar) {
     return (<Redirect to="/homesolicitudes" />);
     }
 
-
+    const manejarEstadoPendiente = (estado: any) => {
+        if(estado === "P"){
+            setMostrarFooter(false);
+            setEstado(estado);
+        }
+    }
 
     return (
     <IonPage>  
@@ -201,89 +236,81 @@ const FormularioSolicitudes: React.FC = () => {
                 <IonButtons slot="start">
                     <IonButton routerLink="/homesolicitudes"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                 </IonButtons>
-                <IonTitle>Solicitudes</IonTitle>
+                <IonTitle>Seguimiento de solicitud</IonTitle>
+                <IonButtons slot="end">
+                    <IonButton onClick={(e) => console.log("print")}><IonIcon icon={save}></IonIcon></IonButton>
+                </IonButtons>
             </IonToolbar>
         </IonHeader>
         <IonLoading
-                        isOpen={mostrarLoad}
-                        message={'Cargando datos, espere por favor...'}
-                    />
+            isOpen={mostrarLoad}
+            message={'Cargando datos, espere por favor...'}
+        />
         <IonContent className="ion-padding">  
-    <IonTitle className="ion-text-center">Datos de la solicitud</IonTitle>
-
-            <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">
-            <IonList>
-        <IonItem>
-                        <IonLabel position="floating">Prioridad<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled required name="prioridad"  value={prioridad} onIonChange={(e) => setPrioridad((e.target as HTMLInputElement).value)} >
-                        
-        {/* {prioridad === 'A' ? <IonIcon color="alto" slot="start" icon={trendingUp}></IonIcon> :
-        prioridad === 'Baja' ? <IonIcon color="bajo" slot="start" icon={trendingDown}></IonIcon> :
-        prioridad === 'Media' ? <IonIcon color="medio" slot="start" icon={remove}></IonIcon> : 
-        prioridad === 'Crítica' ? <IonIcon color="critico" slot="start" icon={flash}></IonIcon> : null } */}
-    </IonInput>                   
-                   </IonItem>            
-
-                    {/* <IonItem>
-
-                        <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
-
-                        <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setPrioridad((e.target as HTMLInputElement).value)} ></IonInput>
-
-                    </IonItem>  */}
-
+        {/* <IonTitle className="ion-text-center">Solicitud</IonTitle> */}
+            <form action="post"> 
+            {/* onSubmit={(e) => { e.preventDefault(); registrar(); }}  */}
+                <IonList>
+                <IonListHeader >DETALLE DE SOLICITUD</IonListHeader>
                     <IonItem>
-                        <IonLabel position="floating">Fecha de la solicitud</IonLabel>
-                        <IonInput disabled name="fecha" value={fecha}>
-                            <IonIcon className="btn_eye_icon"  color="medium" slot="start" icon={calendar}></IonIcon>
-                        </IonInput>   
-                    </IonItem> 
-                    <IonItem>
-                        <IonLabel position="floating">Hora de la solicitud</IonLabel>
-                        <IonInput disabled name="hora" value={hora}>
-                            <IonIcon className="btn_eye_icon"  color="medium" slot="start" icon={time}></IonIcon>
-                        </IonInput>   
-                    </IonItem> 
-                    <IonItem>
-                        <IonLabel position="floating">Tipo de requerimiento<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled required type="text" name="tipo" value={ListaSolicitudes.transformar_tipo(tipo)} onIonChange={(e) => setTipo((e.target as HTMLInputElement).value)} ></IonInput>
+                        {prioridad === 'Alta' ? <IonIcon  color="alto" slot="start" icon={trendingUp}></IonIcon> :
+                        prioridad === 'Baja' ? <IonIcon  color="bajo" slot="start" icon={trendingDown}></IonIcon> :
+                        prioridad === 'Media' ? <IonIcon color="medio" slot="start" icon={remove}></IonIcon> : 
+                        prioridad === 'Crítica' ? <IonIcon color="critico" slot="start" icon={flash}></IonIcon> : null }
+                        Prioridad <IonNote color="dark" slot="end">{prioridad}</IonNote>
                     </IonItem>
 
-                    <IonItem>
-                        <IonLabel position="floating">Usuario solicitante<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled required name="solicitante" value={usuarioSolicitante} onIonChange={(e) => setUsuarioSolicitante((e.detail.value!))} >
-                       </IonInput>
-                    </IonItem>
-
-                    <IonItem>
-                        <IonLabel position="floating">Nombre del solicitante<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled required name="nombreSolicitante" value={nombreSolicitante} onIonChange={(e) => setNombreSolicitante((e.detail.value!))} >
-                       </IonInput>
-                    </IonItem>
-
-                    <IonItem>
-                        <IonLabel position="floating">Cédula del solicitante<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled required type="text" name="cedula" value={cedula} onIonChange={(e) => setCedula((e.target as HTMLInputElement).value)} ></IonInput>
-                    </IonItem>
-
-                    <IonItem>
-                        <IonLabel position="floating">Institución <IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled name="punto" value={punto} onIonChange={(e) => setPunto((e.target as HTMLInputElement).value)} > </IonInput>
-                    </IonItem>
-
-                    <IonItem>
-                        <IonLabel position="floating">Departamento<IonText color="primary">*</IonText></IonLabel>
-                        <IonInput disabled name="departamento" value={departamento} onIonChange={(e) => setDepartamento((e.target as HTMLInputElement).value)} >  </IonInput>
+                    <IonItem >
+                        <IonIcon color="medium" slot="start" icon={calendar}></IonIcon>
+                        Fecha<IonNote color="dark" slot="end">{fecha}</IonNote>
                     </IonItem> 
 
                     <IonItem>
-                        <IonLabel position="floating">Detalle</IonLabel>
-                        <IonTextarea disabled name="descripcion" value={descripcion} onIonChange={(e) => setDescripcion((e.target as HTMLInputElement).value)}></IonTextarea>
+                        <IonIcon color="medium" slot="start" icon={time}></IonIcon>
+                        Hora<IonNote color="dark" slot="end">{hora}</IonNote>  
+                    </IonItem> 
+
+                    <IonItem>
+                        <IonIcon color="medium" slot="start" icon={build}></IonIcon>
+                        Tipo de requerimiento<IonNote color="dark" slot="end">{ListaSolicitudes.transformar_tipo(tipo)} </IonNote> 
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon color="medium" slot="start" icon={person}></IonIcon>
+                        Username<IonNote color="dark" slot="end">{usuarioSolicitante} </IonNote>
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon color="medium" slot="start" icon={man}></IonIcon>
+                        Nombre<IonNote color="dark" slot="end">{nombreSolicitante} </IonNote>
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon color="medium" slot="start" icon={card}></IonIcon>
+                        Cédula<IonNote color="dark" slot="end">{cedula} </IonNote>
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon slot="start" icon={locate}> </IonIcon>
+                        Punto <IonNote slot="end">{punto} </IonNote>
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon slot="start" icon={business}> </IonIcon>
+                        Departamento <IonNote  color="dark" slot="end">{departamento}</IonNote>
+                    </IonItem>
+
+                    <IonItem>
+                        <IonIcon slot="start" icon={informationCircleOutline}> </IonIcon>
+                        Descripción <IonNote color="dark" slot="end">{descripcion}</IonNote>
                     </IonItem>   
+                </IonList>
 
+                <IonList>
+                <IonListHeader className="ion-text-center">ATENCIÓN DE SOLICITUD</IonListHeader>
                     <IonItem>
                         <IonLabel position="floating">Estado<IonText color="primary">*</IonText></IonLabel>
-                        <IonSelect disabled= {habilitarCampos} name="estado" value={estado} onIonChange={(e) => setEstado(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+                        <IonInput disabled name="estado" value={estado} onIonChange={(e) => setEstado((e.target as HTMLInputElement).value)} >
                             {/* {estados.map((m:any, index:number) => {
                             return (
                             <IonSelectOption key={index} value={m.id}>
@@ -291,51 +318,39 @@ const FormularioSolicitudes: React.FC = () => {
                             </IonSelectOption>
                             ); 
                         })}  */}
-                        </IonSelect>   
+                        </IonInput>   
                     </IonItem> 
 
                     <IonItem>
 
-                        <IonLabel position="floating">Responsable a cargo</IonLabel>
+                        <IonLabel position="floating">Responsable a cargo<IonText color="primary">*</IonText></IonLabel>
 
                         <IonSelect disabled={habilitarCampos} name="responsable" value={responsable} onIonChange={(e) => setResponsable(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-
-                            <IonSelectOption key={0} value={null}>
-
-                                {"Ninguna"}
-
-                            </IonSelectOption>
-
-                            {/* {ips.map((m:any, index:number) => {
+                            {empleados.map((m:any, index:number) => {
 
                             return (
 
-                            <IonSelectOption key={index} value={m.id_ip}>
+                            <IonSelectOption key={index} value={m.cedula}>
 
-                                {m.direccion_ip} 
+                                {m.nombres} 
                             </IonSelectOption>
                             );
-                        })} */}
+                        })}
                         </IonSelect>   
                     </IonItem> 
 
                     <IonItem lines="full">
                         <IonLabel position="floating">Equipos involucrados</IonLabel>
-                        <IonSelect  multiple disabled= {habilitarCampos} name="equipos" value={equipos} onIonChange={(e) => setEquipos(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
-                            <IonSelectOption key={0} value={null}></IonSelectOption>
-                            <IonSelectOption key={1} value={null}></IonSelectOption>
-                            <IonSelectOption key={2} value={null}>
-                                {"Ninguna"}</IonSelectOption>
-                                <IonSelectOption key={0} value={null}></IonSelectOption>
-                            {/* {ips.map((m:any, index:number) => {
+                        <IonSelect  multiple disabled= {habilitarCampos} name="equipos" value={equipo} onIonChange={(e) => setEquipo(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
+                            {equipos.map((m:any, index:number) => {
                             return (
-                            <IonSelectOption key={index} value={m.id_ip}>
-                                {m.direccion_ip} 
+                            <IonSelectOption key={index} value={m.id}>
+                                {m.dato} 
                             </IonSelectOption>
                             );
-                        })} */}
+                        })}
                         </IonSelect>   
-                    </IonItem> 
+                    </IonItem>  
 
                     <IonItem>
                         <IonLabel position="floating">Observaciones</IonLabel>
@@ -360,7 +375,7 @@ const FormularioSolicitudes: React.FC = () => {
             <IonAlert
                 isOpen={alerta}
                 onDidDismiss={() => volver_principal()}
-                message={mensaje}
+                message={mensaje === "aceptar" ? "La solicitud ha sido aceptada":"La solicitud ha sido rechazada"}
                 buttons={['Aceptar']}
             />
             <IonAlert
@@ -394,8 +409,12 @@ const FormularioSolicitudes: React.FC = () => {
                         cssClass: 'success',
                         text: 'Aceptar',
                         handler: () => {
+                            // if(mensaje==="aceptar"){
+
+                            // }
+                            setAlerta(true)
                             setHabilitarCampos(false)
-                            setMostrarFooter(false)// setMostrarFooter(true)// setAlerta(true)
+                             setMostrarFooter(true)// setAlerta(true)
                             // aceptarSolicitud// setGuardar(true)              
                         }
                     }        
@@ -450,7 +469,7 @@ const FormularioSolicitudes: React.FC = () => {
                 ]}
             />
         </IonContent>
-       { estado === "P" && mostrarFooter ? <IonFooter class="ion-no-margin-no-padding" >	
+       { estado === "Pendiente" && mostrarFooter ? <IonFooter class="ion-no-margin-no-padding" >	
            <IonRow  class="ion-text-center">
                <IonCol class="ion-no-padding">
                    <IonButton color="success" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("aceptar")} >Aceptar</IonButton>
@@ -462,6 +481,7 @@ const FormularioSolicitudes: React.FC = () => {
         </IonFooter> : null}
     </IonPage>
     );
+  
 };
 
-export default withIonLifeCycle(FormularioSolicitudes);
+export default FormularioSolicitudes;

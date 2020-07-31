@@ -1,8 +1,9 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "Inventario-HospitalLeonBecerra",
+  "appName": "Inventario-HLB",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
   "cordova": {}
+  
 }

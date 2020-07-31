@@ -23,4 +23,11 @@ export default class AxiosSolicitudes {
     return AxiosSolicitudes.instanceAxios.put(`/cambiar_estado_solicitud/${id}/${codigo}`);
   }
 
+  static empleados_sistemas = () => {
+    return AxiosSolicitudes.instanceAxios.get('/empleados_sistemas');
+  }
+
+  static mostrar_codigos = () => {
+    return AxiosSolicitudes.instanceAxios.get('/mostrar_codigos');
+  }
 }
