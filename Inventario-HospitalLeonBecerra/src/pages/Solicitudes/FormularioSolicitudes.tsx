@@ -52,6 +52,7 @@ const FormularioSolicitudes: React.FC = () => {
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
     var [sigPad, setSigPad] = useState({} as any);
+    var [formData, setFormData] = useState({} as any);
 
 
     useIonViewWillEnter(() => {
@@ -180,16 +181,7 @@ const FormularioSolicitudes: React.FC = () => {
             id_solicitud: id,
         }
         // if (!editionMode) {
-            let image = new Image();
-            image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
-            //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
-            guardar_url();
-
-            console.log("Recort: ",trimmedDataURL);
-                const canvas = sigPad.getTrimmedCanvas();
-                canvas.toBlob((blob:any) => {
-                const formData = new FormData();
-                formData.append('image_name', blob);
+            
                 AxiosSolicitudes.crear_atencion_solicitud(registro, formData).then(() => {
                 setMensaje("Registro guardado satisfactoriamente")
                 setConfirmarRegistro(true);
@@ -201,10 +193,9 @@ const FormularioSolicitudes: React.FC = () => {
                     }
                     setError(true);
                 });
-            }); 
         // } else {
             console.log(registro);
-            console.log(image);
+            
             // AxiosRouter.editar_router(registro_equipo_router).then(res => {
             //     console.log(res)
             //     setMensaje("Registro actualizado satisfactoriamente")                   
@@ -255,29 +246,17 @@ const FormularioSolicitudes: React.FC = () => {
 
     const trim = () => {
         //this.cargando = true;
-        
         settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
         setmostrarVentanaFirma(false);
-        /*
-        let image = new Image();
-        image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
-        //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
-        guardar_url();
-        console.log("Recort: ",trimmedDataURL);
+        
         const canvas = sigPad.getTrimmedCanvas();
         canvas.toBlob((blob:any) => {
         const formData = new FormData();
         formData.append('image_name', blob);
-        AxiosFirma.almacenar_firma(formData).then(res => {   
-          //this.cargando = false;
-                
-          console.log("Upload44");
-          console.log("Data: ",res);
-        }).catch(err => {
-          console.log(err);      
-          console.log('Error 2');
-        });
-      });*/
+        console.log("Fomrulario: ",formData);
+        setFormData(formData);
+        
+      });
     
     //   /this.cargar();/
       //this.cargar2();
