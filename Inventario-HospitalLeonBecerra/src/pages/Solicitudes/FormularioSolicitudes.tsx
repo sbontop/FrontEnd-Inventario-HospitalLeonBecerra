@@ -1,11 +1,17 @@
-import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, 
-    IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonNote, IonTextarea, IonIcon, IonListHeader, IonFooter, IonLoading, useIonViewWillEnter, useIonViewWillLeave} from '@ionic/react';
+import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, IonHeader, 
+    IonList, IonButton, IonRow, IonCol, IonNote, IonTextarea, IonIcon, IonListHeader, IonFooter, IonLoading, useIonViewWillEnter, useIonViewWillLeave,
+    IonModal, IonGrid, withIonLifeCycle} from '@ionic/react';
 import React, { useState, useEffect } from 'react';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { arrowBack, trendingDown, trendingUp, remove, flash , time, calendar, checkmarkCircle, checkboxOutline, save, build, person, man, card, business, locate, information, informationCircleOutline, desktop} from 'ionicons/icons';
+import { arrowBack, trendingDown, trendingUp, remove, close, flash , time, calendar, checkmarkCircle, checkboxOutline, save, build, person, man, card, business, locate, information, informationCircleOutline, desktop} from 'ionicons/icons';
+
+
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
+import SignaturePad from 'react-signature-canvas'
+import AxiosFirma from '../../services/AxiosFirma';
+import styles from './styles.module.css'   
 
 const FormularioSolicitudes: React.FC = () => {
     let { id } = useParams();
@@ -31,8 +37,12 @@ const FormularioSolicitudes: React.FC = () => {
     const [alerta, setAlerta] = useState(false);
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
-    
+    const [confirmarEdicion6, setConfirmarEdicion6] = useState(false);
+    const [vistaPrevia, setVistaPrevia] = useState(true);
+
+    const [trimmedDataURL, settrimmedDataURL] = useState(null);
     const [confirmarSolicitud, setConfirmarSolicitud] = useState(false);
+    const [mostrarVentanaFirma, setmostrarVentanaFirma] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
     const [editionMode, setEditionMode] = useState(false);
     const [mostrarFooter, setMostrarFooter] = useState(true); 
@@ -41,6 +51,8 @@ const FormularioSolicitudes: React.FC = () => {
     const [error, setError] = useState(false);
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
+    var [sigPad, setSigPad] = useState({} as any);
+
 
     useIonViewWillEnter(() => {
         cargar_empleados(); 
@@ -156,47 +168,43 @@ const FormularioSolicitudes: React.FC = () => {
     }
 
     const registrar = () => { 
-    if (true
-        // prioridad === undefined || nombre === undefined || pass === undefined || usuario === undefined || clave === undefined
-        // || id_marca === undefined || modelo === undefined || numero_serie === undefined || estado === undefined
-        ) {
+    if ( responsable === undefined || equipos === undefined ) {
         setMensaje("Debe completar todos los campos");
         setIncompleto(true);
-    } else {     
-        let registro_equipo_router = {
-            // id_equipo: id,
-            // fecha_registro: new Date().toISOString().substr(0,10),
-            // prioridad: prioridad,
-            // tipo_equipo: "Router",
-            // id_marca: id_marca,
-            // asignado: empleado,
-            // estado_operativo: estado,
-            // modelo: modelo,
-            // numero_serie: numero_serie,
-            // descripcion: descripcion,
-            // encargado_registro: 'admin',
-            // componente_principal: null,
-            // ip: ip,        
-            // nombre: nombre,
-            // pass: pass,
-            // puerta_enlace: puerta_enlace,
-            // usuario: usuario,
-            // clave: clave
+    } else {  
+        
+        let registro = {
+            equipos: equipo,
+            id_usuario: responsable,
+            observacion: observacion,
+            id_solicitud: id,
         }
-        if (!editionMode) {
-            // AxiosRouter.crear_equipo_router(registro_equipo_router).then(() => {
-            //     setMensaje("Registro guardado satisfactoriamente")
-            //     setConfirmarRegistro(true);
-            //     console.log(guardar)
-            // }).catch(err => {
-            //     setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-            //     if (err.response) {
-            //         setMensaje(err.response.data.log)
-            //     }
-            //     setError(true);
-            // });
-        } else {
-            console.log(registro_equipo_router)
+        // if (!editionMode) {
+            let image = new Image();
+            image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
+            //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
+            guardar_url();
+
+            console.log("Recort: ",trimmedDataURL);
+                const canvas = sigPad.getTrimmedCanvas();
+                canvas.toBlob((blob:any) => {
+                const formData = new FormData();
+                formData.append('image_name', blob);
+                AxiosSolicitudes.crear_atencion_solicitud(registro, formData).then(() => {
+                setMensaje("Registro guardado satisfactoriamente")
+                setConfirmarRegistro(true);
+                console.log(guardar)
+                }).catch(err => {
+                    setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+                    if (err.response) {
+                        setMensaje(err.response.data.log)
+                    }
+                    setError(true);
+                });
+            }); 
+        // } else {
+            console.log(registro);
+            console.log(image);
             // AxiosRouter.editar_router(registro_equipo_router).then(res => {
             //     console.log(res)
             //     setMensaje("Registro actualizado satisfactoriamente")                   
@@ -204,12 +212,12 @@ const FormularioSolicitudes: React.FC = () => {
             // }).catch(() => {
             //     setError(true);
             // });
-        }
+        // }
     }   
     } 
 
     const volver_principal = () => {
-        // setGuardar(false);
+         setGuardar(false);
         
         // setMostrarFooter(false)
         // if(mensaje==="rechazar"){
@@ -228,6 +236,68 @@ const FormularioSolicitudes: React.FC = () => {
             setEstado(estado);
         }
     }
+    //let sigPad:any = {};
+
+    const clear = () => {
+        sigPad.clear()
+    }
+
+
+    const dibujar = () => {
+        sigPad[0].toDataURL(trimmedDataURL);
+    }
+
+
+    const guardar_url = () =>{
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+    }
+
+
+    const trim = () => {
+        //this.cargando = true;
+        
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        setmostrarVentanaFirma(false);
+        /*
+        let image = new Image();
+        image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
+        //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        guardar_url();
+        console.log("Recort: ",trimmedDataURL);
+        const canvas = sigPad.getTrimmedCanvas();
+        canvas.toBlob((blob:any) => {
+        const formData = new FormData();
+        formData.append('image_name', blob);
+        AxiosFirma.almacenar_firma(formData).then(res => {   
+          //this.cargando = false;
+                
+          console.log("Upload44");
+          console.log("Data: ",res);
+        }).catch(err => {
+          console.log(err);      
+          console.log('Error 2');
+        });
+      });*/
+    
+    //   /this.cargar();/
+      //this.cargar2();
+      //var base64:any = this.getBase64Image(document.getElementById("imageid"));
+      //console.log("Base: "); 
+    
+      //this.obtener_imagen_firma_electronica();
+       
+    
+    }
+
+    const vista_previa = () => {
+        settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
+        setVistaPrevia(false);
+        console.log("Data: ",trimmedDataURL);
+        /*this.getBase64Image(this.state.url_cargada, function(base64image:any){
+          console.log('vista_previa',base64image);
+        });*/
+      }
+
 
     return (
     <IonPage>  
@@ -248,8 +318,7 @@ const FormularioSolicitudes: React.FC = () => {
         />
         <IonContent className="ion-padding">  
         {/* <IonTitle className="ion-text-center">Solicitud</IonTitle> */}
-            <form action="post"> 
-            {/* onSubmit={(e) => { e.preventDefault(); registrar(); }}  */}
+            <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post"> 
                 <IonList>
                 <IonListHeader >DETALLE DE SOLICITUD</IonListHeader>
                     <IonItem>
@@ -309,7 +378,7 @@ const FormularioSolicitudes: React.FC = () => {
                 <IonList>
                 <IonListHeader className="ion-text-center">ATENCIÓN DE SOLICITUD</IonListHeader>
                     <IonItem>
-                        <IonLabel position="floating">Estado<IonText color="primary">*</IonText></IonLabel>
+                        <IonLabel position="floating">Estado</IonLabel>
                         <IonInput disabled name="estado" value={estado} onIonChange={(e) => setEstado((e.target as HTMLInputElement).value)} >
                             {/* {estados.map((m:any, index:number) => {
                             return (
@@ -340,7 +409,7 @@ const FormularioSolicitudes: React.FC = () => {
                     </IonItem> 
 
                     <IonItem lines="full">
-                        <IonLabel position="floating">Equipos involucrados</IonLabel>
+                        <IonLabel position="floating">Equipos involucrados<IonText color="primary">*</IonText></IonLabel>
                         <IonSelect  multiple disabled= {habilitarCampos} name="equipos" value={equipo} onIonChange={(e) => setEquipo(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
                             {equipos.map((m:any, index:number) => {
                             return (
@@ -356,11 +425,127 @@ const FormularioSolicitudes: React.FC = () => {
                         <IonLabel position="floating">Observaciones</IonLabel>
                         <IonTextarea disabled= {habilitarCampos} name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)}></IonTextarea>
                     </IonItem>             
+        <IonModal
+          isOpen={mostrarVentanaFirma}
+          onDidDismiss={e => setmostrarVentanaFirma(false)}>
+          <IonToolbar color="primary">
+            <IonTitle>Solicitud</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={() =>setmostrarVentanaFirma(false)}><IonIcon icon={close}></IonIcon></IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonContent>
+
+          <IonGrid>
+            <IonRow class="ion-text-center">
+              <IonCol>
+                
+                <h2>
+                    <b>
+                        Firma electrónica
+                    </b>
+                </h2>
+                
+              </IonCol>
+            </IonRow>
+            
+
+            <IonRow class="ion-text-center" className={styles.fondo}>
+              <IonCol >
+              <IonNote>Al realizar la firma de esta solicitud usted acepta que se ha realizado de manera satisfactoria el servicio brindado en esta solicitud.</IonNote>
+                
+              </IonCol>
+            </IonRow>
+            
+            <br/>
+            <IonRow class="ion-text-center">
+                <SignaturePad clearOnResize={true}
+                    canvasProps={{width: 390, height: 300, className: 'sigCanvas', style:{ "height": "100%", "width": "100%", "background":"#EEEDE8"} }}
+                    ref={(ref) => { sigPad = ref }}
+                />
+            </IonRow> 
+
+            {/*<IonRow class="ion-text-center">
+              {<SignaturePad penColor='green'
+                  canvasProps={{width: 500, height: 200, className: 'sigCanvas' }}
+                  ref={(ref2) => { this.sigPad2 = ref2 }}
+                    />}
+                    </IonRow>*/}
+
+
+            <IonRow class="ion-text-end">
+              <IonCol>
+                <IonButton color="dark" onClick={clear}>Volver a firma</IonButton>
+              </IonCol>              
+            </IonRow>
+            <IonRow class="ion-text-end">
+                        <IonCol>
+                            <IonButton color="dark" onClick={vista_previa}>Vista Previa</IonButton>
+                        </IonCol>
+                        </IonRow>
+            <IonRow class="ion-text-end">  
+              <IonCol>
+                    <IonButton color="dark" onClick={trim}>
+                    Guardar</IonButton>
+              </IonCol>
+            </IonRow>
+
+            
+
+
+            {/* <img alt="prueba" src={trimmedDataURL} /> */}
+            <br/>
+
+            <IonRow hidden={vistaPrevia}>
+              <IonCol class="ion-text-center">
+                <h2>
+                    <b>
+                        Vista Previa
+                    </b>
+                </h2>
+              </IonCol>
+            </IonRow>
+
+
+            <IonRow hidden={vistaPrevia}>
+              <IonCol class="ion-text-center">
+                <img id="imageid" alt="" src ={trimmedDataURL+''} />
+              </IonCol>
+            </IonRow>
+
+
+
+            
+
+
+
+          </IonGrid>                
+          </IonContent>
+        </IonModal>
+
+        
+
+        <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <h2>
+                    <b>
+                        Firma
+                    </b>
+                </h2>
+              </IonCol>
+            </IonRow>
+
+
+            <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <img id="imageid" alt="" src ={trimmedDataURL+''} />
+              </IonCol>
+            </IonRow>
 
                     <p className="ion-text-center">                 
                             <IonRow class="ion-text-center">
                                 <IonCol class="ion-no-padding">
-                                    <IonButton  disabled= {habilitarCampos} expand="full" color="medium" routerLink="/path" class="ion-no-margin">Registrar firma</IonButton>          
+                <IonButton  disabled= {habilitarCampos} expand="full" color="medium" onClick={() => {setmostrarVentanaFirma(true)} } class="ion-no-margin">{trimmedDataURL===null?'Registrar firma':'Volver a firmar'}</IonButton>          
                                 </IonCol>
                             </IonRow> 
                             <IonRow style={{paddingTop: 10}} >
