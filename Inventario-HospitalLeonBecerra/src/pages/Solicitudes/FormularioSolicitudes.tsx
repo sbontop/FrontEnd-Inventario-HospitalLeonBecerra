@@ -35,6 +35,7 @@ const FormularioSolicitudes: React.FC = () => {
     const [descripcion, setDescripcion] = useState("");
     const [guardar, setGuardar] = useState(false);
     const [alerta, setAlerta] = useState(false);
+    const [alertaFinalizar, setAlertaFinalizar] = useState(false);
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [confirmarEdicion6, setConfirmarEdicion6] = useState(false);
@@ -52,6 +53,7 @@ const FormularioSolicitudes: React.FC = () => {
     const [mensaje, setMensaje] = useState("");
     const [redireccionar, setRedireccionar] = useState(false);
     var [sigPad, setSigPad] = useState({} as any);
+    var [formData, setFormData] = useState({} as any);
 
 
     useIonViewWillEnter(() => {
@@ -63,7 +65,7 @@ const FormularioSolicitudes: React.FC = () => {
         let emp = [] as any;
         AxiosSolicitudes.empleados_sistemas().then(res=>{
             res.data.forEach((e: any ) => {
-                let datos_empleado = {"cedula":e.cedula, "nombres": e.nombre + " "+ e.apellido};
+                let datos_empleado = {"username":e.username, "nombres": e.nombre + " "+ e.apellido};
                 emp.push(datos_empleado);
             }); 
             setEmpleados(emp);
@@ -180,20 +182,10 @@ const FormularioSolicitudes: React.FC = () => {
             id_solicitud: id,
         }
         // if (!editionMode) {
-            let image = new Image();
-            image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
-            //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
-            guardar_url();
-
-            console.log("Recort: ",trimmedDataURL);
-                const canvas = sigPad.getTrimmedCanvas();
-                canvas.toBlob((blob:any) => {
-                const formData = new FormData();
-                formData.append('image_name', blob);
-                AxiosSolicitudes.crear_atencion_solicitud(registro, formData).then(() => {
-                setMensaje("Registro guardado satisfactoriamente")
-                setConfirmarRegistro(true);
-                console.log(guardar)
+          try{
+            AxiosSolicitudes.crear_atencion_solicitud1(registro).then(() => {
+                
+                console.log(guardar);
                 }).catch(err => {
                     setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                     if (err.response) {
@@ -201,10 +193,26 @@ const FormularioSolicitudes: React.FC = () => {
                     }
                     setError(true);
                 });
-            }); 
+                AxiosFirma.almacenar_firma(formData).then(res => {   
+          //this.cargando = false;
+                
+          console.log("Upload44");
+          console.log("Data: ",res);
+        }).catch(err => {
+          console.log(err);      
+          console.log('Error 2');
+        });
+                    setMensaje("Registro guardado satisfactoriamente");
+                setConfirmarRegistro(true);
+          }  catch (error) {
+            setMensaje("Error al guardar la atención a esta solicitud")
+            setError(true);
+          }
+               
+            // }); 
         // } else {
-            console.log(registro);
-            console.log(image);
+            // console.log(registro);
+            
             // AxiosRouter.editar_router(registro_equipo_router).then(res => {
             //     console.log(res)
             //     setMensaje("Registro actualizado satisfactoriamente")                   
@@ -399,7 +407,7 @@ const FormularioSolicitudes: React.FC = () => {
 
                             return (
 
-                            <IonSelectOption key={index} value={m.cedula}>
+                            <IonSelectOption key={index} value={m.username}>
 
                                 {m.nombres} 
                             </IonSelectOption>
@@ -563,6 +571,13 @@ const FormularioSolicitudes: React.FC = () => {
                 message={mensaje === "aceptar" ? "La solicitud ha sido aceptada":"La solicitud ha sido rechazada"}
                 buttons={['Aceptar']}
             />
+            
+            <IonAlert
+                isOpen={alertaFinalizar}
+                onDidDismiss={() => volver_principal()}
+                message={"La solicitud ha sido completada con exito."}
+                buttons={['Aceptar']}
+            />
             <IonAlert
                 isOpen={incompleto}
                 onDidDismiss={() => setIncompleto(false)}
@@ -623,7 +638,13 @@ const FormularioSolicitudes: React.FC = () => {
                         cssClass: 'success',
                         text: 'Aceptar',
                         handler: () => {
-                            setAlerta(true)
+                            if(estado==='En progreso'){
+                                setAlertaFinalizar(true)
+                            } else{
+                                   setAlerta(true) 
+                               
+                            }
+                            
                             setGuardar(true)              
                         }
                     }        

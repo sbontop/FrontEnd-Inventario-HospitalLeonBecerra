@@ -31,7 +31,7 @@ export default class AxiosSolicitudes {
     return AxiosSolicitudes.instanceAxios.get('/mostrar_codigos');
   }
 
-  static crear_atencion_solicitud = (request: any, requestFirma: any) => {
-    return AxiosSolicitudes.instanceAxios.post(`/crear_atencion_solicitud/${request}/${requestFirma}`);
+  static crear_atencion_solicitud = (registro: any) => {
+    return AxiosSolicitudes.instanceAxios.post(`/crear_atencion_solicitud1`, registro);
   }
 }
