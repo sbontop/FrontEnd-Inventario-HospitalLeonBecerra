@@ -30,4 +30,8 @@ export default class AxiosSolicitudes {
   static mostrar_codigos = () => {
     return AxiosSolicitudes.instanceAxios.get('/mostrar_codigos');
   }
+
+  static crear_atencion_solicitud = (request: any, requestFirma: any) => {
+    return AxiosSolicitudes.instanceAxios.post(`/crear_atencion_solicitud/${request}/${requestFirma}`);
+  }
 }
