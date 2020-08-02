@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonItem,  IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote, IonAlert, IonLoading} from '@ionic/react';
+import { IonItem,  IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote } from '@ionic/react';
 import { trash, create, pricetag, codeDownload, business, key, reorder } from 'ionicons/icons';
 
 class ListaProgramas extends React.Component<any, any>  {

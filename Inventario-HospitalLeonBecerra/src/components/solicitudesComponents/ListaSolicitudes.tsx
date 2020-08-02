@@ -1,11 +1,8 @@
 import {
     IonItem, IonLabel, IonIcon, IonText, IonChip
 } from '@ionic/react';
-import { trendingDown, trendingUp, flash, remove, calendar, clock, today, timer } from 'ionicons/icons';
+import { trendingDown, trendingUp, flash, remove } from 'ionicons/icons';
 import React from 'react';
-import { time } from 'console';
-import { duration } from '@material-ui/core';
-/* import Axios from '../../services/Axios.services'; */
 
 
 class ListaSolicitudes extends React.Component<any, any>  {

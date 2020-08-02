@@ -1,13 +1,11 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, IonHeader, 
     IonList, IonButton, IonRow, IonCol, IonNote, IonTextarea, IonIcon, IonListHeader, IonFooter, IonLoading, useIonViewWillEnter, useIonViewWillLeave,
-    IonModal, IonGrid, withIonLifeCycle} from '@ionic/react';
-import React, { useState, useEffect } from 'react';
+    IonModal, IonGrid } from '@ionic/react';
+import React, { useState } from 'react';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { arrowBack, trendingDown, trendingUp, remove, close, flash , time, calendar, checkmarkCircle, checkboxOutline, save, build, person, man, card, business, locate, information, informationCircleOutline, desktop} from 'ionicons/icons';
-
-
+import { arrowBack, trendingDown, trendingUp, remove, close, flash , time, calendar, checkboxOutline, save, build, person, man, card, business, locate, informationCircleOutline } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import SignaturePad from 'react-signature-canvas'
 import AxiosFirma from '../../services/AxiosFirma';
@@ -38,10 +36,9 @@ const FormularioSolicitudes: React.FC = () => {
     const [alertaFinalizar, setAlertaFinalizar] = useState(false);
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
-    const [confirmarEdicion6, setConfirmarEdicion6] = useState(false);
     const [vistaPrevia, setVistaPrevia] = useState(true);
 
-    const [trimmedDataURL, settrimmedDataURL] = useState(null);
+    const [trimmedDataURL, settrimmedDataURL] = useState(null);   
     const [confirmarSolicitud, setConfirmarSolicitud] = useState(false);
     const [mostrarVentanaFirma, setmostrarVentanaFirma] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
@@ -98,9 +95,9 @@ const FormularioSolicitudes: React.FC = () => {
     })
 
     useIonViewWillEnter(() => {
+        setMostrarLoad(true);
         if (id !== undefined){
             setEditionMode(true);
-            setMostrarLoad(true);
             // setMostrarFooter(true);
             setConfirmarSolicitud(false);
             AxiosSolicitudes.info_solicitud_id(id).then(res => {
@@ -120,11 +117,11 @@ const FormularioSolicitudes: React.FC = () => {
                 setDepartamento(res.data.dpto);
                 setDescripcion(res.data.observacion);
                 res.data.estado==="P"?setHabilitarCampos(true):setHabilitarCampos(false);
+                setMostrarLoad(false);
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
             });
-            setMostrarLoad(false);
         }                                    
         }, [id]
     );
@@ -134,7 +131,7 @@ const FormularioSolicitudes: React.FC = () => {
         setConfirmarSolicitud(true);
         try {
             if (mensaje === "aceptar"){
-                 AxiosSolicitudes.cambiar_estado_solicitud(id,"EP");
+                AxiosSolicitudes.cambiar_estado_solicitud(id,"EP");
             } else {
                 AxiosSolicitudes.cambiar_estado_solicitud(id,"R");
             }
@@ -170,72 +167,52 @@ const FormularioSolicitudes: React.FC = () => {
     }
 
     const registrar = () => { 
-    if ( responsable === undefined || equipos === undefined ) {
-        setMensaje("Debe completar todos los campos");
-        setIncompleto(true);
-    } else {  
-        
-        let registro = {
-            equipos: equipo,
-            id_usuario: responsable,
-            observacion: observacion,
-            id_solicitud: id,
-        }
-        // if (!editionMode) {
-          try{
-            AxiosSolicitudes.crear_atencion_solicitud1(registro).then(() => {
-                
-                console.log(guardar);
-                }).catch(err => {
-                    setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-                    if (err.response) {
-                        setMensaje(err.response.data.log)
-                    }
-                    setError(true);
-                });
+        if ( responsable === undefined || equipos === undefined ) {
+            setMensaje("Debe completar todos los campos");
+            setIncompleto(true);
+        } else {  
+            try {
                 AxiosFirma.almacenar_firma(formData).then(res => {   
-          //this.cargando = false;
-                
-          console.log("Upload44");
-          console.log("Data: ",res);
-        }).catch(err => {
-          console.log(err);      
-          console.log('Error 2');
-        });
-                    setMensaje("Registro guardado satisfactoriamente");
+                    var id_imagen = res.data;
+                    let registro = {
+                        equipos: equipo,
+                        id_usuario: responsable,
+                        observacion: observacion,
+                        id_solicitud: id,
+                        estado: "C",
+                        id_imagen: id_imagen
+                    }
+                    AxiosSolicitudes.crear_atencion_solicitud(registro).then(() => {
+                        console.log('REGISTRO:', registro, guardar)
+                    }).catch(err => {
+                        setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
+                        if (err.response) {
+                            setMensaje(err.response.data.log)
+                        }
+                        setError(true);
+                    }); 
+                    console.log("Upload44");
+                }).catch(err => {
+                    console.log(err);      
+                    console.log('Error 2');
+                });  
+                setMensaje("Registro guardado satisfactoriamente");
                 setConfirmarRegistro(true);
-          }  catch (error) {
-            setMensaje("Error al guardar la atención a esta solicitud")
-            setError(true);
-          }
-               
-            // }); 
-        // } else {
-            // console.log(registro);
-            
-            // AxiosRouter.editar_router(registro_equipo_router).then(res => {
-            //     console.log(res)
-            //     setMensaje("Registro actualizado satisfactoriamente")                   
-            //     setConfirmarEdicion(true);
-            // }).catch(() => {
-            //     setError(true);
-            // });
-        // }
-    }   
+            }  catch (error) {
+                setMensaje("Error al guardar la atención a esta solicitud")
+                setError(true);
+            }
+        }   
     } 
 
     const volver_principal = () => {
-         setGuardar(false);
-        
-        // setMostrarFooter(false)
-        // if(mensaje==="rechazar"){
-            setRedireccionar(true);
-        // }
-        
+        setGuardar(false);
+        setRedireccionar(true);   
+        setMostrarLoad(false);     
     }
 
     if (redireccionar) {
-    return (<Redirect to="/homesolicitudes" />);
+        return (<Redirect to="/homesolicitudes" />);
     }
 
     const manejarEstadoPendiente = (estado: any) => {
@@ -244,57 +221,30 @@ const FormularioSolicitudes: React.FC = () => {
             setEstado(estado);
         }
     }
-    //let sigPad:any = {};
 
     const clear = () => {
         sigPad.clear()
     }
 
-
     const dibujar = () => {
         sigPad[0].toDataURL(trimmedDataURL);
     }
-
 
     const guardar_url = () =>{
         settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
     }
 
-
     const trim = () => {
-        //this.cargando = true;
-        
         settrimmedDataURL(sigPad.getTrimmedCanvas().toDataURL('image/png'));
         setmostrarVentanaFirma(false);
-        /*
-        let image = new Image();
-        image.src = sigPad.getTrimmedCanvas().toDataURL('image/png');
-        //console.log("Informa: ",sigPad.getTrimmedCanvas().toDataURL('image/png'));
-        guardar_url();
-        console.log("Recort: ",trimmedDataURL);
         const canvas = sigPad.getTrimmedCanvas();
         canvas.toBlob((blob:any) => {
         const formData = new FormData();
-        formData.append('image_name', blob);
-        AxiosFirma.almacenar_firma(formData).then(res => {   
-          //this.cargando = false;
-                
-          console.log("Upload44");
-          console.log("Data: ",res);
-        }).catch(err => {
-          console.log(err);      
-          console.log('Error 2');
+            formData.append('image_name', blob);
+            formData.append('id_solicitud', id);
+            console.log("Fomrulario: ",formData);
+            setFormData(formData);    
         });
-      });*/
-    
-    //   /this.cargar();/
-      //this.cargar2();
-      //var base64:any = this.getBase64Image(document.getElementById("imageid"));
-      //console.log("Base: "); 
-    
-      //this.obtener_imagen_firma_electronica();
-       
-    
     }
 
     const vista_previa = () => {
@@ -304,7 +254,7 @@ const FormularioSolicitudes: React.FC = () => {
         /*this.getBase64Image(this.state.url_cargada, function(base64image:any){
           console.log('vista_previa',base64image);
         });*/
-      }
+    }
 
 
     return (
@@ -316,7 +266,8 @@ const FormularioSolicitudes: React.FC = () => {
                 </IonButtons>
                 <IonTitle>Seguimiento de solicitud</IonTitle>
                 <IonButtons slot="end">
-                    <IonButton onClick={(e) => console.log("print")}><IonIcon icon={save}></IonIcon></IonButton>
+                    <IonButton onClick={(e) => console.log("print")}></IonButton>
+                    {/* <IonIcon icon={save}></IonIcon> */}
                 </IonButtons>
             </IonToolbar>
         </IonHeader>
@@ -641,7 +592,7 @@ const FormularioSolicitudes: React.FC = () => {
                             if(estado==='En progreso'){
                                 setAlertaFinalizar(true)
                             } else{
-                                   setAlerta(true) 
+                                setAlerta(true) 
                                
                             }
                             
@@ -675,19 +626,19 @@ const FormularioSolicitudes: React.FC = () => {
                 ]}
             />
         </IonContent>
-       { estado === "Pendiente" && mostrarFooter ? <IonFooter class="ion-no-margin-no-padding" >	
-           <IonRow  class="ion-text-center">
-               <IonCol class="ion-no-padding">
-                   <IonButton color="success" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("aceptar")} >Aceptar</IonButton>
-                </IonCol>
-                <IonCol class="ion-no-padding">
-                   <IonButton expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("rechazar")} >Rechazar</IonButton>
-                </IonCol>
-            </IonRow> 
-        </IonFooter> : null}
-    </IonPage>
+            { estado === "Pendiente" && mostrarFooter ? 
+            <IonFooter class="ion-no-margin-no-padding" >	
+                <IonRow  class="ion-text-center">
+                    <IonCol class="ion-no-padding">
+                        <IonButton color="success" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("aceptar")} >Aceptar</IonButton>
+                    </IonCol>
+                    <IonCol class="ion-no-padding">
+                        <IonButton expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("rechazar")} >Rechazar</IonButton>
+                    </IonCol>
+                </IonRow> 
+            </IonFooter> : null}
+        </IonPage>
     );
-  
 };
 
 export default FormularioSolicitudes;

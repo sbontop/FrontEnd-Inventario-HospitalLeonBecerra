@@ -32,6 +32,6 @@ export default class AxiosSolicitudes {
   }
 
   static crear_atencion_solicitud = (registro: any) => {
-    return AxiosSolicitudes.instanceAxios.post(`/crear_atencion_solicitud1`, registro);
+    return AxiosSolicitudes.instanceAxios.post(`/crear_atencion_solicitud`, registro);
   }
 }
