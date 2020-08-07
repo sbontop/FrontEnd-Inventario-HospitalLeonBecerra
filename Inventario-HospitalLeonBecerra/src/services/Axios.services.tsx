@@ -1,8 +1,8 @@
 import axios from 'axios';
+import VariableGlobal from './VariableGlobal'
 export default class AxiosCorreo {
   static instanceAxios = axios.create({
-    /* baseURL:  https://backend-hlb.herokuapp.com/api', */
-    baseURL: 'https://backend-hlb.herokuapp.com/api',
+    baseURL: VariableGlobal.baseURL,
   });
 
 

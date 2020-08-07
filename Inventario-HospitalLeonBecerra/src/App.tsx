@@ -28,6 +28,7 @@ import FormularioSolicitudes from './pages/Solicitudes/FormularioSolicitudes';
 import IniciarSesion from './pages/InicioSesion/IniciarSesion';
 import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 import FirmaElectronica from './pages/FirmaElectronica/FirmaElectronica';
+import Mantenimiento from './pages/Mantenimientos/FormularioMantenimiento'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -54,82 +55,85 @@ import GlobalPC from './pages/InventarioPC/GlobalPC';
 
 
 const appPages: AppPage[] = [
-    {
-      title: 'Menú principal',
-      url: '/home',
-      icon: home
-    },
-    {
-      title: 'Inventario',
-      url: '/inventarios',
-      icon: list
-    },
-    {
-      title: 'Registro de equipos',
-      url: '/tiposequiposinventario',
-      icon: desktop
-    },
-    {
-      title: 'Registro de Marcas',
-      url: '/homemarcas',
-      icon: pricetag
-    }
-  ];
+  {
+    title: 'Menú principal',
+    url: '/home',
+    icon: home
+  },
+  {
+    title: 'Inventario',
+    url: '/inventarios',
+    icon: list
+  },
+  {
+    title: 'Registro de equipos',
+    url: '/tiposequiposinventario',
+    icon: desktop
+  },
+  {
+    title: 'Registro de Marcas',
+    url: '/homemarcas',
+    icon: pricetag
+  }
+];
 
 const App: React.FC = () => (
-    <IonApp>
-        <IonReactRouter>
-            <IonSplitPane contentId="main">
-                <Menu appPages={appPages} />
-                <IonRouterOutlet id="main">
-                    <Route path="/formimpresora" component={FormImpresora} exact={true} />
-                    <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
-                    <Route path="/consulta" component={HomeImpresora} exact={true} />
-                    <Route path="/homemantenimientos" component={HomeMantenimientos} exact={true} />
+  <IonApp>
+    <IonReactRouter>
+      <IonSplitPane contentId="main">
+        <Menu appPages={appPages} />
+        <IonRouterOutlet id="main">
+          <Route path="/formimpresora" component={FormImpresora} exact={true} />
+          <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
+          <Route path="/consulta" component={HomeImpresora} exact={true} />
+          <Route path="/homemantenimientos" component={HomeMantenimientos} exact={true} />
 
-                    <Route path="/iniciarsesion" component={IniciarSesion} exact={true} />
-                    <Route path="/registrarusuario" component={RegistrarUsuario} exact={true} />
-                    <Route path="/formotrosequipos" component={FormOtrosEquipos} exact={true} />
-                    <Route path="/formotrosequipos/edit/:id" component={FormOtrosEquipos} exact={true} />
-                    <Route path="/formlaptop" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
-                    <Route path="/form-laptop/edit/:id" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
-                    <Route path="/consultaOtrosEquiposHome" component={OtrosEquiposHome} exact={true} />
-                    <Route path="/firmaelectronica" component={FirmaElectronica} exact={true} />
+          <Route path="/iniciarsesion" component={IniciarSesion} exact={true} />
+          <Route path="/registrarusuario" component={RegistrarUsuario} exact={true} />
+          <Route path="/formotrosequipos" component={FormOtrosEquipos} exact={true} />
+          <Route path="/formotrosequipos/edit/:id" component={FormOtrosEquipos} exact={true} />
+          <Route path="/formlaptop" render={(props) => <FormPCLaptop {...props}></FormPCLaptop>} />
+          <Route path="/form-laptop/edit/:id" render={(props) => <FormPCLaptop {...props}></FormPCLaptop>} />
+          <Route path="/consultaOtrosEquiposHome" component={OtrosEquiposHome} exact={true} />
+          <Route path="/firmaelectronica" component={FirmaElectronica} exact={true} />
 
-                    <Route path="/form-laptop-2/edit-2/:id/:ip" render={(props)=><FormPCLaptop {...props}></FormPCLaptop>} />
-                    <Route path="/inventarios" component={Inventarios} exact={true} />
-                    <Route path="/consultdesk" render={() => <ConsultarDesktop tipo={GlobalPC.varDesktop} />} exact={true} />
-                    <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo={GlobalPC.varLaptop} />} exact={true} />
-                    <Route path="/formdesktop" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
-                    <Route path="/form-desktop/edit/:id" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
-                    <Route path="/form-desktop-2/edit-2/:id/:ip" render={(props)=><FormPCDesk {...props}></FormPCDesk>} />
-                    <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
-                    <Route path="/homerouter" component={HomeRouter} exact={true} />
-                    <Route path="/formulariorouter" component={FormularioRouter} exact={true} />      
-                    <Route path="/formularioprograma" component={FormularioPrograma} exact={true} /> 
-                    <Route path="/homeprograma" component={HomePrograma} exact={true} /> 
-                    <Route path="/formularioprograma/edit/:id" component={FormularioPrograma} exact={true} />
-                    <Route path="/formulariorouter/edit/:id" component={FormularioRouter} exact={true} />
-                    <Route path="/ip/edit/:id_ip" component={EditIp} exact={true} />
-                    <Route path="/homeip" component={HomeIp} exact={true} />
-                    <Route path="/formularioip" component={FormularioIp} exact={true} />
-                    <Route path="/Home" component={Home} exact={true} />
-                    <Route path="/" render={() => <Redirect to="/iniciarsesion" />} exact={true} />
-                    <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
-                    <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
-                    <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
+          <Route path="/form-laptop-2/edit-2/:id/:ip" render={(props) => <FormPCLaptop {...props}></FormPCLaptop>} />
+          <Route path="/inventarios" component={Inventarios} exact={true} />
+          <Route path="/consultdesk" render={() => <ConsultarDesktop tipo={GlobalPC.varDesktop} />} exact={true} />
+          <Route path="/consultlaptop" render={() => <ConsultarDesktop tipo={GlobalPC.varLaptop} />} exact={true} />
+          <Route path="/formdesktop" render={(props) => <FormPCDesk {...props}></FormPCDesk>} />
+          <Route path="/form-desktop/edit/:id" render={(props) => <FormPCDesk {...props}></FormPCDesk>} />
+          <Route path="/form-desktop-2/edit-2/:id/:ip" render={(props) => <FormPCDesk {...props}></FormPCDesk>} />
+          <Route path="/tiposequiposinventario" component={TiposEquiposInventario} exact={true} />
+          <Route path="/homerouter" component={HomeRouter} exact={true} />
+          <Route path="/formulariorouter" component={FormularioRouter} exact={true} />
+          <Route path="/formularioprograma" component={FormularioPrograma} exact={true} />
+          <Route path="/homeprograma" component={HomePrograma} exact={true} />
+          <Route path="/formularioprograma/edit/:id" component={FormularioPrograma} exact={true} />
+          <Route path="/formulariorouter/edit/:id" component={FormularioRouter} exact={true} />
+          <Route path="/ip/edit/:id_ip" component={EditIp} exact={true} />
+          <Route path="/homeip" component={HomeIp} exact={true} />
+          <Route path="/formularioip" component={FormularioIp} exact={true} />
+          <Route path="/Home" component={Home} exact={true} />
+          <Route path="/" render={() => <Redirect to="/iniciarsesion" />} exact={true} />
+          <Route path="/homeCorreo" component={HomeCorreo} exact={true} />
+          <Route path="/formularioCorreo" component={FormularioCorreo} exact={true} />
+          <Route path="/formularioCorreo/edit/:id" component={FormularioCorreo} exact={true} />
 
-                    <Route path="/homesolicitudes" component={HomeSolicitudes} exact={true} />
-                    <Route path="/formsolicitudes" component={FormularioSolicitudes} exact={true} />
-                    <Route path="/formsolicitudes/edit/:id" component={FormularioSolicitudes} exact={true} />
-                    <Route path="/homemarcas" component={HomeMarcas} exact={true} />
-                </IonRouterOutlet>
-            </IonSplitPane>
-        </IonReactRouter>
+          <Route path="/homesolicitudes" component={HomeSolicitudes} exact={true} />
+          <Route path="/formsolicitudes" component={FormularioSolicitudes} exact={true} />
+          <Route path="/formsolicitudes/edit/:id" component={FormularioSolicitudes} exact={true} />
+          <Route path="/homemarcas" component={HomeMarcas} exact={true} />
 
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+          <Route path="/formulariomantenimiento/edit/:id" component={Mantenimiento} exact={true} />
+          <Route path="/formulariomantenimiento/:codigo_equipo" component={Mantenimiento} exact={true} />
+        </IonRouterOutlet>
+      </IonSplitPane>
+    </IonReactRouter>
 
-    </IonApp>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+  </IonApp>
 );
 
 export default App;

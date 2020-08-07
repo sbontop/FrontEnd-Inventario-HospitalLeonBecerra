@@ -1,10 +1,9 @@
 import axios from 'axios';
+import VariableGlobal from './VariableGlobal';
 
 export default class AxiosRouter {
   static instanceAxios = axios.create({
-    //  baseURL: 'https://backend-hlb.herokuapp.com/api',
-    baseURL: 'http://localhost:8000/api'
-    // baseURL: 'https://backend-hlb.herokuapp.com/api',
+    baseURL: VariableGlobal.baseURL,
   });
 
   static listado_routers = () => {
@@ -26,16 +25,16 @@ export default class AxiosRouter {
   static ips = () => {
     return AxiosRouter.instanceAxios.get(`/ips_libres`);
   }
-  
+
   static filtrar_routers = (filtros: any) => {
     return AxiosRouter.instanceAxios.post(`/filtrar_routers`, filtros);
   }
 
-  static buscar_router = (codigo:any) => {
+  static buscar_router = (codigo: any) => {
     return AxiosRouter.instanceAxios.get(`/buscar_router/${codigo}`);
   }
 
-  static datos_router = (codigo:any) => {
+  static datos_router = (codigo: any) => {
     return AxiosRouter.instanceAxios.get(`/router_id/${codigo}`);
   }
 

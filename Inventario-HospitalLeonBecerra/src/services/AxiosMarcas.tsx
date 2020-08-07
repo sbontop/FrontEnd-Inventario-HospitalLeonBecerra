@@ -1,8 +1,8 @@
 import axios from 'axios';
+import VariableGlobal from './VariableGlobal';
 export default class AxiosMarcas {
   static instanceAxios = axios.create({
-    /* baseURL: 'https://app-hlb-api-rest.herokuapp.com/api', */
-    baseURL: 'https://backend-hlb.herokuapp.com/api',
+    baseURL: VariableGlobal.baseURL,
   });
 
   static filtrar_marcas = (filtros: any) => {

@@ -19,7 +19,7 @@ const HomeIp: React.FC = () => {
     const [showPopover, setShowPopover] = useState<{ open: boolean }>({ open: false });
     const [showLoading, setShowLoading] = useState(false);
     const [marca, setMarca] = useState([] as any);
-    const [fecha_registro, setFecha_registro] = useState([] as any);
+    const [setFecha_registro] = useState([] as any);
     const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [pageNumberTmp, setPageNumberTmp] = useState(1);
@@ -58,12 +58,12 @@ const HomeIp: React.FC = () => {
             .catch(err => console.error(err));
     }
 
-    const cargar_ips_prueba = () => {
+    /* const cargar_ips_prueba = () => {
         console.log('Llamada API');
         AxiosIp.listado_ips_prueba().then(res => {
             console.log(res.data);
         });
-    }
+    } */
 
     const aplicar_filtros = () => {
         AxiosIp.filtro_ip(marca, "2020-02-02").then(res => {

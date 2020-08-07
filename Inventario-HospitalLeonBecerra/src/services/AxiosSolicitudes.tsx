@@ -1,10 +1,8 @@
 import axios from 'axios';
+import VariableGlobal from './VariableGlobal';
 export default class AxiosSolicitudes {
   static instanceAxios = axios.create({
-     baseURL: 'http://localhost:8000/api'
-    //   https://backend-hlb.herokuapp.com/api', 
-    
-    // baseURL: 'https://backend-hlb.herokuapp.com/api',
+    baseURL: VariableGlobal.baseURL,
   });
 
   static filtrar_solicitudes = (filtros: any) => {

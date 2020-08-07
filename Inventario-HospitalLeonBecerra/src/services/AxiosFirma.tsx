@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-const baseURL_upload_images: any= 'http://localhost:8000/api/upload/images';
+import VariableGlobal from './VariableGlobal'
+//const baseURL_upload_images: any= 'http://localhost:8000/api/upload/images';
 
 export default class AxiosFirma {
   static instanceAxios = axios.create({
@@ -25,7 +25,7 @@ export default class AxiosFirma {
 
   static almacenar_firma = (firma: any) => {
     return axios
-      .post(baseURL_upload_images, firma,{
+      .post(VariableGlobal.baseURL_upload_images, firma,{
       headers: {'content-type': 'multipart/form-data'}
     })
     .then(response => {
