@@ -68,7 +68,7 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
             </IonRow>
             <IonRow class="row">
             <IonCol size="12">
-              <IonButton color="primary" class="boton" expand="block" size="large">
+              <IonButton color="primary" routerLink="/homemantenimientos" class="boton" expand="block" size="large">
               <div className="margen">
                 <img src={process.env.PUBLIC_URL + "/assets/img/main/historial.png"} className="responsive"  alt="" /><br/><br/>
                 <IonLabel>Mantenimiento</IonLabel>   

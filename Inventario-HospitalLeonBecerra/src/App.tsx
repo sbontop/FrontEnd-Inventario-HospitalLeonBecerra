@@ -20,6 +20,7 @@ import Menu from './components/Menu';
 import Home from './pages/Home';
 import { home, desktop, list, pricetag } from 'ionicons/icons';
 import HomeImpresora from './pages/InventarioImpresora/HomeImpresora';
+import HomeMantenimientos from './pages/Mantenimientos/HomeMantenimientos';
 import OtrosEquiposHome from './pages/InventarioOtrosEquipos/OtrosEquiposHome';
 import HomeMarcas from './pages/Extra/Marcas/HomeMarcas';
 import HomeSolicitudes from './pages/Solicitudes/HomeSolicitudes';
@@ -84,6 +85,8 @@ const App: React.FC = () => (
                     <Route path="/formimpresora" component={FormImpresora} exact={true} />
                     <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
                     <Route path="/consulta" component={HomeImpresora} exact={true} />
+                    <Route path="/homemantenimientos" component={HomeMantenimientos} exact={true} />
+
                     <Route path="/iniciarsesion" component={IniciarSesion} exact={true} />
                     <Route path="/registrarusuario" component={RegistrarUsuario} exact={true} />
                     <Route path="/formotrosequipos" component={FormOtrosEquipos} exact={true} />
