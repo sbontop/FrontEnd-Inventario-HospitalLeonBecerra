@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@capacitor/android": "^1.5.2",
-    "@capacitor/core": "1.4.0",
+    "@capacitor/android": "^2.4.0",
+    "@capacitor/core": "^2.4.0",
     "@ionic/react": "^4.11.10",
     "@ionic/react-router": "^4.11.10",
     "@material-ui/core": "^4.11.0",
@@ -21,6 +21,7 @@
     "axios": "^0.19.2",
     "date-fns": "^2.14.0",
     "ionicons": "^4.6.3",
+    "jetifier": "^1.6.6",
     "laravel-echo": "^1.8.0",
     "pusher-js": "^5.1.1",
     "react": "^16.13.1",
@@ -54,8 +55,9 @@
   },
   "description": "An Ionic project",
   "devDependencies": {
-    "@capacitor/cli": "1.4.0",
+    "@capacitor/cli": "^2.4.0",
     "@ionic/app-scripts": "^3.2.4",
-    "react-scripts": "3.3.0"
+    "react-scripts": "3.3.0",
+    "uglifyjs-webpack-plugin": "^2.2.0"
   }
 }
