@@ -6,9 +6,7 @@ class ListaMantenimiento extends React.Component<any, any>  {
     constructor(props: any) {
         super(props);
         this.state = {
-            ventanaDetalle: false,
-            esDadoDeBaja: false,
-
+            ventanaDetalle: false
         }
     }
 
@@ -20,7 +18,7 @@ class ListaMantenimiento extends React.Component<any, any>  {
                 <IonItem className="ion-activatable" >
                     <IonLabel key={this.props.id_mantenimiento} onClick={() => this.setState({ ventanaDetalle: true })}>
                         <h2><b>{this.props.titulo}</b></h2>
-                        <h3 color="secondary"> Códdigo: {this.props.codigo}</h3>
+                        <h3 color="secondary"> Código: {this.props.codigo_equipo}</h3>
                         <p> Tipo:
                             {
                                 this.props.tipo === 'C' ? " Correctivo" :
@@ -39,7 +37,9 @@ class ListaMantenimiento extends React.Component<any, any>  {
                     </IonAvatar>
 
                     <>
-                        <IonButton size="default" fill="clear" routerLink={"/formulariomantenimiento/edit/" + this.props.id_mantenimiento} color="secondary" >
+                        <IonButton size="default" fill="clear" routerLink={"/formulariomantenimiento/edit/" + this.props.id_mantenimiento
+                    + "/"+ this.props.codigo_equipo  +"/" +this.props.tipo_equipo + "/" + this.props.estado_operativo
+                    } color="secondary" >
                             <IonIcon color="medium" icon={create}></IonIcon>
                         </IonButton>
                         <IonButton size="default" fill="clear" onClick={() => console.log('c')} color="primary" >
@@ -87,18 +87,18 @@ class ListaMantenimiento extends React.Component<any, any>  {
                                 <IonListHeader>Datos del equipo</IonListHeader>
                                 <IonItem>
                                     <IonIcon slot="start" icon={card}> </IonIcon>
-                                    Código <IonNote slot="end">{this.props.codigo}</IonNote>
+                                    Código <IonNote slot="end">{this.props.codigo_equipo}</IonNote>
                                 </IonItem>
 
                                 <IonItem>
                                     <IonIcon slot="start" icon={speedometer}> </IonIcon>
                                     Estado
                                     <IonNote color="dark" slot="end">
-                                        {this.props.estado_equipo === 'D' ? "Disponible" : null}
-                                        {this.props.estado_equipo === 'B' ? "De baja" : null}
-                                        {this.props.estado_equipo === 'R' ? "Reparado" : null}
-                                        {this.props.estado_equipo === 'ER' ? "En revisión" : null}
-                                        {this.props.estado_equipo === 'O' ? "Operativo" : null}
+                                        {this.props.estado_operativo === 'D' ? "Disponible" : null}
+                                        {this.props.estado_operativo === 'B' ? "De baja" : null}
+                                        {this.props.estado_operativo === 'R' ? "Reparado" : null}
+                                        {this.props.estado_operativo === 'ER' ? "En revisión" : null}
+                                        {this.props.estado_operativo === 'O' ? "Operativo" : null}
                                     </IonNote>
                                 </IonItem>
 

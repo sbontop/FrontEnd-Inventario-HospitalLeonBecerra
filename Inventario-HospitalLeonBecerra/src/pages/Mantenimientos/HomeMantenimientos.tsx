@@ -1,7 +1,7 @@
 import React from 'react';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, withIonLifeCycle, IonList, IonItem, IonLabel, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonFab, IonFabButton } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, withIonLifeCycle, IonList, IonItem, IonLabel, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import { arrowBack, add } from 'ionicons/icons';
-import ListaMantenimiento from '../../components/mantenimientoComponents/ListaMantenimientos'
+import ListaEquipos from '../../components/mantenimientoComponents/ListaEquipos';
 import AxiosMantenimiento from '../../services/AxiosMantenimiento'
 
 class HomeMantenimientos extends React.Component<any, any> {
@@ -10,46 +10,59 @@ class HomeMantenimientos extends React.Component<any, any> {
         this.state = {
             tab: "",
             titulo: "Recordatorios",
-            historial: [],
             mostrar_load: false,
             mostrar_scroll: false,
-            mensaje: "",
             parametros: { page_size: 10, page_index: 0 },
-            codigo: ""
+            codigo: "",
+            equipos: []
         }
     }
 
     //Estado inicial
     ionViewWillEnter() {
-        this.setState({ historial: [] });
+
     }
 
     asignar_parametros = (name: any, value: any) => {
         this.setState({ parametros: { ...this.state.parametros, [name]: value } });
     }
 
-    cargar_mantenimientos(newLoad: boolean) {
+    buscar_equipos = (newLoad: boolean) => {
         let parametros: any = {};
         parametros = this.state.parametros;
         if (newLoad) {
             parametros.page_index = 0;
         }
-        AxiosMantenimiento.mostrar_mantenimientos(parametros).then(res => {
-            this.setState({ historial: newLoad ? res.data.resp : [...this.state.historial, ...res.data.resp] });
-            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor", mostrar_scroll: this.state.mantenimientos.length === res.data.itemSize });
+        AxiosMantenimiento.equipos_por_codigo(parametros).then(res => {
+            this.setState({ equipos: newLoad ? res.data.resp : [...this.state.equipos, ...res.data.resp] });
+            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor", mostrar_scroll: this.state.equipos.length === res.data.itemSize });
         }).catch(err => {
             this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor" });
             console.log(err);
         });
     }
 
+    /**
+ * Función para generar la lista de los usurios con sus respectivos datos.
+ */
+    generar_lista_equipos = () => {
+        return (this.state.equipos.map((dato: any) => {
+            return (
+                <ListaEquipos key={dato.codigo} tipo_equipo={dato.tipo_equipo}
+                    codigo={dato.codigo} estado_operativo={dato.estado_operativo} />
+            )
+        }))
+    }
+
+
+
     busqueda = (e: any) => {
-        this.asignar_parametros("codigo_equipo", e.target.value)
-        this.cargar_mantenimientos(true)
+        this.asignar_parametros("codigo", e.target.value);
+        this.buscar_equipos(true);
     }
 
     onClear = (e: any) => {
-        this.setState({ historial: [] });
+        this.buscar_equipos(true);
     }
 
     mantenimientos_pendientes() {
@@ -68,15 +81,6 @@ class HomeMantenimientos extends React.Component<any, any> {
 
     }
 
-    generar_lista_mantenimientos = () => {
-        return (this.state.historial.map((dato: any) => {
-            return (
-                <ListaMantenimiento key={dato.id_mantenimiento} id_mantenimiento={dato.id_mantenimiento} titulo={dato.titulo} tipo={dato.tipo} fecha_inicio={dato.fecha_inicio}
-                    realizado_por={dato.realizado_por} codigo={dato.codigo} estado_equipo={dato.estado_operativo} tipo_equipo={dato.tipo_equipo} />
-
-            )
-        }))
-    }
 
     tab_historial = () => {
         this.setState({
@@ -109,7 +113,7 @@ class HomeMantenimientos extends React.Component<any, any> {
                     <IonToolbar color="dragon ">
                         <IonSegment >
                             <IonSegmentButton onClick={(e: any) => { this.tab_historial() }}>
-                                <IonLabel>Historial</IonLabel>
+                                <IonLabel>Mantenimiento</IonLabel>
                             </IonSegmentButton>
                             <IonSegmentButton onClick={(e: any) => { this.tab_recordatorio() }}>
                                 <IonLabel>Recordatorios</IonLabel>
@@ -122,16 +126,11 @@ class HomeMantenimientos extends React.Component<any, any> {
                         onIonChange={(e: any) => { this.busqueda(e) }}
                         onIonClear={(e: any) => { this.onClear(e) }} >
                     </IonSearchbar>
-                    {/*-- fab placed to the bottom end --*/}
-                    <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                        <IonFabButton color="dragon" routerLink={"/formulariomantenimiento/" + this.state.parametros.codigo_equipo}>
-                            <IonIcon icon={add} />
-                        </IonFabButton>
-                    </IonFab>
 
+                    {this.generar_lista_equipos()}
 
                     <IonList hidden={!(this.state.tab === "Historial") ? true : false}>
-                        {this.generar_lista_mantenimientos()}
+
                     </IonList>
                     <IonList hidden={!(this.state.tab === "Recordatorio") ? true : false}>
                         <IonItem>

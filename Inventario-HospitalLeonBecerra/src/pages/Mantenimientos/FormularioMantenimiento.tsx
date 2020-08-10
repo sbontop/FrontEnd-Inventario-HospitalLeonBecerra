@@ -35,8 +35,7 @@ const FormularioMantenimiento: React.FC = () => {
     const [dirigir, setDirigir] = useState(false);
     const [accionLoading, setAccionLoading] = useState("");
     const [solicitudes, setSolicitudes] = useState([] as any);
-    const { id, codigo_equipo } = useParams();
-
+    const { id, codigo_equipo, tipo_equipo, estado_operativo } = useParams();
 
     useIonViewWillEnter(() => {
         AxiosMantenimiento.solicitudes_en_progreso().then(res => {
@@ -48,8 +47,8 @@ const FormularioMantenimiento: React.FC = () => {
         if (id !== undefined) {
             setEditionMode(true);
             cargar_datos(id);
-        }else{
-            if(codigo_equipo!=="undefined"){
+        } else {
+            if (codigo_equipo !== "undefined") {
                 setCodigo(codigo_equipo);
             }
         }
@@ -70,8 +69,8 @@ const FormularioMantenimiento: React.FC = () => {
                 setActividad_realizada(d.actividad_realizada);
                 setObservacion(d.observacion);
                 setId_solicitud(d.id_solicitud);
-              //  setFecha_recordatorio(d.fecha_recordatorio);
-              //  setHora_recordatorio(d.hora_recordatorio);
+                //  setFecha_recordatorio(d.fecha_recordatorio);
+                //  setHora_recordatorio(d.hora_recordatorio);
             });
             if (fecha_recordatorio !== "") {
                 setRecordatorio(true)
@@ -194,7 +193,7 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
     if (dirigir) {
-        return (<Redirect to="/home" />);
+        return (<Redirect to={"/homehistorial/" + codigo_equipo + "/" + tipo_equipo + "/" + estado_operativo} />);
     }
 
 
@@ -204,10 +203,13 @@ const FormularioMantenimiento: React.FC = () => {
             <IonHeader>
                 <IonToolbar color="primary">
                     <IonButtons slot="start">
-                        <IonButton routerLink="/homemantenimientos"><IonIcon icon={arrowBack}></IonIcon></IonButton>
+                        <IonButton routerLink={"/homehistorial/" + codigo_equipo + "/" + tipo_equipo + "/" + estado_operativo}>
+                            <IonIcon icon={arrowBack}></IonIcon>
+                        </IonButton>
                     </IonButtons>
                     <IonTitle>{editionMode ? "Editar mantenimiento" : "Nuevo mantenimiento"}</IonTitle>
                 </IonToolbar>
+                
             </IonHeader>
             <IonContent className="ion-padding">
                 <IonLoading
@@ -319,10 +321,10 @@ const FormularioMantenimiento: React.FC = () => {
                             <IonGrid>
                                 <IonRow>
                                     <IonCol>
-                                       <IonButton color="success" disabled={codigo==="undefined"? true: false} type="submit">Guardar</IonButton>
+                                        <IonButton color="success" disabled={codigo === "undefined" ? true : false} type="submit">Guardar</IonButton>
                                     </IonCol>
                                     <IonCol>
-                                        <IonButton color="danger" routerLink="/">Cancelar</IonButton>
+                                        <IonButton color="danger" routerLink="/homemantenimientos">Cancelar</IonButton>
                                     </IonCol>
                                 </IonRow>
                             </IonGrid>

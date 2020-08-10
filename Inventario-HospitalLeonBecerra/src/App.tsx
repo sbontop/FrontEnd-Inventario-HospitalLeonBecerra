@@ -28,8 +28,8 @@ import FormularioSolicitudes from './pages/Solicitudes/FormularioSolicitudes';
 import IniciarSesion from './pages/InicioSesion/IniciarSesion';
 import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 import FirmaElectronica from './pages/FirmaElectronica/FirmaElectronica';
-import Mantenimiento from './pages/Mantenimientos/FormularioMantenimiento'
-
+import Mantenimiento from './pages/Mantenimientos/FormularioMantenimiento';
+import Historial from './pages/Mantenimientos/HistorialMantenimiento';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -125,8 +125,9 @@ const App: React.FC = () => (
           <Route path="/formsolicitudes/edit/:id" component={FormularioSolicitudes} exact={true} />
           <Route path="/homemarcas" component={HomeMarcas} exact={true} />
 
-          <Route path="/formulariomantenimiento/edit/:id" component={Mantenimiento} exact={true} />
-          <Route path="/formulariomantenimiento/:codigo_equipo" component={Mantenimiento} exact={true} />
+          <Route path="/homehistorial/:codigo_equipo/:tipo_equipo/:estado_operativo" component={Historial} exact={true} />
+          <Route path="/formulariomantenimiento/edit/:id/:codigo_equipo/:tipo_equipo/:estado_operativo" component={Mantenimiento} exact={true} />
+          <Route path="/formulariomantenimiento/:codigo_equipo/:tipo_equipo/:estado_operativo" component={Mantenimiento} exact={true} />
         </IonRouterOutlet>
       </IonSplitPane>
     </IonReactRouter>

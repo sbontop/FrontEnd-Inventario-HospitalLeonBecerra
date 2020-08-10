@@ -26,4 +26,8 @@ export default class AxiosMantenimiento {
     return AxiosMantenimiento.instanceAxios.post(`/mostrar_mantenimientos`,parametros);
   }
 
+  static equipos_por_codigo = (codigo_equipo: any) => {
+    return AxiosMantenimiento.instanceAxios.post(`/equipos_por_codigo`,codigo_equipo);
+  }
+
 }
