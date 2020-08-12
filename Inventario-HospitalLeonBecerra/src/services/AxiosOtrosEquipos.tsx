@@ -24,6 +24,10 @@ export default class AxiosOtrosEquipos {
     return AxiosOtrosEquipos.instanceAxios.get(`/filtrar_equipos_paginado/${marca}/${fecha}/${estado}/${size}?page=${pageNumber}`);
   }
 
+  static equipos_codigo = (codigo:any) => {
+    return AxiosOtrosEquipos.instanceAxios.get(`/equipos_codigo/${codigo}`);
+  }
+
   static eliminar_otros_equipos = (id_equipo:any,body?:any) => {
     return AxiosOtrosEquipos.instanceAxios.put(`/eliminar_otros_equipos/${id_equipo}`, body);
   }

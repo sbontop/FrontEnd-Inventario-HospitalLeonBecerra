@@ -23,6 +23,7 @@ import ListaOtrosEquipos from '../../components/otrosEquiposComponents/ListaOtro
 interface IState {
   estado:any,
   size: any,
+  size_buscar: any,
   opcion_buscar_codigo: any;
   opcion_buscar_filtro: any;
   opcion_buscar_general: any;
@@ -57,6 +58,7 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
     this.state = {
         estado: 'Todas',
         size:10,
+        size_buscar:10,
         confirmacion: false,
         redirectTo: false,
         cargando:false,
@@ -202,58 +204,45 @@ class OtrosEquiposHome extends Component<{lista:any}, IState> {
   }
  
 
+  getConsultar=(codigo_buscar:any)=>{    
 
-  getConsultar=()=>{    
-    if (this.state.codigo!==this.state.busqueda_codigo && this.state.codigo!==""){
-      this.setState({
-        mostrando_datos:true,
-        page_number_busqueda_codigo : 0,
-        equipos : [],
-        busqueda_codigo : this.state.codigo,
-        opcion_buscar_filtro: false
-      })
-    }
     this.setState({
-      codigo : this.state.busqueda_codigo,
-      page_number_buscar_filtro: 1
+      opcion_buscar_general: false,
+      opcion_buscar_codigo: true,
+      opcion_buscar_filtro: false
     })
-    if (this.state.busqueda_codigo!==""){
-      this.setState({
-        page_number_busqueda_codigo : this.state.page_number_busqueda_codigo + 1,
-        opcion_buscar_general: false,
-        opcion_buscar_codigo: true,
-      })
-    }
-    if (this.state.busqueda_codigo!==""){
-      AxiosOtrosEquipos.mostrar_datos_equipo_by_id_paginado(this.state.busqueda_codigo, this.state.page_number_busqueda_codigo,this.state.size).then((res:any) => {  
 
-          if (this.state.page_number_busqueda_codigo ===1){
+    this.setState({
+      busqueda_codigo:codigo_buscar
+    })
 
-            this.setState({
-              mostrando_datos:false,
-              equipos : res.data.data,
-            });
-          }else{
-            this.setState({
-              equipos:[...this.state.equipos, ...res.data.data],
-            })
-          }
-          //console.log('Find: ',res.data.data);
-          //console.log('Resp: ',res.data);
-          this.setState({
-            disable_Infinite_Scroll : res.data.total === this.state.equipos.length,
-            codigo : this.state.busqueda_codigo
-          })
-        }).catch((err:any) => {
-          this.setState({
-            cargando:false,
-            mostrando_datos: false,
-            error_servidor:true,
-          });
+    if (codigo_buscar===""){
+      this.getOtrosEquiposIniciales(10);
+    }else{
+      AxiosOtrosEquipos.equipos_codigo(codigo_buscar).then((res:any) => {  
+
+        console.log("RES: ",res);
+
+        this.setState({
+          equipos : res.data,
         });
+
+        this.setState({
+          disable_Infinite_Scroll : true,
+          codigo : this.state.busqueda_codigo
+        })
+      }).catch((err:any) => {
+        this.setState({
+          cargando:false,
+          mostrando_datos: false,
+          error_servidor:true,
+        });
+      });
     }   
   }
-   
+
+
+
   cambiar_estado = (e:any) => {
     this.setState({
       estado: e.target.value
@@ -300,6 +289,47 @@ getOtrosEquipos=(size:any)=>{
   }, 1000);  
 }
 
+getOtrosEquiposIniciales=(size:any)=>{
+  this.setState({
+    page_number_busqueda_codigo : 0,
+    page_number_buscar_filtro:1,
+    disable_Infinite_Scroll:false,
+    busqueda_codigo: "",
+    opcion_buscar_general: true,
+    codigo: "",
+    pageNumber:1
+  })
+
+  this.setState({
+    //mostrando_datos:true,
+    opcion_buscar_codigo: false,
+    opcion_buscar_filtro: false,
+  });
+
+  setTimeout(() => {
+    AxiosOtrosEquipos.mostrar_equipos_paginado(10, 1).then((res:any) => {
+      //console.log('Opcion1');
+      this.setState({
+        equipos:res.data.data,
+        mostrando_datos:false,
+      }); 
+  
+      this.setState({
+        disable_Infinite_Scroll: res.data.total === this.state.equipos.length
+      })
+
+    }).catch((err:any) => {
+      //console.log('Option2');
+      this.setState({
+        cargando:false,
+        mostrando_datos:false,
+        error_servidor:true,
+        page_number_busqueda_codigo : 0,
+      });
+    });
+  }, 1000);  
+}
+
  getEquiposNext=(e:any)=>{
   this.setState({
     pageNumber: this.state.pageNumber + 1,
@@ -307,7 +337,7 @@ getOtrosEquipos=(size:any)=>{
   setTimeout(() => {
     if(this.state.opcion_buscar_codigo){
       //console.log('Buscar code');
-      this.getConsultar();
+      this.getConsultar(this.state.busqueda_codigo);
     }else if (this.state.opcion_buscar_filtro){
       //console.log('Buscar filter ');
       this.setState({
@@ -318,7 +348,7 @@ getOtrosEquipos=(size:any)=>{
     }else if (this.state.opcion_buscar_general){
       this.setState({codigo: ""});
       //console.log('Buscar default     ');
-      AxiosOtrosEquipos.mostrar_equipos_paginado(this.state.size, this.state.pageNumber).then((res:any) => {
+      AxiosOtrosEquipos.mostrar_equipos_paginado(10, this.state.pageNumber).then((res:any) => {
         this.setState({
           equipos:[...this.state.equipos, ...res.data.data]
         }); 
@@ -355,7 +385,7 @@ getOtrosEquipos=(size:any)=>{
 
     setTimeout(() => {
       if (this.state.opcion_buscar_codigo){
-        this.getConsultar();
+        this.getConsultar(this.state.busqueda_codigo);
       }else if (this.state.opcion_buscar_filtro){
         this.aplicar_filtros(false,1);
         this.setState({
@@ -521,18 +551,9 @@ getOtrosEquipos=(size:any)=>{
       </IonHeader>
 
                 <IonItem lines = "none">
-                <IonSearchbar value = {this.state.codigo} placeholder={"Buscar por código"} 
-              onIonChange={(e) => this.setState({codigo:(e.target as HTMLInputElement).value})} 
-              /*onIonChange={(e:any)=>{this.setState({
-                codigo:e.target.value,
-                
-                      })
-                  }
-              }*/
-              onIonCancel={this.getConsultar} 
-              cancelButtonIcon="md-search" 
-              showCancelButton="focus"
-            >              
+                <IonSearchbar placeholder={"Buscar por código"}
+                    onIonChange={(e: any) => {this.getConsultar(e.target.value)}} 
+                    onIonClear={(e: any) => { this.handler }}>
                 </IonSearchbar>   
                 <IonButton size="large" shape="round" color="danger" class="bp2" hidden={(!this.state.opcion_buscar_codigo && !this.state.opcion_buscar_filtro)?true:false} fill="clear" onClick={this.handler}><IonIcon icon={home}></IonIcon></IonButton>
                 </IonItem>
