@@ -33,8 +33,7 @@ class ListaCorreos extends React.Component<any, any>  {
         alerta: true
       })
       this.props.handle.cargar_correos(true);
-    }).catch(error => {
-      console.log(error)
+    }).catch(() => {
       this.setState({ mostrar_load: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });   
     }); 
   }  
@@ -117,7 +116,7 @@ class ListaCorreos extends React.Component<any, any>  {
         <IonAlert
           isOpen={this.state.mostrar_confirmacion}
           header={"Eliminar Correo"}
-          message={'¿Esta seguro de eliminar este correo?'}
+          message={'¿Está seguro de eliminar este correo?'}
           buttons={[
             {
               text: 'No',

@@ -23,11 +23,15 @@ export default class AxiosMantenimiento {
   }
 
   static mostrar_mantenimientos = (parametros: any) => {
-    return AxiosMantenimiento.instanceAxios.post(`/mostrar_mantenimientos`,parametros);
+    return AxiosMantenimiento.instanceAxios.post(`/mostrar_mantenimientos`, parametros);
   }
 
   static equipos_por_codigo = (codigo_equipo: any) => {
-    return AxiosMantenimiento.instanceAxios.post(`/equipos_por_codigo`,codigo_equipo);
+    return AxiosMantenimiento.instanceAxios.post(`/equipos_por_codigo`, codigo_equipo);
+  }
+
+  static eliminar_mantenimiento = (id_mantenimiento: any) => {
+    return AxiosMantenimiento.instanceAxios.delete(`/eliminar_mantenimiento/${id_mantenimiento}`);
   }
 
 }

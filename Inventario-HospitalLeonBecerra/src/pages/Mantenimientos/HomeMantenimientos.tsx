@@ -57,12 +57,18 @@ class HomeMantenimientos extends React.Component<any, any> {
 
 
     busqueda = (e: any) => {
-        this.asignar_parametros("codigo", e.target.value);
-        this.buscar_equipos(true);
+        let codigo = e.target.value;
+        if (codigo) {
+            this.asignar_parametros("codigo", e.target.value);
+            console.log(this.state.parametros.codigo);
+            this.buscar_equipos(true);
+        }
+
     }
 
     onClear = (e: any) => {
-        this.buscar_equipos(true);
+           this.asignar_parametros("codigo", "");
+           this.buscar_equipos(true);
     }
 
     mantenimientos_pendientes() {
@@ -124,7 +130,7 @@ class HomeMantenimientos extends React.Component<any, any> {
                 <IonContent>
                     <IonSearchbar hidden={!(this.state.tab === "Historial") ? true : false} placeholder="Buscar equipo por código"
                         onIonChange={(e: any) => { this.busqueda(e) }}
-                        onIonClear={(e: any) => { this.onClear(e) }} >
+                        onIonClear={(e: any) => { this.onClear(e) }}>
                     </IonSearchbar>
 
                     {this.generar_lista_equipos()}

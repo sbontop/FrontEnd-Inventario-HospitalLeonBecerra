@@ -25,6 +25,7 @@ const FormularioCorreo: React.FC = () => {
   const [estado, setEstado] = useState("");
   const [editionMode, setEditionMode] = useState(false);
   const [passwordMode, setPasswordMode] = useState(true);
+  const [confirmar, setConfirmar] = useState(false);
   const { id } = useParams();
 
 
@@ -169,7 +170,7 @@ const FormularioCorreo: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
 
-        <form onSubmit={(e) => { e.preventDefault(); registrar_correo(); }} action="post">
+        <form onSubmit={(e) => { e.preventDefault(); setConfirmar(true); }} action="post">
           <IonList>
 
             <IonRow class="ion-text-center">
@@ -182,7 +183,7 @@ const FormularioCorreo: React.FC = () => {
                   <IonIcon icon={search} color={editionMode ? "light" : "danger"} onClick={() => buscar_usuario()} ></IonIcon>
                 </IonItem>
               </IonCol>
-              
+
             </IonRow>
             <IonItem>
               <IonLabel position="stacked">Departamento</IonLabel>
@@ -218,7 +219,7 @@ const FormularioCorreo: React.FC = () => {
               <IonGrid>
                 <IonRow>
                   <IonCol>
-                    <IonButton color="success" type="submit">Guardar</IonButton>
+                    <IonButton color="success" type="submit">{!editionMode ? "Guardar" : "Guardar cambios"}</IonButton>
                   </IonCol>
                   <IonCol>
                     <IonButton color="danger" routerLink="/homeCorreo">Cancelar</IonButton>
@@ -232,7 +233,13 @@ const FormularioCorreo: React.FC = () => {
           isOpen={alerta}
           onDidDismiss={() => cambiar_estados()}
           message={mensaje}
-          buttons={['Aceptar']}
+          buttons={[{
+            text: 'Aceptar',
+            handler: () => {
+              cambiar_estados();
+            }
+          }
+          ]}
         />
         <IonAlert
           isOpen={incompleto}
@@ -251,6 +258,29 @@ const FormularioCorreo: React.FC = () => {
           onDidDismiss={() => setError(false)}
           message={mensaje}
           buttons={['Aceptar']}
+        />
+        <IonAlert
+          isOpen={confirmar}
+          header={'Confirmación'}
+          message={!editionMode ? '¿Está seguro de agregar este registro?': '¿Está seguro de modificar este registro?'}
+          buttons=
+          {[
+            {
+              text: 'Cancelar',
+              role: 'cancel',
+              cssClass: 'primary',
+              handler: () => {
+                setConfirmar(false);
+              }
+            },
+            {
+              cssClass: 'success',
+              text: 'Aceptar',
+              handler: () => {
+                registrar_correo();
+              }
+            }
+          ]}
         />
       </IonContent>
     </IonPage>

@@ -1,13 +1,39 @@
 import React from 'react';
-import { IonItem, IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonListHeader, IonNote } from '@ionic/react';
+import {
+    IonItem, IonLabel, IonRippleEffect, IonAvatar, IonContent, IonList, IonIcon, IonButton, IonModal, IonToolbar, IonTitle,
+    IonButtons, IonListHeader, IonNote, IonAlert, IonLoading
+} from '@ionic/react';
 import { trash, create, key, speedometer, reorder, logIn, card, calendar } from 'ionicons/icons';
+import AxiosMantenimiento from '../../services/AxiosMantenimiento'
 
 class ListaMantenimiento extends React.Component<any, any>  {
     constructor(props: any) {
         super(props);
         this.state = {
-            ventanaDetalle: false
+            ventanaDetalle: false,
+            mensaje: "",
+            alerta: false,
+            mostrar_confirmacion: false,
+            mostrar_load: false
         }
+    }
+
+
+    eliminar_mantenimiento() {
+        this.setState({
+            mostrar_load: true,
+            mostrar_confirmacion: true
+        })
+        AxiosMantenimiento.eliminar_mantenimiento(this.props.id_mantenimiento).then(() => {
+            this.setState({
+                mostrar_load: false,
+                mensaje: "Mantenimiento eliminado satisfactoriamente",
+                alerta: true
+            })
+            this.props.handle.cargar_mantenimientos(true);
+        }).catch(() => {
+            this.setState({ mostrar_load: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });
+        });
     }
 
 
@@ -38,11 +64,11 @@ class ListaMantenimiento extends React.Component<any, any>  {
 
                     <>
                         <IonButton size="default" fill="clear" routerLink={"/formulariomantenimiento/edit/" + this.props.id_mantenimiento
-                    + "/"+ this.props.codigo_equipo  +"/" +this.props.tipo_equipo + "/" + this.props.estado_operativo
-                    } color="secondary" >
+                            + "/" + this.props.codigo_equipo + "/" + this.props.tipo_equipo + "/" + this.props.estado_operativo
+                        } color="secondary" >
                             <IonIcon color="medium" icon={create}></IonIcon>
                         </IonButton>
-                        <IonButton size="default" fill="clear" onClick={() => console.log('c')} color="primary" >
+                        <IonButton size="default" fill="clear" onClick={() => this.setState({mostrar_confirmacion: true})} color="primary" >
                             <IonIcon color="medium" icon={trash}></IonIcon>
                         </IonButton>
                     </>
@@ -52,7 +78,7 @@ class ListaMantenimiento extends React.Component<any, any>  {
                 <IonContent>
                     <IonModal
                         isOpen={this.state.ventanaDetalle}
-                        onDidDismiss={e => this.setState({ ventanaDetalle: false })}>
+                        onDidDismiss={() => this.setState({ ventanaDetalle: false })}>
                         <IonToolbar color="primary">
                             <IonTitle>Detalle de la solicitud</IonTitle>
                             <IonButtons slot="end">
@@ -110,6 +136,39 @@ class ListaMantenimiento extends React.Component<any, any>  {
                             </IonList>
                         </IonContent>
                     </IonModal>
+
+                    <IonLoading
+                        isOpen={this.state.mostrar_load}
+                        message={'Eliminando correo. Espere por favor...'}
+                    />
+
+                    <IonAlert
+                        isOpen={this.state.alerta}
+                        onDidDismiss={() => { this.setState({ alerta: false }) }}
+                        header={this.state.mensaje}
+                        buttons={['Aceptar']}
+                    />
+                    <IonAlert
+                        isOpen={this.state.mostrar_confirmacion}
+                        header={"Eliminar Mantenimiento"}
+                        message={'¿Está seguro de eliminar este mantenimiento?'}
+                        buttons={[
+                            {
+                                text: 'No',
+                                role: 'cancel',
+                                cssClass: 'secondary',
+                                handler: () => {
+                                    this.setState({ mostrar_confirmacion: false });
+                                }
+                            },
+                            {
+                                text: 'Si',
+                                handler: () => {
+                                    this.eliminar_mantenimiento()
+                                }
+                            }
+                        ]}
+                    />
                 </IonContent>
             </IonList>
         );

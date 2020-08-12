@@ -189,6 +189,7 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
     const volver_principal = () => {
+        setAlerta(false);
         setDirigir(true);
     }
 
@@ -321,7 +322,7 @@ const FormularioMantenimiento: React.FC = () => {
                             <IonGrid>
                                 <IonRow>
                                     <IonCol>
-                                        <IonButton color="success" disabled={codigo === "undefined" ? true : false} type="submit">Guardar</IonButton>
+                                        <IonButton color="success" disabled={codigo === "undefined" ? true : false} type="submit">{!editionMode ? "Guardar" : "Guardar cambios"}</IonButton>
                                     </IonCol>
                                     <IonCol>
                                         <IonButton color="danger" routerLink="/homemantenimientos">Cancelar</IonButton>
@@ -359,7 +360,7 @@ const FormularioMantenimiento: React.FC = () => {
                 <IonAlert
                     isOpen={confirmar}
                     header={'Confirmación'}
-                    message={'¿Está seguro de agregar este mantenimiento?'}
+                    message={!editionMode ? '¿Está seguro de agregar este mantenimiento?': '¿Está seguro de modificar este mantenimiento?'}
                     buttons=
                     {[
                         {

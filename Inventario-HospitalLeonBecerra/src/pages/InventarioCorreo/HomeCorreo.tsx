@@ -1,6 +1,6 @@
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonPopover, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonDatetime,
-  IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent
+  IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, withIonLifeCycle
 } from '@ionic/react';
 import React from 'react';
 import { options, add, arrowBack } from 'ionicons/icons';
@@ -59,7 +59,7 @@ class HomeCorreo extends React.Component<any, any> {
     }, 1000);
   }
 
-  componentDidMount = () => {
+  ionViewWillEnter() {
     this.setState({ mostrar_load: true })
     this.cargar_correos(true);
   }
@@ -85,10 +85,15 @@ class HomeCorreo extends React.Component<any, any> {
   /**
    * Función para filtrar por nombre de empleados.
    */
-  buscar_empleado = () => {
-      this.asignar_parametros("page_index", 0);
-     this.setState({ mostrar_load: true });
-     this.cargar_correos(true); 
+  buscar_empleado = (e: any) => {
+    this.asignar_parametros("empleado", e.target.value)
+    this.asignar_parametros("page_index", 0);
+    this.setState({ mostrar_load: true });
+    this.cargar_correos(true);
+  }
+
+  onClear = () => {
+    this.cargar_correos(true);
   }
 
   /**
@@ -170,8 +175,9 @@ class HomeCorreo extends React.Component<any, any> {
             </IonRefresherContent>
           </IonRefresher>
 
-          <IonSearchbar placeholder={"Buscar por empleado"}   onIonCancel={(e: any) => this.buscar_empleado()}  onIonChange={(e: any) =>  this.asignar_parametros("empleado", e.target.value)}
-            cancelButtonIcon="md-search" showCancelButton="focus">
+          <IonSearchbar placeholder={"Buscar por empleado"}
+            onIonChange={(e: any) => this.buscar_empleado(e)}
+            onIonClear={() => { this.onClear() }}>
           </IonSearchbar>
 
           <IonLoading
@@ -197,4 +203,4 @@ class HomeCorreo extends React.Component<any, any> {
   }
 }
 
-export default HomeCorreo;
+export default  withIonLifeCycle(HomeCorreo);

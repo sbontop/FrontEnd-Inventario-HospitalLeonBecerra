@@ -1,6 +1,7 @@
 import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent,
-    IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonInfiniteScroll, IonInfiniteScrollContent, withIonLifeCycle, IonItemDivider, IonLabel} from '@ionic/react';
+    IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonInfiniteScroll, IonInfiniteScrollContent, withIonLifeCycle, IonItemDivider, IonLabel
+} from '@ionic/react';
 import React from 'react';
 import { add, arrowBack } from 'ionicons/icons';
 import Respuesta from '../../components/Respuesta';
@@ -18,12 +19,15 @@ class HistorialMantenimiento extends React.Component<any, any> {
             mostrar_scroll: false,
             parametros: { page_size: 10, page_index: 0, codigo_equipo: "" },
             tipo_equipo: "",
-            estado_operativo: ""
+            estado_operativo: "",
+            mensaje: "",
+            id_mantenimiento: ""
         }
     }
 
 
     ionViewWillEnter() {
+        this.setState({ mostrar_load: true });
         const { codigo_equipo, tipo_equipo, estado_operativo } = this.props.match.params;
         this.setState({ tipo_equipo: tipo_equipo, estado_operativo: estado_operativo })
         this.asignar_parametros("codigo_equipo", codigo_equipo);
@@ -68,9 +72,9 @@ class HistorialMantenimiento extends React.Component<any, any> {
         }
         AxiosMantenimiento.mostrar_mantenimientos(parametros).then(res => {
             this.setState({ historial: newLoad ? res.data.resp : [...this.state.historial, ...res.data.resp] });
-            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor", mostrar_scroll: this.state.historial.length === res.data.itemSize });
+            this.setState({ mostrar_load: false, mostrar_scroll: this.state.historial.length === res.data.itemSize });
         }).catch(err => {
-            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor" });
+            this.setState({ mostrar_load: false });
             console.log(err);
         });
     }
@@ -82,7 +86,8 @@ class HistorialMantenimiento extends React.Component<any, any> {
         return (this.state.historial.map((dato: any) => {
             return (
                 <ListaMantenimiento key={dato.id_mantenimiento} id_mantenimiento={dato.id_mantenimiento} titulo={dato.titulo} tipo={dato.tipo} fecha_inicio={dato.fecha_inicio}
-                    realizado_por={dato.realizado_por} codigo_equipo={dato.codigo} estado_operativo={dato.estado_operativo} tipo_equipo={dato.tipo_equipo} />
+                    realizado_por={dato.realizado_por} codigo_equipo={dato.codigo} estado_operativo={dato.estado_operativo} tipo_equipo={dato.tipo_equipo}
+                    handle={this}/>
             )
         }))
     }
