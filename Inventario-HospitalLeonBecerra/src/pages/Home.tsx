@@ -21,11 +21,10 @@ import {
 
 
 const HomePage: React.FC<RouteComponentProps> = (props) => {
-
-  if (localStorage.usertoken){
-    //console.log('Existe');
+  if (localStorage.userdata){
+    console.log('Existe');
   }else{
-    //console.log('No existe');
+    console.log('No existe');
     return (<Redirect to="/iniciarsesion" />);      
   }
 
@@ -34,7 +33,7 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-          <IonMenuButton hidden={localStorage.usertoken?false:true} />
+          <IonMenuButton hidden={JSON.parse(localStorage.userdata).token?false:true} />
           </IonButtons>
           <IonTitle>Bienvenido</IonTitle>
         </IonToolbar>

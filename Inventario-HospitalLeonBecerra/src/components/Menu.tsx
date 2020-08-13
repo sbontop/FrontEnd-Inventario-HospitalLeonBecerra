@@ -11,12 +11,13 @@ import {
   IonToolbar,
   IonAvatar
 } from '@ionic/react';
-import { home, desktop, logOut, list, pricetag } from 'ionicons/icons';
+import { home, desktop, logOut, list, pricetag, person } from 'ionicons/icons';
 
 import React, {useState, useEffect} from 'react';
 import { RouteComponentProps, withRouter,Redirect } from 'react-router-dom';
 import { AppPage } from '../declarations';
 import AxiosAutenticacion from '../services/AxiosAutenticacion';
+import Autenticacion from '../pages/InicioSesion/Autenticacion';
 
 
 interface MenuProps extends RouteComponentProps {
@@ -31,9 +32,27 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
   const [cedula, setCedula] = useState("");
   const [redireccionar, setRedireccionar] = useState(Boolean);
 
+  function obtener_pefil_usuario(){
+    let data = Autenticacion.getDataLog();
+    if (Object.keys(data).length > 0){
+      setUsername(data.user.username);
+
+      setNombre(data.user.nombre);
+      setApellido(data.user.apellido);
+      setCedula(data.user.cedula);
+      setRedireccionar(false);
+    }else{
+      if ( document.URL.split("/")[3]==="registrarusuario"){
+        setRedireccionar(false);
+      }else{
+        setRedireccionar(true);
+      }
+    }
+
+
+  }
 
   function obtener_pefil(){
-  
     AxiosAutenticacion.getProfile().then(  (res:any) => {
       //console.log("Función obtener 99");
       //console.log('In of method');
@@ -57,7 +76,6 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
           
         });
       }
-      
       //setEmail(res.user.email);
       //console.log('User: ',res.user.username);
       //console.log(res.user.name);
@@ -78,7 +96,8 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
 
 
   useEffect(() => {
-    obtener_pefil();     
+    //obtener_pefil();     
+    obtener_pefil_usuario();
   });
 
 
@@ -95,25 +114,29 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
       </IonHeader>
       <IonContent>
 
-      <IonItem>
-              <IonAvatar slot="start">
-              <img src="./assets/img/avatar.svg" alt=""/>
-              </IonAvatar>
-              <IonLabel>
-    
-    
-    
-                <h3>Nombre: {nombre}</h3>
-                <h3>Apellido: {apellido}</h3>
-                <p>Usuario: {username}</p>
-                <p>Cédula: {cedula}</p>
-    
-              </IonLabel>
-            </IonItem>
-    
-            <br/>
+        <IonItem>
+          <IonAvatar slot="start">
+          <img src="./assets/img/avatar.svg" alt=""/>
+          </IonAvatar>
+          <IonLabel>    
+            <h3>Nombre: {nombre}</h3>
+            <h3>Apellido: {apellido}</h3>
+            <p>Usuario: {username}</p>
+            <p>Cédula: {cedula}</p>
+          </IonLabel>
+        </IonItem>
+
+            <IonMenuToggle autoHide={false}>
+          <IonItem routerLink='/home' routerDirection="none">
+          <IonIcon slot="start" icon={person} />
+          <IonLabel>Ver perfil</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+        <br/>
 
       <IonList>
+
+        
 
         <IonMenuToggle autoHide={false}>
           <IonItem routerLink='/home' routerDirection="none">
@@ -145,7 +168,7 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
 
 
         <IonMenuToggle autoHide={false}>
-          <IonItem routerLink='/iniciarsesion' onClick ={ (e:any) => {localStorage.removeItem('usertoken')} } routerDirection="none">
+          <IonItem routerLink='/iniciarsesion' onClick ={ (e:any) => {localStorage.removeItem('userdata')} } routerDirection="none">
             <IonIcon slot="start" icon={logOut} />
             <IonLabel>Cerrar sesión</IonLabel>
           </IonItem>
