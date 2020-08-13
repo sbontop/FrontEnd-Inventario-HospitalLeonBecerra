@@ -6,6 +6,7 @@ import { Redirect, /*RouteProps*/ } from 'react-router';
 import { withIonLifeCycle } from '@ionic/react';
 
 import AxiosImpresora from '../../services/AxiosImpresora';
+import Autenticacion from '../InicioSesion/Autenticacion';
 
 interface IState {
   suministro_multifuncional:any,
@@ -599,7 +600,11 @@ mostrar_empleados() {
       console.log('json_datos_editados: ',json_datos_editados);
       this.setState({
         confirmacion:false
-      });   
+      });
+      
+    json_datos_editados.encargado_registro = Autenticacion.getEncargadoRegistro();
+
+      
     AxiosImpresora.crear_impresora_nueva(json_datos_editados).then(res => {
       if (res.data.log === 1){
         if (this.state.cargando===true){

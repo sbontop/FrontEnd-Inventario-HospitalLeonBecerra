@@ -8,6 +8,7 @@ import { withIonLifeCycle } from '@ionic/react';
 
 
 import AxiosOtrosEquipos from '../../services/AxiosOtrosEquipos';
+import Autenticacion from '../InicioSesion/Autenticacion';
 
 interface IState {
   nombre_tipo_otro_equipo:any,
@@ -518,6 +519,10 @@ verificar2=()=>{
       this.setState({
         confirmacion:false
       }); 
+
+    json_datos_editados.encargado_registro = Autenticacion.getEncargadoRegistro();
+
+
     AxiosOtrosEquipos.crear_otro_equipo(json_datos_editados).then(res => {
       console.log('res.data: ',res);
       if (res.status === 200){
