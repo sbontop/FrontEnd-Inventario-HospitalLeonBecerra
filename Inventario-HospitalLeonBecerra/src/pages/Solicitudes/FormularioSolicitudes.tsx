@@ -38,6 +38,7 @@ const FormularioSolicitudes: React.FC = () => {
     const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [vistaPrevia, setVistaPrevia] = useState(true);
 
+    const [firma, setFirma] = useState("");
     const [trimmedDataURL, settrimmedDataURL] = useState(null);   
     const [confirmarSolicitud, setConfirmarSolicitud] = useState(false);
     const [mostrarVentanaFirma, setmostrarVentanaFirma] = useState(false);
@@ -54,7 +55,17 @@ const FormularioSolicitudes: React.FC = () => {
 
 
     useIonViewWillEnter(() => {
-        cargar_empleados(); 
+        // cargar_empleados(); 
+        //setEmpleados([] as any);
+        setMensaje("");
+        setMostrarFooter(true);
+        setIncompleto(false);
+        setHabilitarCampos(false);
+        setEstado("");
+        //setEquipo([]);
+        setObservacion("");
+        setEditionMode(false);
+        // id=undefined;
         cargar_equipos();                               
     });
 
@@ -87,12 +98,30 @@ const FormularioSolicitudes: React.FC = () => {
     }
 
     useIonViewWillLeave(()=>{
-        setEmpleados([] as any);
+        // setEmpleados([] as any);
+        // setMensaje("");
+        // setMostrarFooter(true);
+        // setIncompleto(false);
+        // setHabilitarCampos(false);
+        // setEstado("");
+        // setEquipo("");
+        // setObservacion("");
+        // // setEstado("");
+        // setEditionMode(false)
+    })
+
+    const limpiar=()=>{
+        // setEmpleados([] as any);
         setMensaje("");
         setMostrarFooter(true);
+        setIncompleto(false);
+        setHabilitarCampos(false);
         setEstado("");
-        setEditionMode(false)
-    })
+        // setEquipo([]);
+        setObservacion("");
+        setEditionMode(false);
+        id=undefined;
+    }
 
     useIonViewWillEnter(() => {
         setMostrarLoad(true);
@@ -102,9 +131,10 @@ const FormularioSolicitudes: React.FC = () => {
             setConfirmarSolicitud(false);
             AxiosSolicitudes.info_solicitud_id(id).then(res => {
                 let prioridad= res.data.prioridad;
-                let estado = res.data.estado;
+                // let estado = res.data.estado;
                 transformar_prioridad(prioridad);
-                transformar_estado(estado);
+                
+                // transformar_estado(estado);
                 console.log("edición:",id, res.data);
                 setEmpleado(res.data.nombre);
                 setFecha(res.data.fecha_realizacion);
@@ -116,24 +146,43 @@ const FormularioSolicitudes: React.FC = () => {
                 setPunto(res.data.bspi_punto);
                 setDepartamento(res.data.dpto);
                 setDescripcion(res.data.observacion);
-                res.data.estado==="P"?setHabilitarCampos(true):setHabilitarCampos(false);
+                // res.data.estado==="P"?setHabilitarCampos(true):setHabilitarCampos(false); 
+                setEstado(res.data.estado);
                 setMostrarLoad(false);
+                if(res.data.estado==='C'){
+                    AxiosSolicitudes.info_atencion_solicitud_id(id).then(res=>{
+                        console.log("atenc", res.data)
+                        setEquipo(res.data.equipos);
+                        setFirma(res.data.image_url);
+                        setObservacion(res.data.observacion);
+                        settrimmedDataURL(res.data.image_url);
+                        // setHabilitarCampos(true);
+                    })
+                }
             }).catch(err => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
             });
+            
         }                                    
         }, [id]
     );
+
+    const cambiarComponentes = () => {
+        estado==="P"?setHabilitarCampos(true):setHabilitarCampos(false); 
+        //estado==="C"?setHabilitarCampos(true):setHabilitarCampos(false);
+    }
 
     const aceptarSolicitud = (mensaje: any) => {
         setMensaje(mensaje);
         setConfirmarSolicitud(true);
         try {
             if (mensaje === "aceptar"){
-                AxiosSolicitudes.cambiar_estado_solicitud(id,"EP");
-            } else {
-                AxiosSolicitudes.cambiar_estado_solicitud(id,"R");
+                AxiosSolicitudes.cambiar_estado_solicitud(id, "EP");
+            } else if (mensaje === "pendiente"){
+                AxiosSolicitudes.cambiar_estado_solicitud(id,"P");
+            } else if (mensaje === "rechazar"){
+                AxiosSolicitudes.cambiar_estado_solicitud(id, "R");
             }
             // setMostrarFooter(false)//
         } catch (error) {
@@ -167,7 +216,7 @@ const FormularioSolicitudes: React.FC = () => {
     }
 
     const registrar = () => { 
-        if ( responsable === undefined || equipos === undefined ) {
+        if ( equipos === undefined ) {
             setMensaje("Debe completar todos los campos");
             setIncompleto(true);
         } else {  
@@ -176,7 +225,7 @@ const FormularioSolicitudes: React.FC = () => {
                     var id_imagen = res.data;
                     let registro = {
                         equipos: equipo,
-                        id_usuario: responsable,
+                        id_usuario: "admin",
                         observacion: observacion,
                         id_solicitud: id,
                         estado: "C",
@@ -262,12 +311,13 @@ const FormularioSolicitudes: React.FC = () => {
         <IonHeader>
             <IonToolbar color="primary">
                 <IonButtons slot="start">
-                    <IonButton routerLink="/homesolicitudes"><IonIcon icon={arrowBack}></IonIcon></IonButton>
+                    <IonButton onClick={(e) => limpiar()} routerLink="/homesolicitudes"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                 </IonButtons>
                 <IonTitle>Seguimiento de solicitud</IonTitle>
                 <IonButtons slot="end">
                     <IonButton onClick={(e) => console.log("print")}></IonButton>
-                    {/* <IonIcon icon={save}></IonIcon> */}
+                    {/* {estado==='EP'?
+                        <IonButton onClick={(e) => console.log("print")}><IonIcon icon={save}></IonIcon></IonButton>:null} */}
                 </IonButtons>
             </IonToolbar>
         </IonHeader>
@@ -334,8 +384,10 @@ const FormularioSolicitudes: React.FC = () => {
                     </IonItem>   
                 </IonList>
 
+{estado=== 'P' || estado==='R' ? null :
                 <IonList>
-                <IonListHeader className="ion-text-center">ATENCIÓN DE SOLICITUD</IonListHeader>
+
+                <IonListHeader  className="ion-text-center ion-no-margin-no-padding">ATENCIÓN DE SOLICITUD</IonListHeader>
                     <IonItem>
                         <IonLabel position="floating">Estado</IonLabel>
                         <IonInput disabled name="estado" value={estado} onIonChange={(e) => setEstado((e.target as HTMLInputElement).value)} >
@@ -346,10 +398,11 @@ const FormularioSolicitudes: React.FC = () => {
                             </IonSelectOption>
                             ); 
                         })}  */}
+                        {estado==='P' ? "Pendiente" : estado==='EP' ? "En progreso" : estado==='C' ? "Completada" : "Rechazada" }
                         </IonInput>   
                     </IonItem> 
 
-                    <IonItem>
+                    {/* <IonItem>
 
                         <IonLabel position="floating">Responsable a cargo<IonText color="primary">*</IonText></IonLabel>
 
@@ -365,8 +418,18 @@ const FormularioSolicitudes: React.FC = () => {
                             );
                         })}
                         </IonSelect>   
-                    </IonItem> 
-
+                    </IonItem>  */}
+{/* {
+estado==='C'? <IonList><IonLabel position="floating">Equipos involucrados<IonText color="primary">*</IonText></IonLabel>
+                        
+    {equipo.map((m:any, index:number) => {
+                            return (<>
+                                
+                            <IonItem key={index}>
+                                {m.dato} 
+                            </IonItem></>
+                            );})}
+</IonList>: */}
                     <IonItem lines="full">
                         <IonLabel position="floating">Equipos involucrados<IonText color="primary">*</IonText></IonLabel>
                         <IonSelect  multiple disabled= {habilitarCampos} name="equipos" value={equipo} onIonChange={(e) => setEquipo(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
@@ -379,7 +442,9 @@ const FormularioSolicitudes: React.FC = () => {
                         })}
                         </IonSelect>   
                     </IonItem>  
-
+                   
+    
+{/* } */}
                     <IonItem>
                         <IonLabel position="floating">Observaciones</IonLabel>
                         <IonTextarea disabled= {habilitarCampos} name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)}></IonTextarea>
@@ -448,9 +513,26 @@ const FormularioSolicitudes: React.FC = () => {
                     Guardar</IonButton>
               </IonCol>
             </IonRow>
+{
+    estado==='C'?
+<>
+            <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <h2>
+                    <b>
+                        Firma
+                    </b>
+                </h2>
+              </IonCol>
+            </IonRow>
 
-            
 
+            <IonRow hidden={trimmedDataURL===null?true:false}>
+              <IonCol class="ion-text-center">
+                <img id="imageid" alt="" src ={trimmedDataURL+''} />
+              </IonCol>
+            </IonRow></>:null
+}
 
             {/* <img alt="prueba" src={trimmedDataURL} /> */}
             <br/>
@@ -500,7 +582,7 @@ const FormularioSolicitudes: React.FC = () => {
                 <img id="imageid" alt="" src ={trimmedDataURL+''} />
               </IonCol>
             </IonRow>
-
+{estado === 'C' ? null:
                     <p className="ion-text-center">                 
                             <IonRow class="ion-text-center">
                                 <IonCol class="ion-no-padding">
@@ -512,14 +594,16 @@ const FormularioSolicitudes: React.FC = () => {
                                     <IonButton disabled= {habilitarCampos} type="submit" size="large" expand="block" color="success" class="ion-no-margin">Finalizar  <IonIcon icon={checkboxOutline}></IonIcon></IonButton>
                                 </IonCol>
                             </IonRow>
-                    </p>
+                    </p> }
                 </IonList>
+
+                }
                
             </form>
             <IonAlert
                 isOpen={alerta}
                 onDidDismiss={() => volver_principal()}
-                message={mensaje === "aceptar" ? "La solicitud ha sido aceptada":"La solicitud ha sido rechazada"}
+                message={mensaje === "aceptar" ? "La solicitud ha sido aceptada": mensaje === "rechazar" ? "La solicitud ha sido rechazada" :"La solicitud ha sido movida a la bandeja de pendientes"}
                 buttons={['Aceptar']}
             />
             
@@ -589,7 +673,7 @@ const FormularioSolicitudes: React.FC = () => {
                         cssClass: 'success',
                         text: 'Aceptar',
                         handler: () => {
-                            if(estado==='En progreso'){
+                            if(estado==='EP'){
                                 setAlertaFinalizar(true)
                             } else{
                                 setAlerta(true) 
@@ -626,15 +710,26 @@ const FormularioSolicitudes: React.FC = () => {
                 ]}
             />
         </IonContent>
-            { estado === "Pendiente" && mostrarFooter ? 
+            { estado === "P" && mostrarFooter ? 
             <IonFooter class="ion-no-margin-no-padding" >	
                 <IonRow  class="ion-text-center">
                     <IonCol class="ion-no-padding">
-                        <IonButton color="success" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("aceptar")} >Aceptar</IonButton>
+                        <IonButton color="success"  size="large" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("aceptar")} >Aceptar</IonButton>
                     </IonCol>
                     <IonCol class="ion-no-padding">
-                        <IonButton expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("rechazar")} >Rechazar</IonButton>
+                        <IonButton expand="full" size="large" class="ion-no-margin" onClick={() => aceptarSolicitud("rechazar")} >Rechazar</IonButton>
                     </IonCol>
+                </IonRow> 
+            </IonFooter> : null}
+            { estado === "R" && mostrarFooter ? 
+            <IonFooter class="ion-no-margin-no-padding" >	
+                <IonRow  class="ion-text-center">
+                    <IonCol class="ion-no-padding">
+                        <IonButton color="warning"  size="large" expand="full" class="ion-no-margin" onClick={() => aceptarSolicitud("pendiente")} >Mover a pendientes</IonButton>
+                    </IonCol>
+                    {/* <IonCol class="ion-no-padding">
+                        <IonButton expand="full" size="large" class="ion-no-margin" onClick={() => aceptarSolicitud("rechazar")} >Rechazar</IonButton>
+                    </IonCol> */}
                 </IonRow> 
             </IonFooter> : null}
         </IonPage>

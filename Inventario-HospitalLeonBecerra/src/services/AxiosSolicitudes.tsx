@@ -17,6 +17,10 @@ export default class AxiosSolicitudes {
     return AxiosSolicitudes.instanceAxios.get(`/info_solicitud_id/${id}`);
   }
 
+  static info_atencion_solicitud_id = (id:any) => {
+    return AxiosSolicitudes.instanceAxios.get(`/info_atencion_solicitud_id/${id}`);
+  }
+
   static cambiar_estado_solicitud = (id: any, codigo: any) => {
     return AxiosSolicitudes.instanceAxios.put(`/cambiar_estado_solicitud/${id}/${codigo}`);
   }

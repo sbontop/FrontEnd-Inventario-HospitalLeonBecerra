@@ -132,7 +132,6 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
           <IonLabel>Ver perfil</IonLabel>
           </IonItem>
         </IonMenuToggle>
-        <br/>
 
       <IonList>
 
