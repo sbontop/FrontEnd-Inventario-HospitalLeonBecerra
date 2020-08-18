@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton,withIonLifeCycle, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton, withIonLifeCycle, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
 import { time, globe, arrowBack, sync, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
@@ -101,20 +101,6 @@ class HomeSolicitudes extends React.Component<any, any> {
         this.setState({ parametros: { page_size: 10, page_index: 0, estado: "O", filtro_estado: "C" } });
     }
 
-    /**
-     * Función que permite cambiar el título de la página de acuerdo al segmento
-     * en que se encuentre el usuario.
-     */
-    cambiar_titulo() {
-        let titulo = "Pendientes";
-        if (this.state.parametros.estado === "EP")
-            titulo = "En progreso";
-        if (this.state.parametros.estado === "O")
-            titulo = "Otras Solicitudes";
-        return (
-            <IonLabel color="medium" className="ion-margin-top">{titulo}</IonLabel>
-        )
-    }
 
     /**
     * Función para cargar los datos según los filtros seleccionados.
@@ -149,24 +135,30 @@ class HomeSolicitudes extends React.Component<any, any> {
                             <IonButton routerLink="/home"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
                         <IonTitle>Solicitudes</IonTitle>
+
+                        {this.state.parametros.estado === "O" ?
+                            <IonButtons slot="end">
+                                <IonButton onClick={() => this.setState({ mostrar_pop: true })}><IonIcon icon={options}></IonIcon></IonButton>
+                            </IonButtons> : null}
+                            
                     </IonToolbar>
                     <IonToolbar color="dragon ">
                         <IonSegment value={this.state.parametros.estado} onIonChange={(e: any) => this.cambiar_estado(e.detail.value)}>
                             <IonSegmentButton value="P" layout="icon-start"> {/*Pendientes */}
-                                <IonIcon icon={time} />
-                                <IonBadge style={{marginBottom: 10, marginLeft:3}} color="light">{this.state.pendientes === 0 ? "" : this.state.pendientes}</IonBadge>
+                                <IonLabel>Pendientes</IonLabel>
+                                <IonBadge style={{ marginBottom: 10, marginLeft: 3 }} color="light">{this.state.pendientes === 0 ? "" : this.state.pendientes}</IonBadge>
                             </IonSegmentButton>
                             <IonSegmentButton value="EP">  {/*En progreso */}
-                                <IonIcon icon={sync} />
+                                <IonLabel>En progreso</IonLabel>
                             </IonSegmentButton>
                             <IonSegmentButton value="O">  {/*Otras solicitudes: Completadas y rechazadas */}
-                                <IonIcon icon={globe} />
+                                <IonLabel>Otras</IonLabel>
                             </IonSegmentButton>
                         </IonSegment>
                     </IonToolbar>
                 </IonHeader>
                 <IonContent>
-                <IonLoading
+                    <IonLoading
                         isOpen={this.state.mostrar_load}
                         message={'Cargando datos, espere por favor...'}
                     />
@@ -174,12 +166,6 @@ class HomeSolicitudes extends React.Component<any, any> {
                         <IonRefresherContent refreshingSpinner="circles">
                         </IonRefresherContent>
                     </IonRefresher>
-
-                    <IonItem lines="none">
-                        {this.cambiar_titulo()}
-                        {this.state.parametros.estado === "O" ? <IonIcon slot="end" color="medium"
-                            onClick={() => this.setState({ mostrar_pop: true })} icon={options}></IonIcon> : null}
-                    </IonItem>
 
                     <Respuesta informacion={this.state.datos.length}></Respuesta>
 
@@ -224,7 +210,7 @@ class HomeSolicitudes extends React.Component<any, any> {
                         {this.generar_lista()}
                     </IonList>
 
-                    
+
                     <IonInfiniteScroll disabled={this.state.mostrar_scroll} threshold="100px"
                         onIonInfinite={(e: any) => this.refrescar(e, this.state.parametros.page_index + 1)}
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>

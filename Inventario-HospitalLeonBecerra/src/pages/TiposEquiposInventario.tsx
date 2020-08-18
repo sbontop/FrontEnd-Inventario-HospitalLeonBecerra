@@ -10,9 +10,6 @@ export default class TiposEquiposInventario extends Component <{history:any}, an
             <IonPage>
                 <IonHeader> 
                     <IonToolbar color="primary">
-                        {/* <IonButtons slot="start">
-                            <IonBackButton defaultHref="/home"></IonBackButton>
-                        </IonButtons> */}
                         <IonButtons slot="start">
                             <IonButton routerLink="/inventarios"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>

@@ -27,6 +27,13 @@ class HomeMantenimientos extends React.Component<any, any> {
         this.setState({ parametros: { ...this.state.parametros, [name]: value } });
     }
 
+
+    /**
+     * Función auxiliar que permite cargar una lista de equipos
+     * cuyo código sea similar al que el usuario está escribiendo 
+     * en el componente IonSearchbar.
+     * @param newLoad 
+     */
     buscar_equipos = (newLoad: boolean) => {
         let parametros: any = {};
         parametros = this.state.parametros;
@@ -42,9 +49,9 @@ class HomeMantenimientos extends React.Component<any, any> {
         });
     }
 
-    /**
- * Función para generar la lista de los usurios con sus respectivos datos.
- */
+    /*
+    * Función para generar la lista de equipos coincidentes.
+    */
     generar_lista_equipos = () => {
         return (this.state.equipos.map((dato: any) => {
             return (
@@ -55,20 +62,27 @@ class HomeMantenimientos extends React.Component<any, any> {
     }
 
 
-
+    /*
+    * Función auxiliar que se ejecuta con el evento onIonChange de IonSearchbar.
+    * que utiliza la función auxiliar buscar_equipos para realizar la
+    * búsqueda.
+    */
     busqueda = (e: any) => {
         let codigo = e.target.value;
         if (codigo) {
             this.asignar_parametros("codigo", e.target.value);
-            console.log(this.state.parametros.codigo);
             this.buscar_equipos(true);
         }
 
     }
 
+    /*
+    * Función auxiliar que se ejecuta con el evento onIonClear de IonSearchbar
+    * que se ejecuta cuando el usuario elimina el texto de IonSearchbar.
+    */
     onClear = (e: any) => {
-           this.asignar_parametros("codigo", "");
-           this.buscar_equipos(true);
+        this.asignar_parametros("codigo", "");
+        this.buscar_equipos(true);
     }
 
     mantenimientos_pendientes() {

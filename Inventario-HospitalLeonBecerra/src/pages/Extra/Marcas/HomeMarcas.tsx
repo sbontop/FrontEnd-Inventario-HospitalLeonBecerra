@@ -1,5 +1,6 @@
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonList, IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent
+  IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonList, IonIcon, IonLoading, IonRefresher, IonRefresherContent, IonSearchbar, IonInfiniteScroll, 
+  IonInfiniteScrollContent, withIonLifeCycle
 } from '@ionic/react';
 import React from 'react';
 import { add, arrowBack } from 'ionicons/icons';
@@ -27,8 +28,8 @@ class HomeMarcas extends React.Component<any, any> {
     this.setState({ parametros: { ...this.state.parametros, [name]: value } });
   }
 
-  actualizar_parametros(){
-    this.setState({ parametros: { page_size: 20, page_index: 0 }});
+  actualizar_parametros() {
+    this.setState({ parametros: { page_size: 20, page_index: 0 } });
   }
 
   clearReload() {
@@ -36,28 +37,25 @@ class HomeMarcas extends React.Component<any, any> {
     this.cargar_marcas(true);
   }
 
-  componentDidMount = () => {
+
+  ionViewWillEnter() {
     this.setState({ mostrar_load: true })
     this.cargar_marcas(true);
   }
 
+
   cargar_marcas(newLoad: boolean) {
-    console.log("Parametros dentro de cargar marcas")
-    console.log(this.state.parametros)
     Axios.filtrar_marcas(this.state.parametros).then(res => {
       this.setState({ datos: newLoad ? res.data.resp : [...this.state.datos, ...res.data.resp] });
       this.setState({ mostrar_load: false, mostrar_scroll: this.state.datos.length === res.data.itemSize });
     }).catch(err => {
       this.setState({ mostrar_load: false });
-      console.log(err);
     });
   }
 
 
   refrescar = (e: any, newPageIndex: number) => {
-    console.log("parametros dentro refrescar")
     this.asignar_parametros("page_index", newPageIndex);
-    console.log(this.state.parametros)
     setTimeout(() => {
       this.cargar_marcas(newPageIndex === 0);
       if (newPageIndex === 0) {
@@ -70,10 +68,15 @@ class HomeMarcas extends React.Component<any, any> {
 
 
 
-  buscar_por_marca = () => {
+  busqueda = (e: any) => {
     this.asignar_parametros("page_index", 0);
-    this.asignar_parametros("marca", this.state.marca);
+    this.asignar_parametros("marca", e.target.value);
     this.setState({ mostrar_load: true });
+    this.cargar_marcas(true);
+  }
+
+  onClear = (e: any) => {
+    this.asignar_parametros("marca", "");
     this.cargar_marcas(true);
   }
 
@@ -84,7 +87,7 @@ class HomeMarcas extends React.Component<any, any> {
       )
     }))
   }
- 
+
   render() {
     return (
       <IonPage>
@@ -95,7 +98,7 @@ class HomeMarcas extends React.Component<any, any> {
             </IonButtons>
             <IonTitle >Inventario de marcas</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={() =>  this.setState({ open: true })}><IonIcon icon={add}></IonIcon></IonButton>
+              <IonButton onClick={() => this.setState({ open: true })}><IonIcon icon={add}></IonIcon></IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
@@ -106,8 +109,9 @@ class HomeMarcas extends React.Component<any, any> {
             </IonRefresherContent>
           </IonRefresher>
 
-          <IonSearchbar placeholder={"Buscar una marca"} onIonBlur={this.buscar_por_marca} onIonChange={(e: any) => this.setState({ marca: e.target.value })}
-            cancelButtonIcon="md-search" showCancelButton="always">
+          <IonSearchbar placeholder={"Buscar una marca por su nombre"}
+            onIonChange={(e: any) => { this.busqueda(e) }}
+            onIonClear={(e: any) => { this.onClear(e) }}>
           </IonSearchbar>
 
           <IonLoading
@@ -127,11 +131,11 @@ class HomeMarcas extends React.Component<any, any> {
               loadingText="Cargando más registros">
             </IonInfiniteScrollContent>
           </IonInfiniteScroll>
-           <Pop prop={this} editionMode={false} handle={this} ></Pop> 
+          <Pop prop={this} editionMode={false} handle={this} ></Pop>
         </IonContent>
       </IonPage>
     );
   }
 }
 
-export default HomeMarcas;
+export default withIonLifeCycle(HomeMarcas);

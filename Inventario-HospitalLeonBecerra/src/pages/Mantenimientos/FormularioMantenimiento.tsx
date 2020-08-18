@@ -20,7 +20,6 @@ const FormularioMantenimiento: React.FC = () => {
     const [actividad_realizada, setActividad_realizada] = useState("");
     const [observacion, setObservacion] = useState("");
     const [codigo, setCodigo] = useState("");
-    const [id_solicitud, setId_solicitud] = useState(null);
     const [realizado_por] = useState("admin");//, setRealizado_por
     const [fecha_recordatorio, setFecha_recordatorio] = useState("");
     const [hora_recordatorio, setHora_recordatorio] = useState("");
@@ -34,17 +33,13 @@ const FormularioMantenimiento: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [dirigir, setDirigir] = useState(false);
     const [accionLoading, setAccionLoading] = useState("");
-    const [solicitudes, setSolicitudes] = useState([] as any);
     const { id, codigo_equipo, tipo_equipo, estado_operativo } = useParams();
 
+    /**
+    * Función que se ejecuta al entrar a esta vista.
+    */
     useIonViewWillEnter(() => {
-        AxiosMantenimiento.solicitudes_en_progreso().then(res => {
-            setSolicitudes(res.data);
-        });
-    }, []);
-
-    useIonViewWillEnter(() => {
-        if (id !== undefined) {
+        if (id !== "undefined") {
             setEditionMode(true);
             cargar_datos(id);
         } else {
@@ -54,6 +49,10 @@ const FormularioMantenimiento: React.FC = () => {
         }
     }, [id]);
 
+    /**
+     * Función que se ejecutará al entrar al formulario en modo edición
+     * @param id: id del mantenimiento.
+     */
     const cargar_datos = (id: any) => {
         setAccionLoading("Cargando")
         setLoading(true);
@@ -68,7 +67,6 @@ const FormularioMantenimiento: React.FC = () => {
                 setEstado_fisico(d.estado_fisico);
                 setActividad_realizada(d.actividad_realizada);
                 setObservacion(d.observacion);
-                setId_solicitud(d.id_solicitud);
                 //  setFecha_recordatorio(d.fecha_recordatorio);
                 //  setHora_recordatorio(d.hora_recordatorio);
             });
@@ -84,7 +82,7 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
     /**
-     * Función para gestionar el registro de un correo
+     * Función para gestionar el registro de un mantenimiento
      */
     const registrar_mantenimiento = () => {
 
@@ -107,6 +105,10 @@ const FormularioMantenimiento: React.FC = () => {
         }
     }
 
+    /**
+     * Función auxiliar que retorna un objeto con el valor
+     * obtenido de los componentes del formulario. 
+     */
     const retornar_registro = () => {
         return {
             titulo: titulo,
@@ -117,16 +119,18 @@ const FormularioMantenimiento: React.FC = () => {
             estado_fisico: estado_fisico,
             actividad_realizada: actividad_realizada,
             observacion: observacion,
-            id_solicitud: id_solicitud,
             realizado_por: realizado_por,
             fecha_recordatorio: fecha_recordatorio,
             hora_recordatorio: hora_recordatorio,
             id_mantenimiento: id,
             codigo: codigo
         }
-
     }
 
+    /**
+     * Función auxiliar para validar que se hayan completado los componentes requeridos.
+     * Retorna true si falta completar algún campo, false en caso contrario. 
+     */
     const validar_inputs = () => {
         if (tipo === "" || fecha_inicio === "" || titulo === "" || validar_recordatorio()) {
             return true;
@@ -134,6 +138,11 @@ const FormularioMantenimiento: React.FC = () => {
         return false;
     }
 
+    /**
+     * Función auxiliar para validar que se hayan completado los campos de un recordatorio.
+     * En caso de que el usuario haya elegido crear uno.
+     * Retorna true si falta completar algún campo, false en caso contrario. 
+     */
     const validar_recordatorio = () => {
         if ((recordatorio && (fecha_recordatorio === "" || hora_recordatorio === ""))) {
             return true;
@@ -180,6 +189,12 @@ const FormularioMantenimiento: React.FC = () => {
         });
     }
 
+    /**
+     * Función auxiliar que permite eliminar los valores seleccionados en los campos
+     * fecha y hora de un recordatorio, en caso de que el usuario decida no establecer
+     * alguno.
+     * @param valor 
+     */
     const evento_recordatorio = (valor: any) => {
         setRecordatorio(valor);
         if (valor === false) {
@@ -210,7 +225,7 @@ const FormularioMantenimiento: React.FC = () => {
                     </IonButtons>
                     <IonTitle>{editionMode ? "Editar mantenimiento" : "Nuevo mantenimiento"}</IonTitle>
                 </IonToolbar>
-                
+
             </IonHeader>
             <IonContent className="ion-padding">
                 <IonLoading
@@ -245,22 +260,6 @@ const FormularioMantenimiento: React.FC = () => {
                                 placeholder="Fecha fin" displayFormat="DD/MM/YYYY" min="2020" max="2030" onIonCancel={(e: any) => setFecha_fin("")}
                             ></IonDatetime>
                         </IonItem>
-
-                        <IonItem>
-                            <IonLabel position="stacked">Solicitud relacionada</IonLabel>
-                            <IonSelect value={id_solicitud} name="estado" onIonChange={(e) => setId_solicitud(e.detail.value)} okText="Ok" cancelText="Cancelar">
-                                <IonSelectOption value={null}>Ninguna</IonSelectOption>
-                                {solicitudes.map((m: any) => {
-                                    return (
-                                        <IonSelectOption key={m.id_solicitud} value={m.id_solicitud}>
-                                            {'ID:' + m.id_solicitud + '-' + m.id_usuario}
-                                        </IonSelectOption>
-                                    );
-                                })}
-                            </IonSelect>
-                        </IonItem>
-
-
 
                         <IonItem>
                             <IonLabel position="stacked">Tipo de mantenimiento<IonText color="danger">*</IonText></IonLabel>
@@ -308,12 +307,15 @@ const FormularioMantenimiento: React.FC = () => {
                                     <IonLabel position="stacked">Fecha del recordatorio</IonLabel>
                                     <IonDatetime value={fecha_recordatorio} doneText="Ok" cancelText="Cancelar" name="fecha_recordatorio"
                                         onIonChange={(e: any) => setFecha_recordatorio(e.detail.value! ? e.detail.value.substring(0, 10) : "")}
-                                        placeholder="Fecha" displayFormat="DD/MM/YYYY" min="2020" max="2030"></IonDatetime>
+                                        placeholder="Fecha" displayFormat="DD/MM/YYYY" min="2020" max="2030" onIonCancel={(e: any) => setFecha_recordatorio("")}
+                                    ></IonDatetime>
                                 </IonItem>
 
                                 <IonItem>
                                     <IonLabel position="stacked">Hora del recordatorio</IonLabel>
-                                    <IonDatetime displayFormat="HH:mm" value={hora_recordatorio} doneText="Ok" cancelText="Cancelar" onIonChange={e => setHora_recordatorio(e.detail.value!)}></IonDatetime>
+                                    <IonDatetime displayFormat="HH:mm" value={hora_recordatorio} doneText="Ok" cancelText="Cancelar"
+                                        onIonCancel={(e: any) => setHora_recordatorio("")}
+                                        onIonChange={e => setHora_recordatorio(e.detail.value!)}></IonDatetime>
                                 </IonItem>
                             </div> : null
                         }
@@ -360,7 +362,7 @@ const FormularioMantenimiento: React.FC = () => {
                 <IonAlert
                     isOpen={confirmar}
                     header={'Confirmación'}
-                    message={!editionMode ? '¿Está seguro de agregar este mantenimiento?': '¿Está seguro de modificar este mantenimiento?'}
+                    message={!editionMode ? '¿Está seguro de agregar este mantenimiento?' : '¿Está seguro de modificar este mantenimiento?'}
                     buttons=
                     {[
                         {

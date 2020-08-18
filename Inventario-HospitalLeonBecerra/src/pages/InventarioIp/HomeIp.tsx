@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     IonContent, IonToolbar, IonIcon, IonTitle, IonPage, IonButtons, IonBackButton, IonButton, IonPopover, IonLoading,
-    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime, 
+    IonRefresher, IonRefresherContent, IonSearchbar, IonList, IonItem, IonLabel, IonDatetime,
     useIonViewDidEnter,
     useIonViewDidLeave,
     useIonViewWillEnter,
@@ -9,6 +9,7 @@ import {
     IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import ListIps from '../../components/ipComponents/ListIps';
+import VariableGlobal from '../../services/VariableGlobal'
 import { add, options } from 'ionicons/icons';
 import AxiosIp from '../../services/AxiosIp';
 import { RefresherEventDetail } from '@ionic/core';
@@ -23,9 +24,9 @@ const HomeIp: React.FC = () => {
     const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [pageNumberTmp, setPageNumberTmp] = useState(1);
-    
+
     async function fetchData() {
-        const url: string =`http://localhost:8000/api/listar_ips?page=${pageNumber}`;
+        const url: string = VariableGlobal.baseURL + `/listar_ips?page=${pageNumber}`;
 
         const res: Response = await fetch(url);
         res
@@ -42,7 +43,7 @@ const HomeIp: React.FC = () => {
     }
 
     async function fetchDataTmp() {
-        const url: string =`http://localhost:8000/api/listar_ips?page=${pageNumberTmp}`;
+        const url: string = VariableGlobal.baseURL + `/listar_ips?page=${pageNumberTmp}`;
 
         const res: Response = await fetch(url);
         res
@@ -80,7 +81,7 @@ const HomeIp: React.FC = () => {
         setShowPopover({ open: false })
     }
 
-    async function onChange (e: any) {
+    async function onChange(e: any) {
         let direccion_ip = e.target.value;
         if (direccion_ip) {
             setDisableInfiniteScroll(true);
@@ -97,7 +98,7 @@ const HomeIp: React.FC = () => {
         }
     }
 
-    async function onClear(e: any)  {
+    async function onClear(e: any) {
         await fetchData();
     }
 
@@ -186,7 +187,7 @@ const HomeIp: React.FC = () => {
                             fortigate={ip.fortigate}
                             observacion={ip.observacion}
                             maquinas_adicionales={ip.maquinas_adicionales}
-                            nombre_usuario={ip.nombre_usuario}
+                            nombre_usuario={ip.apellido !== null ? ip.nombre + " " + ip.apellido:  "No asignada"}
                             encargado_registro={ip.encargado_registro}
                         />
                     )

@@ -18,10 +18,6 @@ export default class AxiosMantenimiento {
     return AxiosMantenimiento.instanceAxios.put(`/editar_mantenimiento`, mantenimiento);
   }
 
-  static solicitudes_en_progreso = () => {
-    return AxiosMantenimiento.instanceAxios.get((`/solicitudes_en_progreso`));
-  }
-
   static mostrar_mantenimientos = (parametros: any) => {
     return AxiosMantenimiento.instanceAxios.post(`/mostrar_mantenimientos`, parametros);
   }

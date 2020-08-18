@@ -1,15 +1,14 @@
 import {
-    IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert,
+    IonContent, IonToolbar, IonTitle, IonPage, IonAlert,
     IonItem, IonLabel, IonInput, IonText, IonButtons, IonBackButton, IonList, IonButton, IonRow, IonCol
 } from '@ionic/react';
 import React, { useState } from 'react';
 import AxiosIp from '../../services/AxiosIp';
 import { Redirect } from 'react-router';
-
+import Autenticacion from '../InicioSesion/Autenticacion';
 // IMPORTANTE: La IP no se debe guardar en equipo, 
 // lo que se debe guardar es la relacion de ip con routers
 const FormularioIp: React.FC = () => {
-    const [estado, setEstado] = useState("");
     const [direccion_ip, setDireccion_ip] = useState("");
     const [hostname, setHostname] = useState("");
     const [subred, setSubred] = useState("");
@@ -25,7 +24,6 @@ const FormularioIp: React.FC = () => {
     const registrar = () => {
         let registro_ip_obj = {
             // campos de la tabla ip
-            estado: estado,
             fecha_asignacion: new Date().toISOString().substr(0, 10),
             direccion_ip: direccion_ip,
             hostname: hostname,
@@ -33,9 +31,7 @@ const FormularioIp: React.FC = () => {
             fortigate: fortigate,
             observacion: observacion,
             maquinas_adicionales: maquinas_adicionales,
-            /**Estos campos se manejan desde el backend */
-            // nombre_usuario: 'Samuel Braganza',
-            // usuario_registro: 'admin',
+            encargado_registro: Autenticacion.getEncargadoRegistro()
         }
 
         AxiosIp.crear_ip(registro_ip_obj).then(res => {
@@ -70,13 +66,6 @@ const FormularioIp: React.FC = () => {
                 <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">
                     <IonList>
                         <IonItem>
-                            <IonLabel position="floating">Estado<IonText color="danger">*</IonText></IonLabel>
-                            <IonSelect onIonChange={(e) => setEstado(e.detail.value)}>
-                                <IonSelectOption value="EU" key="EU">En Uso</IonSelectOption>
-                                <IonSelectOption value="L" key="L">Libre</IonSelectOption>
-                            </IonSelect>
-                        </IonItem>
-                        <IonItem>
                             <IonLabel position="floating">Dirección IP<IonText color="danger">*</IonText></IonLabel>
                             <IonInput required type="text" name="direccion_ip" value={direccion_ip} onIonChange={(e) => setDireccion_ip((e.target as HTMLInputElement).value)} />
                         </IonItem>
@@ -93,11 +82,11 @@ const FormularioIp: React.FC = () => {
                             <IonInput required type="text" name="fortigate" value={fortigate} onIonChange={(e) => setFortigate((e.target as HTMLInputElement).value)} />
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Observacion<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Observación<IonText color="danger">*</IonText></IonLabel>
                             <IonInput type="text" name="observacion" value={observacion} onIonChange={(e) => setObservacion((e.target as HTMLInputElement).value)} />
                         </IonItem>
                         <IonItem>
-                            <IonLabel position="floating">Maquinas Adicionales<IonText color="danger">*</IonText></IonLabel>
+                            <IonLabel position="floating">Máquinas Adicionales<IonText color="danger">*</IonText></IonLabel>
                             <IonInput required type="number" name="maquinas_adicionales" value={maquinas_adicionales} onIonChange={(e) => setMaquinas_adicionales((e.target as HTMLInputElement).value)} />
                         </IonItem>
                         <IonRow class="ion-text-center">

@@ -114,7 +114,7 @@ class ListIps extends React.Component<IpInterface, estados, { history: any }>  {
           onDidDismiss={e => this.setState({ ventanaDetalle: false })}
           >
             <IonToolbar color="primary">
-                <IonTitle>Detalle de router</IonTitle>
+                <IonTitle>Detalle de la IP</IonTitle>
                 <IonButtons slot="end">
                     <IonButton onClick={() => this.setState({ ventanaDetalle: false })}>
                         <IonIcon name="close" slot="icon-only"></IonIcon>
@@ -154,11 +154,11 @@ class ListIps extends React.Component<IpInterface, estados, { history: any }>  {
                 </IonItem>
                 <IonItem>
                   <IonIcon slot="start" icon={laptop}> </IonIcon>
-                  Maquinas Adicionales <IonNote slot="end">{this.props.maquinas_adicionales}</IonNote>
+                  Máquinas Adicionales <IonNote slot="end">{this.props.maquinas_adicionales}</IonNote>
                 </IonItem>
                 <IonItem>
                   <IonIcon slot="start" icon={eye}> </IonIcon>
-                  Observacion <IonNote slot="end">{this.props.observacion}</IonNote>
+                  Observación <IonNote slot="end">{this.props.observacion}</IonNote>
                 </IonItem>
               </IonList>
             </IonContent>

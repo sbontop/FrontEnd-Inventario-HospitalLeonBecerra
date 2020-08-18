@@ -25,7 +25,9 @@ class HistorialMantenimiento extends React.Component<any, any> {
         }
     }
 
-
+    /**
+     * Función que se ejecuta al entrar a esta vista.
+     */
     ionViewWillEnter() {
         this.setState({ mostrar_load: true });
         const { codigo_equipo, tipo_equipo, estado_operativo } = this.props.match.params;
@@ -64,6 +66,11 @@ class HistorialMantenimiento extends React.Component<any, any> {
     }
 
 
+     /**
+     * Función auxiliar que permite cargar una lista de mantenimientos
+     * asociados a un equipo.
+     * @param newLoad 
+     */
     cargar_mantenimientos(newLoad: boolean) {
         let parametros: any = {};
         parametros = this.state.parametros;
@@ -87,7 +94,7 @@ class HistorialMantenimiento extends React.Component<any, any> {
             return (
                 <ListaMantenimiento key={dato.id_mantenimiento} id_mantenimiento={dato.id_mantenimiento} titulo={dato.titulo} tipo={dato.tipo} fecha_inicio={dato.fecha_inicio}
                     realizado_por={dato.realizado_por} codigo_equipo={dato.codigo} estado_operativo={dato.estado_operativo} tipo_equipo={dato.tipo_equipo}
-                    handle={this}/>
+                    handle={this} />
             )
         }))
     }
