@@ -7,6 +7,7 @@ import {
 import { arrowBack } from 'ionicons/icons';
 import React, { useState } from 'react';
 import AxiosMantenimiento from '../../services/AxiosMantenimiento';
+import Autenticacion from '../InicioSesion/Autenticacion';
 import { useParams, Redirect } from 'react-router';
 
 /* Atributos basados en el archivo Anidex */
@@ -20,7 +21,7 @@ const FormularioMantenimiento: React.FC = () => {
     const [actividad_realizada, setActividad_realizada] = useState("");
     const [observacion, setObservacion] = useState("");
     const [codigo, setCodigo] = useState("");
-    const [realizado_por] = useState("admin");//, setRealizado_por
+    const [realizado_por] = useState(Autenticacion.getEncargadoRegistro());//, setRealizado_por
     const [fecha_recordatorio, setFecha_recordatorio] = useState("");
     const [hora_recordatorio, setHora_recordatorio] = useState("");
     const [editionMode, setEditionMode] = useState(false);
@@ -39,11 +40,11 @@ const FormularioMantenimiento: React.FC = () => {
     * Función que se ejecuta al entrar a esta vista.
     */
     useIonViewWillEnter(() => {
-        if (id !== "undefined") {
+        if (id !== undefined) {
             setEditionMode(true);
             cargar_datos(id);
         } else {
-            if (codigo_equipo !== "undefined") {
+            if (codigo_equipo !== undefined) {
                 setCodigo(codigo_equipo);
             }
         }
@@ -57,6 +58,7 @@ const FormularioMantenimiento: React.FC = () => {
         setAccionLoading("Cargando")
         setLoading(true);
         AxiosMantenimiento.mantenimiento_id(id).then(res => {
+            console.log(res.data)
             res.data.forEach(function (d: any) {
                 setCodigo(d.codigo)
                 setTitulo(d.titulo);
@@ -67,12 +69,10 @@ const FormularioMantenimiento: React.FC = () => {
                 setEstado_fisico(d.estado_fisico);
                 setActividad_realizada(d.actividad_realizada);
                 setObservacion(d.observacion);
-                //  setFecha_recordatorio(d.fecha_recordatorio);
-                //  setHora_recordatorio(d.hora_recordatorio);
+                setFecha_recordatorio(d.fecha_recordatorio === null ? "" : d.fecha_recordatorio);
+                setHora_recordatorio(d.hora_recordatorio === null ? "" : d.hora_recordatorio);
+                setRecordatorio(d.fecha_recordatorio === null ? false : true);
             });
-            if (fecha_recordatorio !== "") {
-                setRecordatorio(true)
-            }
             setLoading(false);
         }).catch(() => {
             setLoading(false);
@@ -121,7 +121,7 @@ const FormularioMantenimiento: React.FC = () => {
             observacion: observacion,
             realizado_por: realizado_por,
             fecha_recordatorio: fecha_recordatorio,
-            hora_recordatorio: hora_recordatorio,
+            hora_recordatorio: hora_recordatorio.length >= 11 ? hora_recordatorio.substring(11, 16) : hora_recordatorio,
             id_mantenimiento: id,
             codigo: codigo
         }
@@ -175,6 +175,7 @@ const FormularioMantenimiento: React.FC = () => {
      * @param registro_mantenimiento 
      */
     const editar_mantenimiento = (registro_mantenimiento: any) => {
+        console.log(registro_mantenimiento)
         AxiosMantenimiento.editar_mantenimiento(registro_mantenimiento).then(() => {
             setMensaje("Registro actualizado satisfactoriamente")
             setLoading(false)
@@ -314,8 +315,9 @@ const FormularioMantenimiento: React.FC = () => {
                                 <IonItem>
                                     <IonLabel position="stacked">Hora del recordatorio</IonLabel>
                                     <IonDatetime displayFormat="HH:mm" value={hora_recordatorio} doneText="Ok" cancelText="Cancelar"
-                                        onIonCancel={(e: any) => setHora_recordatorio("")}
-                                        onIonChange={e => setHora_recordatorio(e.detail.value!)}></IonDatetime>
+                                        placeholder="Hora"
+                                        onIonCancel={() => setHora_recordatorio("")}
+                                        onIonChange={(e: any) => setHora_recordatorio(e.detail.value!)}></IonDatetime>
                                 </IonItem>
                             </div> : null
                         }
@@ -327,7 +329,7 @@ const FormularioMantenimiento: React.FC = () => {
                                         <IonButton color="success" disabled={codigo === "undefined" ? true : false} type="submit">{!editionMode ? "Guardar" : "Guardar cambios"}</IonButton>
                                     </IonCol>
                                     <IonCol>
-                                        <IonButton color="danger" routerLink="/homemantenimientos">Cancelar</IonButton>
+                                        <IonButton color="danger" routerLink={"/homehistorial/" + codigo_equipo + "/" + tipo_equipo + "/" + estado_operativo}>Cancelar</IonButton>
                                     </IonCol>
                                 </IonRow>
                             </IonGrid>
@@ -338,13 +340,23 @@ const FormularioMantenimiento: React.FC = () => {
                     isOpen={incompleto}
                     onDidDismiss={() => setIncompleto(false)}
                     message={mensaje}
-                    buttons={['Aceptar']}
+                    buttons={[{
+                        text: 'Aceptar',
+                        handler: () => {
+                            setIncompleto(false)
+                        }
+                    }]}
                 />
                 <IonAlert
                     isOpen={error}
                     onDidDismiss={() => setError(false)}
                     message={mensaje}
-                    buttons={['Aceptar']}
+                    buttons={[{
+                        text: 'Aceptar',
+                        handler: () => {
+                            setError(false)
+                        }
+                    }]}
                 />
                 <IonAlert
                     isOpen={alerta}

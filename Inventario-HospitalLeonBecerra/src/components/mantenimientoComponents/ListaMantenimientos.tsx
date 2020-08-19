@@ -7,6 +7,7 @@ import { trash, create, key, speedometer, reorder, logIn, card, calendar } from 
 import AxiosMantenimiento from '../../services/AxiosMantenimiento'
 
 class ListaMantenimiento extends React.Component<any, any>  {
+    _isMounted = false;
     constructor(props: any) {
         super(props);
         this.state = {
@@ -17,12 +18,17 @@ class ListaMantenimiento extends React.Component<any, any>  {
             mostrar_load: false
         }
     }
-
+    componentDidMount() {
+        this._isMounted = true;
+    }
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
     eliminar_mantenimiento() {
         this.setState({
-            mostrar_load: true,
-            mostrar_confirmacion: true
+            mostrar_confirmacion: false,
+            mostrar_load: true
         })
         AxiosMantenimiento.eliminar_mantenimiento(this.props.id_mantenimiento).then(() => {
             this.setState({
@@ -68,7 +74,7 @@ class ListaMantenimiento extends React.Component<any, any>  {
                         } color="secondary" >
                             <IonIcon color="medium" icon={create}></IonIcon>
                         </IonButton>
-                        <IonButton size="default" fill="clear" onClick={() => this.setState({mostrar_confirmacion: true})} color="primary" >
+                        <IonButton size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })} color="primary" >
                             <IonIcon color="medium" icon={trash}></IonIcon>
                         </IonButton>
                     </>
@@ -144,9 +150,14 @@ class ListaMantenimiento extends React.Component<any, any>  {
 
                     <IonAlert
                         isOpen={this.state.alerta}
-                        onDidDismiss={() => { this.setState({ alerta: false }) }}
+                        onDidDismiss={() => { if (this._isMounted) this.setState({ alerta: false }) }}
                         header={this.state.mensaje}
-                        buttons={['Aceptar']}
+                        buttons={[{
+                            text: 'Aceptar',
+                            handler: () => {
+                                this.setState({ alerta: false })
+                            }
+                        }]}
                     />
                     <IonAlert
                         isOpen={this.state.mostrar_confirmacion}
