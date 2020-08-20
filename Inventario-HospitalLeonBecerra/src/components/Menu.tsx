@@ -33,67 +33,33 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
   const [redireccionar, setRedireccionar] = useState(Boolean);
 
   function obtener_pefil_usuario() {
+    setRedireccionar(false);
     let data = Autenticacion.getDataLog();
-    if (Object.keys(data).length > 0) {
-      setUsername(data.user.username);
 
-      setNombre(data.user.nombre);
-      setApellido(data.user.apellido);
-      setCedula(data.user.cedula);
-      setRedireccionar(false);
-    } else {
-      if (document.URL.split("/")[3] === "registrarusuario") {
+    if (localStorage.userdata){
+
+      if (Object.keys(data).length > 0){
+        setUsername(data.user.username);
+        setNombre(data.user.nombre);
+        setApellido(data.user.apellido);
+        setCedula(data.user.cedula);
         setRedireccionar(false);
-      } else {
-        setRedireccionar(true);
+      }else{
+        if ( document.URL.split("/")[3]==="registrarusuario"){
+          setRedireccionar(false);
+        }else{
+          setRedireccionar(true);
+        }
       }
+
+    }else{
+      setUsername("");
+      setNombre("");
+      setApellido("");
+      setCedula("")
     }
 
-
   }
-
-  function obtener_pefil() {
-    AxiosAutenticacion.getProfile().then((res: any) => {
-      //console.log("Función obtener 99");
-      //console.log('In of method');
-      //console.log("Read: ",res.status);
-
-      if (res.status === 'Token is Expired') {
-        //console.log('En la condición');
-        localStorage.removeItem('usertoken');
-        setRedireccionar(true);
-      } else {
-        //console.log('Part 6');
-        setUsername(res.user.username);
-        AxiosAutenticacion.obtener_datos_usuario(res.user.username).then((resp: any) => {
-          //console.log('Into slide: ',res);
-          //console.log('res.data.nombre',res.data[0].nombre);
-          setNombre(resp.data[0].nombre);
-          setApellido(resp.data[0].apellido);
-          setCedula(resp.data[0].cedula)
-        }).catch((err: any) => {
-          console.log(err);
-
-        });
-      }
-      //setEmail(res.user.email);
-      //console.log('User: ',res.user.username);
-      //console.log(res.user.name);
-      //console.log(res.user.email);
-      /* if (res) {
-          console.log("Res: ",res);
-      }else{ 
-          console.log("Error");
-      } */
-    }).catch((err: any) => {
-      //console.log("Verificar 200");
-      //localStorage.removeItem('usertoken');
-      console.log(err);
-    });
-
-  }
-
-
 
   useEffect(() => {
     //obtener_pefil();     
@@ -109,6 +75,10 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
     }
     AxiosNotificacion.actualizar_token(datos);
     localStorage.removeItem('userdata');
+
+    
+
+
   }
 
 
@@ -117,7 +87,7 @@ const Menu: React.FC<MenuProps> = ({ appPages }) => {
   if (!redireccionar) {
     return (
 
-      <IonMenu contentId="main" type="overlay">
+      <IonMenu contentId="main" swipeGesture = {redireccionar?true:false} hidden = {localStorage.userdata?false:true} type="overlay">
         <IonHeader>
           <IonToolbar color="primary">
             <IonTitle>Menu</IonTitle>

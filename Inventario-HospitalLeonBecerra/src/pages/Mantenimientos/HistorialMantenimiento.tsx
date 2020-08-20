@@ -8,6 +8,7 @@ import Respuesta from '../../components/Respuesta';
 import AxiosMantenimiento from '../../services/AxiosMantenimiento'
 import ListaMantenimiento from '../../components/mantenimientoComponents/ListaMantenimientos';
 import Auxiliar from '../../components/mantenimientoComponents/Auxilar';
+import { Redirect } from 'react-router';
 
 class HistorialMantenimiento extends React.Component<any, any> {
 
@@ -101,6 +102,12 @@ class HistorialMantenimiento extends React.Component<any, any> {
 
 
     render() {
+
+
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+          }
+
         return (
             <IonPage>
                 <IonHeader>

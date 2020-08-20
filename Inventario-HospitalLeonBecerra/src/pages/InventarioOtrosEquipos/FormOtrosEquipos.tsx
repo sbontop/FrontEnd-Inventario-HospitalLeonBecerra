@@ -587,6 +587,11 @@ verificar2=()=>{
   }  
 
   render(){
+
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
       return (<Redirect to="/consultaOtrosEquiposHome" />);      
     }

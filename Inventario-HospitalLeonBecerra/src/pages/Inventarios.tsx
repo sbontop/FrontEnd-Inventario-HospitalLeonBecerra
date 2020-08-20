@@ -2,10 +2,15 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonBu
 import OpcionesInventario from './OpcionesInventario'
 import React from 'react';
 import {
-  RouteComponentProps
+  RouteComponentProps, Redirect
 } from 'react-router';
 import { arrowBack } from 'ionicons/icons';
 const Inventarios: React.FC<RouteComponentProps> = (props) => {
+
+  if (localStorage.userdata === undefined){
+    return (<Redirect to="/iniciarsesion" />)
+  }
+  
   return (
     <IonPage>
       <IonHeader>

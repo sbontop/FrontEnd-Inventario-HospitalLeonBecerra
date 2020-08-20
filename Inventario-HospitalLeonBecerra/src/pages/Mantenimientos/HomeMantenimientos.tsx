@@ -3,6 +3,7 @@ import { IonPage, IonHeader, IonToolbar, IonContent, IonIcon, IonButtons, IonBut
 import { arrowBack, add } from 'ionicons/icons';
 import ListaEquipos from '../../components/mantenimientoComponents/ListaEquipos';
 import AxiosMantenimiento from '../../services/AxiosMantenimiento'
+import { Redirect } from 'react-router';
 
 class HomeMantenimientos extends React.Component<any, any> {
     constructor(props: any) {
@@ -117,6 +118,9 @@ class HomeMantenimientos extends React.Component<any, any> {
     }
 
     render() {
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+          }
         return (
             <IonPage>
                 <IonHeader>

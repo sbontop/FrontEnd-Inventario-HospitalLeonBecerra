@@ -3,9 +3,15 @@ import { IonList, IonItem, IonLabel, IonContent, IonThumbnail, IonRippleEffect, 
          IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/react';
 import './InventarioPC/style.css';
 import { arrowBack } from 'ionicons/icons';
+import { Redirect } from 'react-router';
 
 export default class TiposEquiposInventario extends Component <{history:any}, any>{
     render() {
+
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+        }
+
         return (
             <IonPage>
                 <IonHeader> 

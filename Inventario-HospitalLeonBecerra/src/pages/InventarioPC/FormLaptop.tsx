@@ -213,6 +213,10 @@ export default class FormPCLaptop extends Component<any, IState> {
 
     render() {
 
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+        }
+
         if (this.state.backAction) {
 
             return (<Redirect to="/consultlaptop" />);

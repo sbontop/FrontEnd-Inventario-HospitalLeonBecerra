@@ -214,6 +214,10 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
 
+    if (localStorage.userdata === undefined){
+        return (<Redirect to="/iniciarsesion" />)
+    }
+
 
     return (
         <IonPage>

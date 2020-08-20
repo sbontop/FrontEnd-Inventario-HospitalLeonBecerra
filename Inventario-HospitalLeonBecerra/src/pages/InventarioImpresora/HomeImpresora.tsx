@@ -8,6 +8,7 @@ import { withIonLifeCycle } from '@ionic/react';
 import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 import ListaImpresoras from '../../components/impresoraComponents/ListaImpresoras';
 import SelectOptionEstado from '../../components/SelectOptionEstado';
+import { Redirect } from 'react-router';
 //import AxiosAutenticacion from '../../services/AxiosAutenticacion';
 
 interface IState {
@@ -463,7 +464,12 @@ getImpresorasNext=(e:any)=>{
     this.setState({pageNumber:1});
   }
 
-  render(){//Start    
+  render(){//Start
+    
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+    
     return (
     <div>     
     <IonPage>

@@ -4,6 +4,7 @@ import { time, globe, arrowBack, sync, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
 import Respuesta from '../../components/Respuesta';
+import { Redirect } from 'react-router';
 
 class HomeSolicitudes extends React.Component<any, any> {
     constructor(props: any) {
@@ -127,6 +128,13 @@ class HomeSolicitudes extends React.Component<any, any> {
     }
 
     render() {
+
+
+
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+          }
+
         return (
             <IonPage>
                 <IonHeader>

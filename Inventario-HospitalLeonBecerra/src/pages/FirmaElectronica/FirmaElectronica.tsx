@@ -5,6 +5,7 @@ import AxiosFirma from '../../services/AxiosFirma';
 
 import { withIonLifeCycle } from '@ionic/react';
 import SignaturePad from 'react-signature-canvas'
+import { Redirect } from 'react-router';
 
 class FirmaElectronica extends Component<any , any> {
   //private cargando:any = false;
@@ -121,6 +122,11 @@ class FirmaElectronica extends Component<any , any> {
 
   render(){//Start   
     let {trimmedDataURL}:any = this.state 
+
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+
     return(      
 
 

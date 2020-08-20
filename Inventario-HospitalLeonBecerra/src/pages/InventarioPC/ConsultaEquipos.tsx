@@ -196,6 +196,9 @@ export default class ConsultarDesktop extends React.Component<{ tipo: any }, ISt
 
     render() {
 
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+        }
 
         if (this.state.backAction) {
             return (<Redirect to="/tiposequiposinventario" />);
