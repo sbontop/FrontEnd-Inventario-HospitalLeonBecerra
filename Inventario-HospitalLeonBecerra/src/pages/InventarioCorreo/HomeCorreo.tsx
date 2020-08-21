@@ -8,6 +8,7 @@ import ListaCorreos from '../../components/correoComponents/ListaCorreos';
 import AxiosCorreo from '../../services/Axios.services';
 import SelectOptionDepartamento from '../../components/correoComponents/SelectOptionDepartamento';
 import Respuesta from '../../components/Respuesta';
+import { Redirect } from 'react-router';
 
 class HomeCorreo extends React.Component<any, any> {
 
@@ -119,6 +120,11 @@ class HomeCorreo extends React.Component<any, any> {
 
 
   render() {
+
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+
     return (
       <IonPage>
         <IonHeader>

@@ -266,6 +266,10 @@ const FormularioSolicitudes: React.FC = () => {
         console.log("Data: ",trimmedDataURL);
     }
 
+    if (localStorage.userdata === undefined){
+        return (<Redirect to="/iniciarsesion" />)
+    }
+
     return (
     <IonPage>  
         <IonHeader>

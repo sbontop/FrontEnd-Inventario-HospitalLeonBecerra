@@ -14,6 +14,7 @@ import { add, options } from 'ionicons/icons';
 import AxiosIp from '../../services/AxiosIp';
 import { RefresherEventDetail } from '@ionic/core';
 import { useState } from 'react';
+import { Redirect } from 'react-router';
 
 const HomeIp: React.FC = () => {
     const [ips, setIps] = useState([] as any);
@@ -142,6 +143,10 @@ const HomeIp: React.FC = () => {
         fetchDataTmp();
         event.detail.complete();
     }
+
+    if (localStorage.userdata === undefined){
+        return (<Redirect to="/iniciarsesion" />)
+      }
 
     return (
         <IonPage>

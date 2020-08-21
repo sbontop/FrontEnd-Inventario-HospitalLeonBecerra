@@ -5,6 +5,7 @@ import ListRouters from '../../../components/ProgramaComponents/ListProgramas';
 import { add, options, arrowBack } from 'ionicons/icons';
 import AxiosPrograma from '../../../services/AxiosPrograma';
 import Respuesta from '../../../components/Respuesta';
+import { Redirect } from 'react-router';
 
 class HomePrograma extends React.Component<any, any> {
     constructor(props: any) {
@@ -124,6 +125,11 @@ class HomePrograma extends React.Component<any, any> {
     }
 
     render() {
+
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+          }
+
         return (
             <IonPage>
                 <IonHeader>

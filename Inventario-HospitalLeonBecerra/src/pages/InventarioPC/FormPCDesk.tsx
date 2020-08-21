@@ -280,6 +280,9 @@ export default class FormPCDesk extends Component<any, IState> {
         // });
         // // const ramtabs = this
 
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+        }
 
         return (
             <IonPage>

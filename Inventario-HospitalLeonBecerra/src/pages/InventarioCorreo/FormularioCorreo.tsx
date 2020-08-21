@@ -151,6 +151,14 @@ const FormularioCorreo: React.FC = () => {
   }
 
   /**
+   * Para redireccionar al login si no está logeado
+   */
+
+  if (localStorage.userdata === undefined){
+    return (<Redirect to="/iniciarsesion" />)
+  }
+
+  /**
    * Función que recibe una variable booleana, si es true la vista actual se redirige hacia otra ventana.
    */
   if (dirigir) {

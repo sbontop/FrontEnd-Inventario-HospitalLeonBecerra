@@ -11,6 +11,7 @@ import { IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
 
 
 import ListaOtrosEquipos from '../../components/otrosEquiposComponents/ListaOtrosEquipos';
+import { Redirect } from 'react-router';
 
 //declare const Modernizr:any;
 
@@ -485,6 +486,11 @@ getOtrosEquiposIniciales=(size:any)=>{
   }
 
   render(){//Start
+
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+
     return (
     <div>     
     <IonPage>

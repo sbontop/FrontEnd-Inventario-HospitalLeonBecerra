@@ -6,6 +6,7 @@ import { add, options, arrowBack } from 'ionicons/icons';
 import AxiosRouter from '../../services/AxiosRouter';
 import SelectOptionEstado from '../../components/SelectOptionEstado';
 import Respuesta from '../../components/Respuesta';
+import { Redirect } from 'react-router';
 
 class HomeRouter extends React.Component<any, any> {
     constructor(props: any) {
@@ -124,6 +125,11 @@ class HomeRouter extends React.Component<any, any> {
     }
 
     render() {
+
+        if (localStorage.userdata === undefined){
+            return (<Redirect to="/iniciarsesion" />)
+          }
+
         return (
             <IonPage>
                 <IonHeader>

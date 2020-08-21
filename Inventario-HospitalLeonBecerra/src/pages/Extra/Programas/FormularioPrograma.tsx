@@ -92,6 +92,10 @@ const FormularioPrograma: React.FC = () => {
         setRedireccionar(true);
     }
   
+    if (localStorage.userdata === undefined){
+        return (<Redirect to="/iniciarsesion" />)
+    }
+
     if (redireccionar) {
         return (<Redirect to="/homeprograma" />);
     }

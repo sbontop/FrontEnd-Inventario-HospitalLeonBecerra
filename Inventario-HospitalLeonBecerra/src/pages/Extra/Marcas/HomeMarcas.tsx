@@ -8,6 +8,7 @@ import ListaMarcas from '../../../components/marcaComponents/ListaMarcas';
 import Axios from '../../../services/AxiosMarcas';
 import Respuesta from '../../../components/Respuesta';
 import Pop from './Pop'
+import { Redirect } from 'react-router';
 
 class HomeMarcas extends React.Component<any, any> {
 
@@ -88,7 +89,14 @@ class HomeMarcas extends React.Component<any, any> {
     }))
   }
 
+  
+
   render() {
+
+    if (localStorage.userdata === undefined){
+      return (<Redirect to="/iniciarsesion" />)
+    }
+
     return (
       <IonPage>
         <IonHeader>

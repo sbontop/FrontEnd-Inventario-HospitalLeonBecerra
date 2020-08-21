@@ -40,7 +40,7 @@ const tiposImpresoras = [{id: 'Multifuncional'},{id: 'Matricial'},{id: 'Brazalet
 let estadosImpresoras = [{id: 'Operativa'},{id: 'En revisión'},{id: 'Reparado'},{id: 'De baja'},{id: 'Disponible'}];
 let suministros = [{id:'Toner'},{id:'Tinta'},{id:'Cartucho'}];
 
-class FormImpresora extends Component<{} , IState> {
+class FormRecordatorios extends Component<{} , IState> {
   private id:any;
   constructor(props: any) {
     super(props);
@@ -657,9 +657,6 @@ mostrar_empleados() {
   }  
 
   render(){
-    if (localStorage.userdata === undefined){
-      return (<Redirect to="/iniciarsesion" />)
-    }
     if (this.state.confirmacion===false && this.state.redireccionar===true) {
       return (<Redirect to="/Consulta" />);      
     }
@@ -669,7 +666,7 @@ mostrar_empleados() {
         <IonButtons slot="start">
             <IonBackButton defaultHref="/home"></IonBackButton>
         </IonButtons>
-        <IonTitle >  {this.id!==undefined?'Editar impresora':'Registrar impresora'} </IonTitle>
+        <IonTitle >  {this.id!==undefined?'Editar recordatorio':'Crear recordatorio'} </IonTitle>
         <IonButtons slot="end">
         {/*<IonButton hidden = {this.id===undefined?true:false} onClick = {this.accion} ><IonIcon icon={trash}></IonIcon></IonButton>*/}
         </IonButtons>
@@ -799,10 +796,15 @@ mostrar_empleados() {
 
         <form>        
         <IonGrid>
+
+        <IonRow class="ion-text-center">
+              <IonCol >
+                  <img src="./assets/img/recordatorio/recordatorio.jpg" height="160" alt="Recordatorio" />
+              </IonCol>
+              
+          </IonRow>
+
           <IonRow class="ion-text-center">
-            <IonCol>
-              <img src="./assets/img/printer.png" alt=""/>
-            </IonCol>
             <IonCol>            
               <IonList>
               <IonItem>
@@ -1073,4 +1075,4 @@ mostrar_empleados() {
   }        
 }
 
-export default withIonLifeCycle(FormImpresora);
+export default withIonLifeCycle(FormRecordatorios);

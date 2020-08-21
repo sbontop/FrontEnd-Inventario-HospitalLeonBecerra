@@ -21,11 +21,9 @@ import {
 
 
 const HomePage: React.FC<RouteComponentProps> = (props) => {
-  if (localStorage.userdata){
-    console.log('Existe');
-  }else{
-    console.log('No existe');
-    return (<Redirect to="/iniciarsesion" />);      
+  
+  if (localStorage.userdata === undefined){
+    return (<Redirect to="/iniciarsesion" />)
   }
 
   return (
