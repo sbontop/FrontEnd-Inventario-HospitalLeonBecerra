@@ -17,8 +17,16 @@ export default class AxiosSolicitudes {
     return AxiosSolicitudes.instanceAxios.get(`/info_solicitud_id/${id}`);
   }
 
-  static info_atencion_solicitud_id = (id:any) => {
-    return AxiosSolicitudes.instanceAxios.get(`/info_atencion_solicitud_id/${id}`);
+  static info_atencion_solicitud_id = (id:any, cedula:any) => {
+    return AxiosSolicitudes.instanceAxios.get(`/info_atencion_solicitud_id/${id}/${cedula}`);
+  }
+
+  static info_atencion_solicitud_edit = (id:any) => {
+    return AxiosSolicitudes.instanceAxios.get(`/info_atencion_solicitud_edit/${id}`);
+  }
+
+  static editar_atencion_solicitud = (atencion: any) => {
+    return AxiosSolicitudes.instanceAxios.post(`/editar_atencion_solicitud`, atencion);
   }
 
   static cambiar_estado_solicitud = (id: any, codigo: any) => {
@@ -29,8 +37,8 @@ export default class AxiosSolicitudes {
     return AxiosSolicitudes.instanceAxios.get('/empleados_sistemas');
   }
 
-  static mostrar_codigos = () => {
-    return AxiosSolicitudes.instanceAxios.get('/mostrar_codigos');
+  static mostrar_codigos = (cedula: any) => {
+    return AxiosSolicitudes.instanceAxios.get(`/mostrar_codigo_equipos_solicitante/${cedula}`);
   }
 
   static crear_atencion_solicitud = (registro: any) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonLoading, IonSegmentButton, withIonLifeCycle, IonBadge, IonList, IonPopover, IonItem, IonLabel, IonSelectOption, IonSelect, IonDatetime, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent } from '@ionic/react';
-import { time, globe, arrowBack, sync, options } from 'ionicons/icons';
+import { arrowBack, options } from 'ionicons/icons';
 import ListaSolicitudes from '../../components/solicitudesComponents/ListaSolicitudes';
 import AxiosSolicitudes from '../../services/AxiosSolicitudes'
 import Respuesta from '../../components/Respuesta';
