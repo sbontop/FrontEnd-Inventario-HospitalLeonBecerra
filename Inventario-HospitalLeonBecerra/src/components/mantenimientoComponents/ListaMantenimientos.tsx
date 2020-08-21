@@ -69,9 +69,9 @@ class ListaMantenimiento extends React.Component<any, any>  {
                     </IonAvatar>
 
                     <>
-                        <IonButton size="default" fill="clear" routerLink={"/formulariomantenimiento/edit/" + this.props.id_mantenimiento
-                            + "/" + this.props.codigo_equipo + "/" + this.props.tipo_equipo + "/" + this.props.estado_operativo
-                        } color="secondary" >
+                        <IonButton size="default" fill="clear" 
+                        routerLink={"/formulariomantenimiento/edit/"+this.props.id_mantenimiento+"/"+this.props.codigo_equipo+"/"+this.props.tipo_equipo+"/"+this.props.estado_operativo}
+                         color="secondary" >
                             <IonIcon color="medium" icon={create}></IonIcon>
                         </IonButton>
                         <IonButton size="default" fill="clear" onClick={() => this.setState({ mostrar_confirmacion: true })} color="primary" >

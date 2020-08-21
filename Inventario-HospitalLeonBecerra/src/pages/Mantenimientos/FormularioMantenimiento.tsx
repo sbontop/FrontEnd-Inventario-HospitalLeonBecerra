@@ -2,16 +2,17 @@
 import {
     IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonLabel, IonItem, IonInput, IonButton, IonList,
     IonSelect, IonSelectOption, IonAlert, IonText, IonIcon, IonButtons, IonGrid, IonRow, IonCol, IonDatetime, IonTextarea, IonToggle,
-    IonLoading, useIonViewWillEnter
+    IonLoading, useIonViewWillLeave
 } from '@ionic/react';
 import { arrowBack } from 'ionicons/icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AxiosMantenimiento from '../../services/AxiosMantenimiento';
 import Autenticacion from '../InicioSesion/Autenticacion';
 import { useParams, Redirect } from 'react-router';
 
 /* Atributos basados en el archivo Anidex */
 const FormularioMantenimiento: React.FC = () => {
+    let { id, codigo_equipo, tipo_equipo, estado_operativo } = useParams();
     const [titulo, setTitulo] = useState("");
     const [tipo, setTipo] = useState("");
     const [fecha_inicio, setFecha_inicio] = useState("");
@@ -34,31 +35,39 @@ const FormularioMantenimiento: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [dirigir, setDirigir] = useState(false);
     const [accionLoading, setAccionLoading] = useState("");
-    const { id, codigo_equipo, tipo_equipo, estado_operativo } = useParams();
+
 
     /**
     * Función que se ejecuta al entrar a esta vista.
     */
-    useIonViewWillEnter(() => {
+    useEffect(() => {
         if (id !== undefined) {
             setEditionMode(true);
             cargar_datos(id);
-        } else {
+        }else{
             if (codigo_equipo !== undefined) {
                 setCodigo(codigo_equipo);
             }
         }
-    }, [id]);
+      }, [id,codigo_equipo]);
+
+   /*  useIonViewWillEnter(() => {
+        if (codigo_equipo !== undefined) {
+            setCodigo(codigo_equipo);
+        }
+
+    }, [codigo_equipo]);
+ */
 
     /**
      * Función que se ejecutará al entrar al formulario en modo edición
      * @param id: id del mantenimiento.
      */
     const cargar_datos = (id: any) => {
+
         setAccionLoading("Cargando")
         setLoading(true);
         AxiosMantenimiento.mantenimiento_id(id).then(res => {
-            console.log(res.data)
             res.data.forEach(function (d: any) {
                 setCodigo(d.codigo)
                 setTitulo(d.titulo);
@@ -80,6 +89,20 @@ const FormularioMantenimiento: React.FC = () => {
             setError(true);
         });
     }
+
+    useIonViewWillLeave(() => {
+        setTitulo("");
+        setTipo("");
+        setFecha_inicio("");
+        setFecha_fin("");
+        setObservacion_falla("");
+        setEstado_fisico("");
+        setActividad_realizada("");
+        setObservacion("");
+        setFecha_recordatorio("");
+        setHora_recordatorio("");
+        setRecordatorio(false);
+    });
 
     /**
      * Función para gestionar el registro de un mantenimiento
@@ -175,7 +198,6 @@ const FormularioMantenimiento: React.FC = () => {
      * @param registro_mantenimiento 
      */
     const editar_mantenimiento = (registro_mantenimiento: any) => {
-        console.log(registro_mantenimiento)
         AxiosMantenimiento.editar_mantenimiento(registro_mantenimiento).then(() => {
             setMensaje("Registro actualizado satisfactoriamente")
             setLoading(false)
@@ -214,7 +236,7 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
 
-    if (localStorage.userdata === undefined){
+    if (localStorage.userdata === undefined) {
         return (<Redirect to="/iniciarsesion" />)
     }
 
