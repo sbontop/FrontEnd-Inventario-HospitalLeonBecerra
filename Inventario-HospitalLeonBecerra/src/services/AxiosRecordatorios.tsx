@@ -14,6 +14,14 @@ export default class AxiosRecordatorios {
     return AxiosRecordatorios.instanceAxios.put(`/eliminar_recordatorio/${id_equipo}`,body);
   }
 
+  static eliminar_recordatorio_actual = (id_equipo:any) => {
+    return AxiosRecordatorios.instanceAxios.delete(`/eliminar_recordatorio_actual/${id_equipo}`);
+  }
+
+  static recordatorios_actuales = () => {
+    return AxiosRecordatorios.instanceAxios.get(`/recordatorios_actuales`);
+  }
+
   static recordatorios_codigo = (codigo:any) => {
     return AxiosRecordatorios.instanceAxios.get(`/recordatorio_codigo/${codigo}`);
   }

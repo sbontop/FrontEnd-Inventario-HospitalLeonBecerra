@@ -1,27 +1,19 @@
 import React from 'react';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonIcon, IonButtons, IonButton, IonSegment, IonSegmentButton, withIonLifeCycle, IonList, IonItem, IonLabel, IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonRefresher, IonRefresherContent, IonRow, IonCol, IonNote, IonLoading, IonAlert } from '@ionic/react';
-import { arrowBack, add } from 'ionicons/icons';
-import ListaEquipos from '../../components/mantenimientoComponents/ListaEquipos';
-import AxiosMantenimiento from '../../services/AxiosMantenimiento';
+import { arrowBack } from 'ionicons/icons';
 import ListaRecordatorios from '../../components/recordatoriosComponents/ListaRecordatorios';
 import { Redirect } from 'react-router';
 import { RefresherEventDetail } from '@ionic/core';
 
-import AxiosRecordatorios from '../../services/AxiosRecordatorios'
+import AxiosRecordatorios from '../../services/AxiosRecordatorios';
 import styles from './styles.module.css';
 
 
-class HomeMantenimientos extends React.Component<any, any> {
+class RecordatoriosActualesHome extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = { 
-            tab: "",
-            titulo: "Recordatorios",
-            mostrar_load: false,
-            mostrar_scroll: false,
-            parametros: { page_size: 10, page_index: 0 },
-            codigo: "",
-            equipos: [],
+            
             disable_infinite_scroll:false,
             recordatorios: [],
             page_number_busqueda_codigo: 0,
@@ -90,10 +82,6 @@ class HomeMantenimientos extends React.Component<any, any> {
         }, 1000);  
       }
 
-    asignar_parametros = (name: any, value: any) => {
-        this.setState({ parametros: { ...this.state.parametros, [name]: value } });
-    }
-
     getConsultar=(codigo_buscar:any)=>{  
         this.setState({
           opcion_buscar_general: false,
@@ -147,27 +135,7 @@ class HomeMantenimientos extends React.Component<any, any> {
       }
 
       eliminar = () =>{
-        let info:any;
-        if (this.state.opcion_buscar_general){
-          console.log('opcion_buscar_general');
-          info = {"tipo":"general","size":(this.state.pageNumber)*10};
-          console.log("First");
-          this.setState({
-            page_number_busqueda_codigo : 0,
-            busqueda_codigo: "",
-            opcion_buscar_codigo:false,
-            codigo_recordatorio: ""
-          })
-        }else if(this.state.opcion_buscar_codigo){
-          console.log('opcion_buscar_codigo');
-          info = {"tipo":"codigo","codigo":this.state.busqueda_codigo,"size":(this.state.page_number_busqueda_codigo)*10};
-          this.setState({
-            page_number_buscar_filtro:1,
-            pageNumber:1,
-            opcion_buscar_general: false,
-            opcion_buscar_filtro:false,
-          })
-        }
+
         this.setState({
           eliminar:false,
           eliminando:true
@@ -176,31 +144,9 @@ class HomeMantenimientos extends React.Component<any, any> {
           //eliminando:false,
           confirmacion:false
         });
-        AxiosRecordatorios.eliminar_recordatorio(this.state.id_recordatorio_eliminar,info).then((res:any) => {
-
-            let fecha_anterior:any = "";
-            let info:any = res.data.data;
-          
-            for (let i in info){
-                if (i === '0'){
-                    console.log("True");
-                    fecha_anterior = info[i].fecha_recordatorio;
-                    console.log(info[i].fecha_recordatorio);
-                }
-
-                if(info[i].fecha_recordatorio !== fecha_anterior){
-                    info[i].indicador = 'Jump range';
-                    fecha_anterior = info[i].fecha_recordatorio;
-                    console.log("Para update  ");
-                    console.log("Cambia: ",info[i]);
-                    
-                }
-              //console.log(+i+". ",info[i]);
-          }
-
-
+        AxiosRecordatorios.eliminar_recordatorio_actual(this.state.id_recordatorio_eliminar).then((res:any) => {
           this.setState({
-            recordatorios: info,
+            recordatorios: res.data,
             eliminando:false,
             confirmacion:true
           });
@@ -240,20 +186,10 @@ class HomeMantenimientos extends React.Component<any, any> {
             opcion_buscar_codigo: false,
           });
 
-            AxiosRecordatorios.mostrar_recordatorios_paginado(this.state.size,this.state.pageNumber).then((res:any) => {
-              let fecha_anterior:any = "";
-              let info:any = res.data.data;              
-              for (let i in info){
-                    if (i === '0'){
-                        fecha_anterior = info[i].fecha_recordatorio;
-                    }
-                    if(info[i].fecha_recordatorio !== fecha_anterior){
-                        info[i].indicador = 'Jump range';
-                        fecha_anterior = info[i].fecha_recordatorio;
-                    }
-              }
+            AxiosRecordatorios.recordatorios_actuales().then((res:any) => {
+              console.log(res.data);
               this.setState({
-                recordatorios:info,
+                recordatorios:res.data,
                 mostrando_datos:false,
               }); 
               this.setState({
@@ -358,78 +294,7 @@ class HomeMantenimientos extends React.Component<any, any> {
         }, 1000);
       }
     
-    /**
-     * Función auxiliar que permite cargar una lista de equipos
-     * cuyo código sea similar al que el usuario está escribiendo 
-     * en el componente IonSearchbar.
-     * @param newLoad 
-     */
-    buscar_equipos = (newLoad: boolean) => {
-        let parametros: any = {};
-        parametros = this.state.parametros;
-        if (newLoad) {
-            parametros.page_index = 0;
-        }
-        AxiosMantenimiento.equipos_por_codigo(parametros).then(res => {
-            this.setState({ equipos: newLoad ? res.data.resp : [...this.state.equipos, ...res.data.resp] });
-            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor", mostrar_scroll: this.state.equipos.length === res.data.itemSize });
-        }).catch(err => {
-            this.setState({ mostrar_load: false, mensaje: "Cargando datos, espere por favor" });
-            console.log(err);
-        });
-    }
 
-    /*
-    * Función para generar la lista de equipos coincidentes.
-    */
-    generar_lista_equipos = () => {
-        return (this.state.equipos.map((dato: any) => {
-            return (
-                <ListaEquipos key={dato.codigo} tipo_equipo={dato.tipo_equipo}
-                    codigo={dato.codigo} estado_operativo={dato.estado_operativo} />
-            )
-        }))
-    }
-
-
-    /*
-    * Función auxiliar que se ejecuta con el evento onIonChange de IonSearchbar.
-    * que utiliza la función auxiliar buscar_equipos para realizar la
-    * búsqueda.
-    */
-    busqueda = (e: any) => {
-        let codigo = e.target.value;
-        if (codigo) {
-            this.asignar_parametros("codigo", e.target.value);
-            this.buscar_equipos(true);
-        }
-
-    }
-
-    /*
-    * Función auxiliar que se ejecuta con el evento onIonClear de IonSearchbar
-    * que se ejecuta cuando el usuario elimina el texto de IonSearchbar.
-    */
-    onClear = (e: any) => {
-        this.asignar_parametros("codigo", "");
-        this.buscar_equipos(true);
-    }
-
-    mantenimientos_pendientes() {
-
-    }
-
-    refrescar = (e: any, newPageIndex: number) => {
-
-    }
-
-    limpiar_filtros = () => {
-        this.setState({ parametros: { page_size: 10, page_index: 0 } });
-    }
-
-    aplicar_filtros = () => {
-
-    }
 
 
     tab_historial = () => {
@@ -457,54 +322,26 @@ class HomeMantenimientos extends React.Component<any, any> {
                         <IonButtons slot="start">
                             <IonButton routerLink="/home"><IonIcon icon={arrowBack}></IonIcon></IonButton>
                         </IonButtons>
-                        <h4>{this.state.titulo}</h4>
-                        <IonButtons slot="end">
-                            <IonButton hidden={!(this.state.tab === "Recordatorio") ? true : false}><IonIcon icon={add}></IonIcon></IonButton>
-                            {/*<IonButton onClick={this.accion} ><IonIcon icon={clipboard}></IonIcon></IonButton>*/}
-                        </IonButtons>
+                        <h4>Recordatorios para hoy</h4>
+                        
                     </IonToolbar>
-                    <IonToolbar color="dragon ">
-                        <IonSegment >
-                            <IonSegmentButton onClick={(e: any) => { this.tab_historial() }}>
-                                <IonLabel>Mantenimiento</IonLabel>
-                            </IonSegmentButton>
-                            <IonSegmentButton onClick={(e: any) => { this.tab_recordatorio() }}>
-                                <IonLabel>Recordatorios</IonLabel>
-                            </IonSegmentButton>
-                        </IonSegment>
-                    </IonToolbar>
+                    
                 </IonHeader>
                 <IonContent>
-                    
-
-                    <IonList hidden={!(this.state.tab === "Historial") ? true : false}>
-                        <IonSearchbar hidden={!(this.state.tab === "Historial") ? true : false} placeholder="Buscar equipo por código"
-                                                onIonChange={(e: any) => { this.busqueda(e) }}
-                                                onIonClear={(e: any) => { this.onClear(e) }}>
-                                            </IonSearchbar>
-
-                                            {this.generar_lista_equipos()}
-                    
-
-                    <IonInfiniteScroll disabled={this.state.mostrar_scroll} threshold="100px"
-                                            onIonInfinite={(e: any) => this.refrescar(e, this.state.parametros.page_index + 1)}
-                                            ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
-                                            <IonInfiniteScrollContent
-                                                loadingSpinner="bubbles"
-                                                loadingText="Cargando más registros">
-                                            </IonInfiniteScrollContent>
-                                        </IonInfiniteScroll>
-                    </IonList>
-                    
+                    <br/>  
 
 
+                    <IonRow hidden={this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?true:false} class="ion-text-center" className={styles.fondo_recordatorio}>
+                      <IonCol >
+                      <IonNote className="ion-text-cemter" color="light">Tiene pendiente el/los siguiente/s mantenimientos, por favor realizarlos lo/s lo antes posible. Gracias.</IonNote>
+                      </IonCol>
+                    </IonRow>                    
+                    <div hidden= {this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?true:false} className="ion-margin-top ion-text-center">
+                        <img src="./assets/img/mantenimiento/warning.png" alt="Equipo"
+                            width="64" height="64" />
+                    </div>
 
-                    <IonList hidden={!(this.state.tab === "Recordatorio") ? true : false}>
-                    
-                    <IonSearchbar placeholder={"Buscar por código de equipo"}
-                        onIonChange={(e: any) => {this.getConsultar(e.target.value)}} 
-                        onIonClear={(e: any) => { this.handler() }}>
-                    </IonSearchbar>
+
                     <IonRefresher slot="fixed" onIonRefresh={this.doRefresh}>
                         <IonRefresherContent
                         pullingIcon="arrow-dropdown"
@@ -515,64 +352,6 @@ class HomeMantenimientos extends React.Component<any, any> {
                     </IonRefresher>
                     {this.state.recordatorios.map((dato: any, index:any) => {
                         
-                        if(dato.indicador === "Jump range"){
-                            return (
-                                
-                                    <div key={dato.id_recordatorio}>
-                                    <IonRow class="ion-text-center" className={styles.fondo}>
-                                        <IonCol>
-                                            <IonNote color="medium"></IonNote>
-                                        </IonCol>
-                                    </IonRow>
-                                    <h4 className="ion-text-start ion-margin"><b>{dato.fecha_recordatorio}</b></h4>
-                                    
-                                    <ListaRecordatorios key={dato.id_recordatorio+dato.titulo}  
-                                    id_recordatorio={dato.id_recordatorio}
-                                    hora_recordatorio={dato.hora_recordatorio}
-                                    fecha_recordatorio={dato.fecha_recordatorio}
-                                    estado={dato.estado}
-                                    id_mantenimiento={dato.id_mantenimiento}
-                                    codigo={dato.codigo}
-                                    titulo={dato.titulo}
-                                    creado={dato.created_at}
-                                    id_equipo= {dato.id_equipo}
-                                    tipo_equipo = {dato.tipo_equipo}
-                                    estado_operativo = {dato.estado_operativo}
-                                    onRemove = {() =>this._remove(dato.id_recordatorio)}
-                                    />
-                                    </div>
-                            );
-                        }
-
-                        
-
-                        else if(index === 0){
-                        
-                            return (
-                                <div key={dato.id_recordatorio}>
-                                <IonRow class="ion-text-center" className={styles.fondo}>
-                                    <IonCol>
-                                        <IonNote></IonNote>
-                                    </IonCol>
-                                </IonRow>
-                                <h4 className="ion-text-start ion-margin"><b>{dato.fecha_recordatorio}</b></h4>
-                                <ListaRecordatorios key={dato.id_recordatorio+dato.titulo}  
-                                id_recordatorio={dato.id_recordatorio}
-                                hora_recordatorio={dato.hora_recordatorio}
-                                fecha_recordatorio={dato.fecha_recordatorio}
-                                estado={dato.estado}
-                                id_mantenimiento={dato.id_mantenimiento}
-                                codigo={dato.codigo}
-                                titulo={dato.titulo}
-                                creado={dato.created_at}
-                                id_equipo= {dato.id_equipo}
-                                tipo_equipo = {dato.tipo_equipo}
-                                estado_operativo = {dato.estado_operativo}
-                                onRemove = {() =>this._remove(dato.id_recordatorio)}
-                                />
-                                </div>
-                            )
-                        }
 
                         return (
                             <div key={dato.id_recordatorio}>
@@ -682,7 +461,7 @@ class HomeMantenimientos extends React.Component<any, any> {
                             message={'Eliminando registro. Espere por favor...'}
                     />
 
-                    <IonInfiniteScroll disabled={this.state.disable_infinite_scroll} threshold="100px"                        
+                    {/* <IonInfiniteScroll disabled={this.state.disable_infinite_scroll} threshold="100px"                        
                         onIonInfinite={ (e:any) => { this.getRecordatoriosNext(e)  }}
                         ref={React.createRef<HTMLIonInfiniteScrollElement>()}>
                         <IonInfiniteScrollContent
@@ -691,18 +470,9 @@ class HomeMantenimientos extends React.Component<any, any> {
                             //loadingText="Cargando más registros"
                             loadingText = {!this.state.disable_infinite_scroll?'Cargando más registros':'No hay más registros que mostrar'}>
                         </IonInfiniteScrollContent>
-                    </IonInfiniteScroll>
+                    </IonInfiniteScroll> */}
 
-                    {(this.state.disable_infinite_scroll && this.state.recordatorios.length!==0) ?
-                    <div className="ion-margin">
-                        <IonItem lines="none">
-                        <br></br>
-                        <IonLabel color="medium" class="ion-text-center">No hay más registros que mostrar</IonLabel>
-                        <br></br>
-                        </IonItem>
-                    </div>
-                    :null
-                    }
+                    
 
                     {this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?
                     <div key="sin datos">
@@ -713,23 +483,13 @@ class HomeMantenimientos extends React.Component<any, any> {
                                         </p>
                                     </IonLabel>
                     </div>:null
-                    }
-
-
-
-                    </IonList>
-
-
-
-
-
-                    
+                    }                    
                 </IonContent>
             </IonPage >
         )
     }
 }
-export default withIonLifeCycle(HomeMantenimientos);
+export default withIonLifeCycle(RecordatoriosActualesHome);
 
 
 

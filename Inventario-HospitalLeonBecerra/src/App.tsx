@@ -30,6 +30,7 @@ import RegistrarUsuario from './pages/InicioSesion/RegistrarUsuario';
 import FirmaElectronica from './pages/FirmaElectronica/FirmaElectronica';
 import Mantenimiento from './pages/Mantenimientos/FormularioMantenimiento';
 import Historial from './pages/Mantenimientos/HistorialMantenimiento';
+import RecordatoriosActualesHome from './pages/Mantenimientos/RecordatoriosActualesHome';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -87,6 +88,7 @@ const App: React.FC = () => (
           <Route path="/formimpresora/edit/:id" component={FormImpresora} exact={true} />
           <Route path="/consulta" component={HomeImpresora} exact={true} />
           <Route path="/homemantenimientos" component={HomeMantenimientos} exact={true} />
+          <Route path="/recordatoriosactualeshome" component={RecordatoriosActualesHome} exact={true} />
 
           <Route path="/iniciarsesion" component={IniciarSesion} exact={true} />
           <Route path="/registrarusuario" component={RegistrarUsuario} exact={true} />

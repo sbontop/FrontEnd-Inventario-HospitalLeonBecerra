@@ -11,17 +11,41 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  useIonViewWillEnter,
+  IonIcon,
+  IonBadge
 } from '@ionic/react';
 import React from 'react';
 import './Home.css';
 import {
   RouteComponentProps,Redirect
 } from 'react-router';
+import AxiosRecordatorios from '../services/AxiosRecordatorios';
+import { useState} from 'react';
+import { notifications } from 'ionicons/icons';
+
 //import MenuLateral from '../components/Menu_Lateral';
 
 
 const HomePage: React.FC<RouteComponentProps> = (props) => {
   
+  const [cantidad, setCantidad] = useState("");
+
+  useIonViewWillEnter(() => {
+    console.log('ionViewWillEnter event fired');
+    cantidad_recordatorios();
+  });
+
+  const cantidad_recordatorios = () => {
+    AxiosRecordatorios.recordatorios_actuales().then(res => {
+      setCantidad(res.data.length)
+    }).catch(err => {
+      if (err.response) {
+        setCantidad('0')
+      }
+    });
+  }
+
   if (localStorage.userdata === undefined){
     return (<Redirect to="/iniciarsesion" />)
   }
@@ -34,6 +58,10 @@ const HomePage: React.FC<RouteComponentProps> = (props) => {
           <IonMenuButton hidden={JSON.parse(localStorage.userdata).token?false:true} />
           </IonButtons>
           <IonTitle>Bienvenido</IonTitle>
+          <IonButtons slot="end">
+  <IonButton shape="round" slot="end" size="large" routerLink="/recordatoriosactualeshome"><IonIcon icon={notifications}></IonIcon><IonBadge color="light">{cantidad}</IonBadge></IonButton>
+            {/*<IonButton onClick={this.accion} ><IonIcon icon={clipboard}></IonIcon></IonButton>*/}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
