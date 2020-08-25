@@ -171,10 +171,10 @@ class IniciarSesion extends Component<any, any> {
         cargado: false
       })
       //console.log("Verificar 20");
-      console.log("res9999",res);
+      //console.log("res9999",res);
       if (res.data !== undefined) {
         //console.log("Pa 1 ");
-        console.log('Login: ',res);
+        //console.log('Login: ',res);
         if ((res + '').length > 0 && !(res + '').includes('400') && !(res + '').includes('Network Error') && res.data.user.estado!== undefined){
           Autenticacion.authenticate(res.data);
           this.props.history.push(`/Home`)  
@@ -188,13 +188,13 @@ class IniciarSesion extends Component<any, any> {
           activo:true
         })
       }else if ((res + '').includes('400')) {
-        console.log("Pa 2 ");
+        //console.log("Pa 2 ");
         this.setState({
           cargando: false,
           error_credenciales: true,
         });
       }else {
-        console.log("Pa 6 ");
+        //console.log("Pa 6 ");
         //console.log("Pw: ",res);
         this.setState({
           cargando: false,
