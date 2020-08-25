@@ -333,7 +333,7 @@ class RecordatoriosActualesHome extends React.Component<any, any> {
 
                     <IonRow hidden={this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?true:false} class="ion-text-center" className={styles.fondo_recordatorio}>
                       <IonCol >
-                      <IonNote className="ion-text-cemter" color="light">Tiene pendiente el/los siguiente/s mantenimientos, por favor realizarlos lo/s lo antes posible. Gracias.</IonNote>
+                      <IonNote className="ion-text-cemter" color="light">Tiene pendiente el/los siguiente/s mantenimientos, por favor realizarlo/s lo antes posible. Gracias.</IonNote>
                       </IonCol>
                     </IonRow>                    
                     <div hidden= {this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?true:false} className="ion-margin-top ion-text-center">
