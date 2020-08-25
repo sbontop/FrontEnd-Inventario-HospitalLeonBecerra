@@ -171,21 +171,29 @@ class IniciarSesion extends Component<any, any> {
         cargado: false
       })
       //console.log("Verificar 20");
-      //console.log("res9999",res);
-      if ((res + '').length > 0 && !(res + '').includes('400') && !(res + '').includes('Network Error')) {
+      console.log("res9999",res);
+      if (res.data !== undefined) {
         //console.log("Pa 1 ");
-        //console.log('Login: ',res.data);
-        Autenticacion.authenticate(res.data);
-        this.props.history.push(`/Home`)
+        console.log('Login: ',res);
+        if ((res + '').length > 0 && !(res + '').includes('400') && !(res + '').includes('Network Error') && res.data.user.estado!== undefined){
+          Autenticacion.authenticate(res.data);
+          this.props.history.push(`/Home`)  
+        }
+
+        
         //this.configurar_notificaciones(this.state.username)
-      } else if ((res + '').includes('400')) {
+      }else if ((res + '').includes('401')){
+        this.setState({
+          cargado:false,
+          activo:true
+        })
+      }else if ((res + '').includes('400')) {
         console.log("Pa 2 ");
         this.setState({
           cargando: false,
           error_credenciales: true,
         });
-      }
-      else {
+      }else {
         console.log("Pa 6 ");
         //console.log("Pw: ",res);
         this.setState({
@@ -193,13 +201,7 @@ class IniciarSesion extends Component<any, any> {
           error_servidor: true,
         });
       }
-    }).catch((err: any) => {
-      //console.log("Verificar 100");
-      this.setState({
-        cargando: false,
-        error_servidor: true,
-      });
-    });
+    })
 
 
 
@@ -444,6 +446,23 @@ class IniciarSesion extends Component<any, any> {
                 console.log('ERROR 46');
                 this.setState({
                   error_credenciales: false
+                });
+              }
+            }
+            ]}
+          />
+
+          <IonAlert
+            isOpen={this.state.activo}
+            subHeader={'Cuenta deshabilitada'}
+            message={'La cuenta de este usuario no está activa'}
+            buttons={[{
+              cssClass: 'success',
+              text: 'OK',
+              handler: () => {
+                console.log('ERROR 46');
+                this.setState({
+                  activo: false
                 });
               }
             }
