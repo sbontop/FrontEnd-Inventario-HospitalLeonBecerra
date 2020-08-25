@@ -293,23 +293,7 @@ class RecordatoriosActualesHome extends React.Component<any, any> {
           event.detail.complete();
         }, 1000);
       }
-    
 
-
-
-    tab_historial = () => {
-        this.setState({
-            tab: "Historial",
-            titulo: "Mantenimientos de equipos"
-        })
-    }
-
-    tab_recordatorio = () => {
-        this.setState({
-            tab: "Recordatorio",
-            titulo: "Recordatorios"
-        })
-    }
 
     render() {
         if (localStorage.userdata === undefined){
@@ -329,8 +313,6 @@ class RecordatoriosActualesHome extends React.Component<any, any> {
                 </IonHeader>
                 <IonContent>
                     <br/>  
-
-
                     <IonRow hidden={this.state.recordatorios.length === 0 && this.state.mostrando_datos===false?true:false} class="ion-text-center" className={styles.fondo_recordatorio}>
                       <IonCol >
                       <IonNote className="ion-text-cemter" color="light">Tiene pendiente el/los siguiente/s mantenimientos, por favor realizarlo/s lo antes posible. Gracias.</IonNote>
@@ -375,25 +357,6 @@ class RecordatoriosActualesHome extends React.Component<any, any> {
                         })
                         }
 
-                        {/* <IonItem>
-                            Recordatorio 1
-                        </IonItem>
-                        <IonItem>
-                            Recordatorio 2
-                        </IonItem>
-                        <IonItem>
-                            Recordatorio 3
-                        </IonItem>
-                        <IonItem>
-                            Recordatorio 4
-                        </IonItem>
-                        <IonItem>
-                            Recordatorio 5
-                        </IonItem>
-                        <IonItem>
-                            Recordatorio 6
-                        </IonItem> */}
-                    
                     <IonLoading
                         isOpen={this.state.mostrando_datos}
                         message={'Cargando datos. Espere por favor...'}
