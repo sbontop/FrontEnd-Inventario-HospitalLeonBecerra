@@ -54,7 +54,8 @@ export default class FormPCDesk extends Component<any, IState> {
             listSO: [],
             listOffice: [],
             fuente: false,
-            visible_fuente: false
+            visible_fuente: false,
+            tipo_memoria: null
         }
     }
 
@@ -90,6 +91,7 @@ export default class FormPCDesk extends Component<any, IState> {
         let valuesRD = ['tipo', 'capacidad', "tipo_capacidad"];
         let valuesP = ['frecuencia', 'nucleos'];
         let arr_cod: any[] = [];
+        let tipo_ram = []; 
        // let arr_serie: any[] = [];
         let ramSoportada = 0;
         let slotsTotal = 0;
@@ -186,10 +188,11 @@ export default class FormPCDesk extends Component<any, IState> {
                     return "La Capacidad ingresada en " + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ") + " no es valida."
                 }
                 if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
+                    
                     if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) return 'La Capacidad del componente ' + arrPrincipal[_k].split('-')[1].toUpperCase().replace('_', " ") + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
                     //ramTotal += Number(dataCopy[arrPrincipal[_k]]['capacidad']);
                     let r = Number(dataCopy[arrPrincipal[_k]]['capacidad']);
-                    ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"] === "GB" ? r : r / 1000);
+                    ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"] === "GB" ? r : r / 1024);
                 }
             }
             if (arrPrincipal[_k].indexOf('cpu-procesador') !== -1) {

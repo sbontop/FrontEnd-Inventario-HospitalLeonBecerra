@@ -51,7 +51,8 @@ export default class FormPCLaptop extends Component<any, IState> {
             listSO: [],
             listOffice: [],
             fuente: false,
-            visible_fuente: false
+            visible_fuente: false,
+            tipo_memoria: null
 
         }
     }
@@ -177,7 +178,7 @@ export default class FormPCLaptop extends Component<any, IState> {
             }
             if (arrPrincipal[_k].indexOf('cpu-memoria_ram') !== -1) {
                 if ((Number(dataCopy[arrPrincipal[_k]]['capacidad']) === 1 ? 2 : Number(dataCopy[arrPrincipal[_k]]['capacidad'])) % 2 !== 0 || Number((dataCopy[arrPrincipal[_k]]['capacidad']) <= 0)) {
-                    return 'La Capacidad del componente ' + dataCopy[arrPrincipal[_k]] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
+                    return 'La Capacidad del componente ' + arrPrincipal[_k] + ' no es correcta. Deben ser numeros positivos pares multipos de 2. '
                 }
                 let r = Number(dataCopy[arrPrincipal[_k]]['capacidad']);
                 ramTotal += (dataCopy[arrPrincipal[_k]]["tipo_capacidad"] === "GB" ? r : r / 1000);

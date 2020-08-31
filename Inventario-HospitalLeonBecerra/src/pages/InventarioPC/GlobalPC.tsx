@@ -36,6 +36,7 @@ export default interface IState {
     listOffice: any;
     fuente: any;
     visible_fuente: any;
+    tipo_memoria:any;
    
 
 }
@@ -119,7 +120,7 @@ export default class GlobalPC {
         obj.setState({
             data: {
                 ...obj.state.data,
-                [name]: typeof value === "string" ? value.toUpperCase() : value
+                [name]: value
             }
         });
 
@@ -133,7 +134,7 @@ export default class GlobalPC {
                 ...obj.state.data,
                 [val[0]]: {
                     ...obj.state.data[val[0]],
-                    [val[1]]: typeof value === "string" ? value.toUpperCase() : value
+                    [val[1]]: value
                 }
             }
         });
