@@ -18,7 +18,7 @@ const FormularioCorreo: React.FC = () => {
   const [error, setError] = useState(false);
   const [usuario, setUsuario] = useState("");
   const [cedula, setCedula] = useState("");
-  const [punto, setPunto] = useState();
+  const [punto, setPunto] = useState("");
   const [departamento, setDepartamento] = useState("");
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -26,6 +26,7 @@ const FormularioCorreo: React.FC = () => {
   const [editionMode, setEditionMode] = useState(false);
   const [passwordMode, setPasswordMode] = useState(true);
   const [confirmar, setConfirmar] = useState(false);
+  const [bloqueado, setBloqueado] = useState(true);
   const { id } = useParams();
 
 
@@ -115,16 +116,21 @@ const FormularioCorreo: React.FC = () => {
       if (usuario === "") {
         setMensaje("Debe escribir los nombres del empleado");
         setIncompleto(true);
+        setBloqueado(true);
       } else {
         AxiosCorreo.buscar_empleado(usuario).then(res => {
           if (res.data.length === 0) {
+            setDepartamento("");
+            setPunto("");
             setBuscar(true);
+            setBloqueado(true);
           } else {
             res.data.forEach(function (d: any) {
               setCedula(d.cedula);
               setDepartamento(d.departamento);
               setPunto(d.bspi_punto);
             });
+            setBloqueado(false);
           }
         }).catch(err => {
           setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
@@ -154,7 +160,7 @@ const FormularioCorreo: React.FC = () => {
    * Para redireccionar al login si no está logeado
    */
 
-  if (localStorage.userdata === undefined){
+  if (localStorage.userdata === undefined) {
     return (<Redirect to="/iniciarsesion" />)
   }
 
@@ -203,11 +209,11 @@ const FormularioCorreo: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Correo<IonText color="danger">*</IonText></IonLabel>
-              <IonInput required inputmode="email" type="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" className="ion-margin-top" value={correo} placeholder="example@hospitalleonbecerra.org" name="correo" onIonChange={e => setCorreo(e.detail.value!)}></IonInput>
+              <IonInput required inputmode="email" disabled={bloqueado} type="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" className="ion-margin-top" value={correo} placeholder="example@hospitalleonbecerra.org" name="correo" onIonChange={e => setCorreo(e.detail.value!)}></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Contraseña<IonText color="danger">*</IonText></IonLabel>
-              <IonInput required type={passwordMode ? "password" : "text"} minlength={5} className="ion-margin-top" name="contrasena" value={contrasena} onIonChange={e => setContrasena(e.detail.value!)}></IonInput>
+              <IonInput required type={passwordMode ? "password" : "text"} disabled={bloqueado} minlength={5} className="ion-margin-top" name="contrasena" value={contrasena} onIonChange={e => setContrasena(e.detail.value!)}></IonInput>
               <IonIcon className="btn_eye_icon" icon={passwordMode ? eye : eyeOff} color="danger" onClick={() => cambiar_tipo()} ></IonIcon>
             </IonItem>
             <IonList>
@@ -270,7 +276,7 @@ const FormularioCorreo: React.FC = () => {
         <IonAlert
           isOpen={confirmar}
           header={'Confirmación'}
-          message={!editionMode ? '¿Está seguro de agregar este registro?': '¿Está seguro de modificar este registro?'}
+          message={!editionMode ? '¿Está seguro de agregar este registro?' : '¿Está seguro de modificar este registro?'}
           buttons=
           {[
             {
