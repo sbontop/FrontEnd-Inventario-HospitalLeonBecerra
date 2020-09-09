@@ -44,20 +44,20 @@ const FormularioMantenimiento: React.FC = () => {
         if (id !== undefined) {
             setEditionMode(true);
             cargar_datos(id);
-        }else{
+        } else {
             if (codigo_equipo !== undefined) {
                 setCodigo(codigo_equipo);
             }
         }
-      }, [id,codigo_equipo]);
+    }, [id, codigo_equipo]);
 
-   /*  useIonViewWillEnter(() => {
-        if (codigo_equipo !== undefined) {
-            setCodigo(codigo_equipo);
-        }
-
-    }, [codigo_equipo]);
- */
+    /*  useIonViewWillEnter(() => {
+         if (codigo_equipo !== undefined) {
+             setCodigo(codigo_equipo);
+         }
+ 
+     }, [codigo_equipo]);
+  */
 
     /**
      * Función que se ejecutará al entrar al formulario en modo edición
@@ -108,14 +108,10 @@ const FormularioMantenimiento: React.FC = () => {
      * Función para gestionar el registro de un mantenimiento
      */
     const registrar_mantenimiento = () => {
-
-        if (validar_inputs()) {
-            let advertencia = "Debe completar todos los campos.";
-            if (recordatorio) {
-                advertencia = advertencia + " Si ha elegido programar un recordatorio, debe especificar una fecha y hora.";
-            }
+        let resultado = validar();
+        if (resultado.validar) {
             setConfirmar(false);
-            setMensaje(advertencia);
+            setMensaje(resultado.advertencia);
             setIncompleto(true);
         } else {
             setAccionLoading("Guardando")
@@ -151,6 +147,35 @@ const FormularioMantenimiento: React.FC = () => {
     }
 
     /**
+     * Función auxiliar para retornar los mensajes a las validaciones realizadas. 
+     */
+    const validar = () => {
+        let advertencia = "";
+        let validar= false;
+        if (validar_inputs()) {
+            advertencia = "Debe completar todos los campos";
+            if (recordatorio) {
+                advertencia = " Si ha elegido programar un recordatorio, debe especificar una fecha y hora.";
+            }
+            validar= true
+        }
+       
+        if (validar_finalizacion()) {
+            advertencia = "La fecha de finalización no puede ser anterior a la fecha de inicio.";
+            validar= true
+        }
+        if(validar_fecha_record()){
+            advertencia = "La fecha del recordatorio no puede ser anterior a la fecha de inicio.";
+            validar= true
+        }
+
+        return {
+            validar: validar,
+            advertencia: advertencia
+        };
+    }
+
+    /**
      * Función auxiliar para validar que se hayan completado los componentes requeridos.
      * Retorna true si falta completar algún campo, false en caso contrario. 
      */
@@ -172,6 +197,34 @@ const FormularioMantenimiento: React.FC = () => {
         }
         return false;
     }
+
+    /**
+    * Función auxiliar para validar que si se elige una fecha de finalización, esta no 
+    * sea anterior a la fecha de inicio.
+    * Retorna true si la fecha es incorrecta, false en caso contrario. 
+    */
+    const validar_fecha_record = () => {
+        var f1 = new Date(fecha_recordatorio);
+        var f2 = new Date(fecha_inicio);
+        if (fecha_fin && (f1 < f2)) {
+            return true;
+        }
+        return false;
+    } 
+
+    /**
+    * Función auxiliar para validar que si se elige crear un recordatorio
+    * la fecha de este no sea anterior a la fecha de inicio de mantenimiento.
+    * Retorna true si la fecha es incorrecta, false en caso contrario. 
+    */
+   const validar_finalizacion = () => {
+    var f1 = new Date(fecha_fin);
+    var f2 = new Date(fecha_inicio);
+    if (fecha_fin && (f1 < f2)) {
+        return true;
+    }
+    return false;
+}
 
 
     /**
