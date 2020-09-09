@@ -1,7 +1,8 @@
-import { IonContent, IonToolbar, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, 
+import { IonContent, IonToolbar, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, useIonViewWillLeave,
          IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter} from '@ionic/react';
 import React, { useState } from 'react';
 import AxiosPrograma from '../../../services/AxiosPrograma';
+import Autenticacion from '../../InicioSesion/Autenticacion';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
 import { arrowBack } from 'ionicons/icons';
@@ -13,10 +14,8 @@ const FormularioPrograma: React.FC = () => {
     const [codigo, setCodigo] = useState("");
     const [editor, setEditor] = useState("");
     const [observacion, setObservacion] = useState("");
-    const [guardar, setGuardar] = useState(false);
     const [alerta, setAlerta] = useState(false);
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
-    const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editionMode, setEditionMode] = useState(false);
@@ -38,57 +37,74 @@ const FormularioPrograma: React.FC = () => {
                 setVersion(res.data.version);
                 setObservacion(res.data.observacion);
                 setLoading(false);
-            }).catch(err => {
+            }).catch(() => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
             });
         }
     }, [id]);
 
-    const registrar = () => { 
+    useIonViewWillLeave(()=>{
+        setCodigo("");
+        setNombre("");
+        setVersion("");
+        setEditor("");
+        setObservacion("");
+    });
+
+    const guardar = () => {
         if (codigo === undefined || nombre === undefined) {
             setMensaje("Debe completar todos los campos");
-            setIncompleto(true);
-        } else {     
-            let registro_programa = {
-                id_programa: id,
-                codigo: codigo,
-                nombre: nombre,
-                editor: editor,
-                version: version,
-                observacion: observacion,
-                encargado_registro: "admin"
-            }
-            if (!editionMode) {
-                // console.log("3",registro_programa)
-                AxiosPrograma.crear_programa(registro_programa).then(res => {
-                    setConfirmarRegistro(true);
-                    setMensaje("Registro guardado satisfactoriamente");
-                    console.log(guardar);
-                    // volver_principal();
-                }).catch(err => {
-                    //setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-                    if (err.response) {
-                       setMensaje(err.response.data.log)
-                    }
-                    setError(true);
-                });
-            } else {
-                // console.log(registro_programa)
-                AxiosPrograma.editar_programa(registro_programa).then(res => {
-                    // console.log("act",res)
-                    setConfirmarEdicion(true);
-                    setMensaje("Registro actualizado satisfactoriamente")                   
-                    // volver_principal();
-                }).catch(_error => {
-                    setError(true);
-                });
-            }
+            setIncompleto(true);            
+            setConfirmarRegistro(false);
+        }else{
+            setConfirmarRegistro(true);
+        } 
+    }
+
+    const registrar = () => {      
+        let registro_programa = {
+            id_programa: id,
+            codigo: codigo,
+            nombre: nombre,
+            editor: editor,
+            version: version,
+            observacion: observacion,
+            encargado_registro: Autenticacion.getEncargadoRegistro()
+        }
+        if (!editionMode) {                
+            setAccionLoading("Guardando");
+            setLoading(true);
+            AxiosPrograma.crear_programa(registro_programa).then(res => {
+                setLoading(false);
+                setMensaje("Registro guardado satisfactoriamente");
+                setAlerta(true);
+            }).catch(err => {
+                setLoading(false);
+                if (err.response) {
+                    setMensaje(err.response.data.log) 
+                }
+                setError(true);
+            });
+        } else {
+            setAccionLoading("Actualizando");
+            setLoading(true);
+            AxiosPrograma.editar_programa(registro_programa).then(() => {
+                setLoading(false);
+                setMensaje("Registro actualizado satisfactoriamente");
+                setAlerta(true);
+            }).catch(_error => {
+                setLoading(false);
+                if (_error.response) {
+                    setMensaje(_error.response.data.log) 
+                }
+                setError(true);
+            });
         }   
     } 
   
     const volver_principal = () => {
-        setGuardar(false);
+        setAlerta(false);
         setRedireccionar(true);
     }
   
@@ -119,7 +135,7 @@ const FormularioPrograma: React.FC = () => {
                 <p className="ion-text-center">
                     <img src="./assets/img/programa/command.png" alt="Usuario" />
                 </p>
-                <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">   
+                <form onSubmit={(e) => { e.preventDefault(); guardar(); }} action="post">   
                     <IonList> 
                         <IonItem>
                             <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
@@ -145,7 +161,7 @@ const FormularioPrograma: React.FC = () => {
                             <IonGrid>
                                 <IonRow class="ion-text-center">
                                     <IonCol>
-                                        <IonButton type="submit" color="secondary" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
+                                        <IonButton onClick={()=> console.log("estador##",confirmarRegistro)} type="submit" color="success" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
                                     </IonCol>
                                     <IonCol>
                                         <IonButton color="primary" routerLink="/homeprograma" class="ion-no-margin">Cancelar</IonButton>          
@@ -170,8 +186,18 @@ const FormularioPrograma: React.FC = () => {
                 <IonAlert
                     isOpen={error}
                     header={'Se ha producido un error al realizar su solicitud'}
-                    message={'Asegurese de agregar un un registro que no exista'}
-                    buttons={['Aceptar']}
+                    message={mensaje}
+                    buttons=
+                    {[   
+                        {
+                            cssClass: 'success',
+                            text: 'Aceptar',
+                            handler: () => {
+                                setConfirmarRegistro(false);
+                                setError(false);
+                            }
+                        }        
+                    ]}
                 />
                 <IonAlert
                 isOpen={confirmarRegistro}
@@ -191,34 +217,7 @@ const FormularioPrograma: React.FC = () => {
                             cssClass: 'success',
                             text: 'Aceptar',
                             handler: () => {
-                                setAlerta(true)
-                                setGuardar(true)   
-                                setAccionLoading("Guardando")             
-                            }
-                        }        
-                    ]}
-                />
-                <IonAlert
-                isOpen={confirmarEdicion}
-                header={'Confirmación'}
-                message={'¿Está seguro de modificar este registro?'}
-                buttons=
-                    {[         
-                        {
-                        text: 'Cancelar',
-                        role: 'cancel',
-                        cssClass: 'primary',
-                            handler: () => {
-                                setConfirmarEdicion(false)
-                            }
-                        },
-                        {
-                        cssClass: 'success',
-                        text: 'Aceptar',
-                            handler: () => {
-                                setAlerta(true)
-                                setGuardar(true)  
-                                setAccionLoading("Actualizando")            
+                                registrar()             
                             }
                         }        
                     ]}
