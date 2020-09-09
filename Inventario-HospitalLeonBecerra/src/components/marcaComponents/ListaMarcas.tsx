@@ -25,8 +25,7 @@ class ListaMarcas extends React.Component<any, any>  {
             this.props.handle.actualizar_parametros();
             this.setState({mostrar_load: false})
             this.props.handle.cargar_marcas(true);
-        }).catch(error => {
-            console.log(error)
+        }).catch(() => {
             this.setState({ mostrar_load: false, alerta: true, mensaje: "Ocurrió un error al procesar su solicitud, inténtelo más tarde" });
         });
     }

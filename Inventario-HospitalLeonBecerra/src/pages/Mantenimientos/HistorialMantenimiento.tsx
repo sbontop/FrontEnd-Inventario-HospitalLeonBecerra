@@ -81,9 +81,8 @@ class HistorialMantenimiento extends React.Component<any, any> {
         AxiosMantenimiento.mostrar_mantenimientos(parametros).then(res => {
             this.setState({ historial: newLoad ? res.data.resp : [...this.state.historial, ...res.data.resp] });
             this.setState({ mostrar_load: false, mostrar_scroll: this.state.historial.length === res.data.itemSize });
-        }).catch(err => {
+        }).catch(() => {
             this.setState({ mostrar_load: false });
-            console.log(err);
         });
     }
 

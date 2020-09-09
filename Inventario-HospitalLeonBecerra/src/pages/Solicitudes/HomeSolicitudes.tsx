@@ -38,7 +38,6 @@ class HomeSolicitudes extends React.Component<any, any> {
      */
     cambiar_estado(valor: any) {
         this.setState({ parametros: { page_size: 10, page_index: 0, estado: valor, filtro_estado: "C" } });
-        console.log(this.state.parametros);
         this.cargar_solicitudes(true);
     }
 
@@ -107,8 +106,6 @@ class HomeSolicitudes extends React.Component<any, any> {
     * Función para cargar los datos según los filtros seleccionados.
     */
     aplicar_filtros = () => {
-        console.log("filtros");
-        console.log(this.state.parametros)
         this.asignar_parametros("page_index", 0);
         this.setState({ mostrar_pop: false, mostrar_load: true })
         this.cargar_solicitudes(true);
@@ -131,9 +128,9 @@ class HomeSolicitudes extends React.Component<any, any> {
 
 
 
-        if (localStorage.userdata === undefined){
+        if (localStorage.userdata === undefined) {
             return (<Redirect to="/iniciarsesion" />)
-          }
+        }
 
         return (
             <IonPage>
@@ -148,7 +145,7 @@ class HomeSolicitudes extends React.Component<any, any> {
                             <IonButtons slot="end">
                                 <IonButton onClick={() => this.setState({ mostrar_pop: true })}><IonIcon icon={options}></IonIcon></IonButton>
                             </IonButtons> : null}
-                            
+
                     </IonToolbar>
                     <IonToolbar color="dragon ">
                         <IonSegment value={this.state.parametros.estado} onIonChange={(e: any) => this.cambiar_estado(e.detail.value)}>
@@ -196,7 +193,7 @@ class HomeSolicitudes extends React.Component<any, any> {
                                     onIonChange={(e: any) => this.asignar_parametros(e.target.name, e.target.value)}>
                                     <IonSelectOption value="A">Alta</IonSelectOption>
                                     <IonSelectOption value="B">Baja</IonSelectOption>
-                                    <IonSelectOption value="C">Crítica</IonSelectOption>
+                                    <IonSelectOption value="CT">Crítica</IonSelectOption>
                                     <IonSelectOption value="M">Media</IonSelectOption>
                                 </IonSelect>
                             </IonItem>
