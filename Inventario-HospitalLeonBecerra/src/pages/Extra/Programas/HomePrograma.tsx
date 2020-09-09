@@ -183,7 +183,7 @@ class HomePrograma extends React.Component<any, any> {
                     <IonAlert
                     isOpen={this.state.showAlertConfirm}
                     header={"Eliminar Programa"}
-                    message={'¿Esta seguro de eliminar este programa?'}
+                    message={'¿Está seguro de que desea eliminar este programa?. Tenga en cuenta que se eliminará definitivamente'}
                     buttons={[
                         {
                         text: 'No',

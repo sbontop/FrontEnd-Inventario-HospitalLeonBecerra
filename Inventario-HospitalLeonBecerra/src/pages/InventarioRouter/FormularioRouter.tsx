@@ -1,7 +1,9 @@
 import { IonContent, IonToolbar, IonSelect, IonSelectOption, IonTitle, IonPage, IonAlert, IonGrid, IonItem, IonLabel, IonInput, IonText, 
-         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter,useIonViewWillLeave } from '@ionic/react';
+         IonButtons, IonHeader, IonList, IonButton, IonRow, IonCol, IonTextarea, IonIcon, IonLoading, useIonViewWillEnter, useIonViewWillLeave } from '@ionic/react';
 import React, { useState } from 'react';
 import AxiosRouter from '../../services/AxiosRouter';
+import Autenticacion from '../InicioSesion/Autenticacion';
+import AxiosPC from '../../services/AxiosPC';
 import { Redirect } from 'react-router';
 import { useParams } from 'react-router-dom';
 import { arrowBack, eye, eyeOff } from 'ionicons/icons';
@@ -27,12 +29,10 @@ const FormularioRouter: React.FC = () => {
     const [passwordMode, setPasswordMode] = useState(true);    
     const [passwordMode1, setPasswordMode1] = useState(true);
     const [descripcion, setDescripcion] = useState("");
-    const [guardar, setGuardar] = useState(false);
     const [alerta, setAlerta] = useState(false);
     const [loading, setLoading] = useState(false);
     const [accionLoading, setAccionLoading] = useState("");
     const [confirmarRegistro, setConfirmarRegistro] = useState(false);
-    const [confirmarEdicion, setConfirmarEdicion] = useState(false);
     const [incompleto, setIncompleto] = useState(false);
     const [editionMode, setEditionMode] = useState(false);
     const [error, setError] = useState(false);
@@ -40,7 +40,7 @@ const FormularioRouter: React.FC = () => {
     const [redireccionar, setRedireccionar] = useState(false);
     
     useIonViewWillEnter(() => {
-        AxiosRouter.marcas_routers().then(res => {
+        AxiosPC.mostrar_marcas().then(res => {
             setMarcas(res.data); });    
     }, []);
   
@@ -95,7 +95,7 @@ const FormularioRouter: React.FC = () => {
                 setIp(res.data.ip);
                 setDescripcion(res.data.descripcion);
                 setLoading(false);
-            }).catch(err => {
+            }).catch(() => {
                 setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
                 setError(true);
             });
@@ -110,61 +110,72 @@ const FormularioRouter: React.FC = () => {
         passwordMode1 ? setPasswordMode1(false) : setPasswordMode1(true)
     }
 
-    const registrar = () => { 
-        if (codigo === undefined || nombre === undefined || pass === undefined || usuario === undefined || clave === undefined
-         || id_marca === undefined || modelo === undefined || numero_serie === undefined || estado === undefined) {
+    const guardar = () => {
+        if (codigo === "" || nombre === "" || pass === "" || usuario === "" || clave === ""
+            || id_marca === "" || modelo === "" || numero_serie === "" || estado === "") {
             setMensaje("Debe completar todos los campos");
             setIncompleto(true);
-        } else {     
-            let registro_equipo_router = {
-                id_equipo: id,
-                fecha_registro: new Date().toISOString().substr(0,10),
-                codigo: codigo,
-                tipo_equipo: "Router",
-                id_marca: id_marca,
-                asignado: empleado,
-                estado_operativo: estado,
-                modelo: modelo,
-                numero_serie: numero_serie,
-                descripcion: descripcion,
-                encargado_registro: 'admin',
-                componente_principal: null,
-                ip: ip,        
-                nombre: nombre,
-                pass: pass,
-                puerta_enlace: puerta_enlace,
-                usuario: usuario,
-                clave: clave
-            }
-            if (!editionMode) {
-                AxiosRouter.crear_equipo_router(registro_equipo_router).then(() => {
-                    setMensaje("Registro guardado satisfactoriamente")
-                    setConfirmarRegistro(true);
-                    console.log(guardar)
-                }).catch(err => {
-                    setMensaje("Ocurrió un error al procesar su solicitud, inténtelo más tarde")
-                    if (err.response) {
-                       setMensaje(err.response.data.log)
-                    }
-                    setError(true);
-                });
-            } else {
-                console.log(registro_equipo_router)
-                AxiosRouter.editar_router(registro_equipo_router).then(res => {
-                    console.log(res)
-                    setConfirmarEdicion(true);
+            setConfirmarRegistro(false);
+        }else{
+            setConfirmarRegistro(true);
+        } 
+    }
 
-                    setMensaje("Registro actualizado satisfactoriamente")                   
-                    
-                }).catch(() => {
-                    setError(true);
-                });
-            }
+    const registrar = () => {    
+        let registro_equipo_router = {
+            id_equipo: id,
+            fecha_registro: new Date().toISOString().substr(0,10),
+            codigo: codigo,
+            tipo_equipo: "Router",
+            id_marca: id_marca,
+            asignado: empleado,
+            estado_operativo: estado,
+            modelo: modelo,
+            numero_serie: numero_serie,
+            descripcion: descripcion,
+            encargado_registro: Autenticacion.getEncargadoRegistro(),
+            componente_principal: null,
+            ip: ip,        
+            nombre: nombre,
+            pass: pass,
+            puerta_enlace: puerta_enlace,
+            usuario: usuario,
+            clave: clave
+        }
+        if (!editionMode) {
+            setAccionLoading("Guardando");
+            setLoading(true);
+            AxiosRouter.crear_equipo_router(registro_equipo_router).then(() => {                  
+                setLoading(false);
+                setMensaje("Registro guardado satisfactoriamente");
+                setAlerta(true);
+            }).catch(err => {
+                setLoading(false);
+                if (err.response) {
+                    setMensaje(err.response.data.log) 
+                }
+                setError(true);
+            });
+        } else {
+            console.log(registro_equipo_router);
+            setAccionLoading("Actualizando");
+            setLoading(true);
+            AxiosRouter.editar_router(registro_equipo_router).then(() => {
+                setLoading(false);
+                setMensaje("Registro actualizado satisfactoriamente");
+                setAlerta(true);
+            }).catch((err) => {
+                setLoading(false);
+                if (err.response) {
+                    setMensaje(err.response.data.log)
+                }
+                setError(true);
+            });
         }   
     } 
   
     const volver_principal = () => {
-        setGuardar(false);
+        setAlerta(false);
         setRedireccionar(true);
     }
   
@@ -191,34 +202,18 @@ const FormularioRouter: React.FC = () => {
                 message={accionLoading+' datos, espere por favor...'}
             />
             <IonContent className="ion-padding">
-            
-                {/* <IonTitle className="ion-text-center">{!editionMode ? "Nuevo router" : "Editar router"}</IonTitle> */}
-                {/* <p className="ion-text-center">
-                    <img src="./assets/img/router/routerR3.png" alt="Usuario" />
-                </p> */}
-                <form onSubmit={(e) => { e.preventDefault(); registrar(); }} action="post">
-                <IonList>  
-                     {/* <IonGrid> */}
-
-          <IonRow class="ion-text-center">
-            <IonCol size="4">
-            <img src="./assets/img/router/router.png" alt="router" />
-            </IonCol>
-            <IonCol size="8">            
-              
-            <IonItem>
-                            <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
-                            <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
-                        </IonItem>            
-             
-            </IonCol>
-          </IonRow>  
-          {/* </IonGrid>    */}
+                <form onSubmit={(e) => { e.preventDefault(); guardar(); }} action="post">
+                    <IonList>  
+                        <IonRow class="ion-text-center">
+                            <IonCol size="4"> <img src="./assets/img/router/router.png" alt="router" /> </IonCol>
+                            <IonCol size="8">            
+                                <IonItem>
+                                    <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
+                                    <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
+                                </IonItem>            
                     
-                        {/* <IonItem>
-                            <IonLabel position="floating">Código<IonText color="primary">*</IonText></IonLabel>
-                            <IonInput disabled = {editionMode} required type="text" name="codigo" value={codigo} onIonChange={(e) => setCodigo((e.target as HTMLInputElement).value)} ></IonInput>
-                        </IonItem>  */}
+                            </IonCol>
+                        </IonRow>  
                         <IonItem>
                             <IonLabel position="floating">Asignar a empleado</IonLabel>
                             <IonSelect name="empleado" value={empleado} onIonChange={(e) => setEmpleado(e.detail.value)} okText="Aceptar" cancelText="Cancelar" >
@@ -252,7 +247,6 @@ const FormularioRouter: React.FC = () => {
                             <IonInput type={passwordMode1 ? "password" : "text"} name="clave" value={clave} onIonChange={(e) => setClave((e.detail.value!))} >
                             <IonIcon className="btn_eye_icon"  icon={passwordMode1 ? eye : eyeOff} color="primary" onClick={() => cambiar_tipo1()} ></IonIcon>
                             </IonInput>
-
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">Marca<IonText color="primary">*</IonText></IonLabel>
@@ -313,7 +307,7 @@ const FormularioRouter: React.FC = () => {
                             <IonGrid>
                                 <IonRow class="ion-text-center">
                                     <IonCol>
-                                        <IonButton type="submit" color="secondary" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
+                                        <IonButton type="submit" color="success" class="ion-no-margin">{!editionMode ? "Guardar" : "Guardar cambios"} </IonButton>
                                     </IonCol>
                                     <IonCol>
                                         <IonButton color="primary" routerLink="/homerouter" class="ion-no-margin">Cancelar</IonButton>          
@@ -338,13 +332,24 @@ const FormularioRouter: React.FC = () => {
                 <IonAlert
                     isOpen={error}
                     header={'Se ha producido un error al realizar su solicitud'}
-                    message={'Asegurese de agregar un un registro que no exista'}
-                    buttons={['Aceptar']}
+                    message={mensaje}
+                    buttons=
+                    {[   
+                        {
+                            cssClass: 'success',
+                            text: 'Aceptar',
+                            handler: () => {
+                                setConfirmarRegistro(false);
+                                setError(false);
+                                setMensaje("");
+                            }
+                        }        
+                    ]}
                 />
                 <IonAlert
                 isOpen={confirmarRegistro}
                 header={'Confirmación'}
-                message={'¿Está seguro de agregar este nuevo registro?'}
+                message={!editionMode ? '¿Está seguro de agregar este nuevo registro?' : '¿Está seguro de modificar este registro?'}
                 buttons=
                     {[         
                         {
@@ -359,33 +364,7 @@ const FormularioRouter: React.FC = () => {
                             cssClass: 'success',
                             text: 'Aceptar',
                             handler: () => {
-                                setAlerta(true)
-                                setGuardar(true)  
-                                setAccionLoading("Guardando")             
-                            }
-                        }        
-                    ]}
-                />
-                <IonAlert
-                isOpen={confirmarEdicion}
-                header={'Confirmación'}
-                message={'¿Está seguro de modificar este registro?'}
-                buttons=
-                    {[         
-                        {
-                        text: 'Cancelar',
-                        role: 'cancel',
-                        cssClass: 'primary',
-                            handler: () => {
-                                setConfirmarEdicion(false)
-                            }
-                        },
-                        {
-                        cssClass: 'success',
-                        text: 'Aceptar',
-                            handler: () => {
-                                setAlerta(true)
-                                setGuardar(true)             
+                                registrar()             
                             }
                         }        
                     ]}
