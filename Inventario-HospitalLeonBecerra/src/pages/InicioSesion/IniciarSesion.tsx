@@ -2,18 +2,17 @@
 import React, { Component } from 'react';
 import {
   IonContent, IonToolbar, IonGrid, IonRow, IonCol,
-  IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, /*, IonFooter,
-   IonPage, IonTitle, IonToolbar*//*IonList, IonLabel, IonInput,IonToggle, IonRadio, IonCheckbox, IonItemOptions,IonItemSliding, IonItemOption*/ IonButton, IonLoading, IonIcon
+  IonPage, IonAlert, IonItem, IonLabel, IonInput, IonText, IonButtons, IonButton, IonLoading, IonIcon
 } from '@ionic/react';
 import { Redirect, /*RouteProps*/ } from 'react-router';
 //import { RouteComponentProps } from 'react-router-dom';
 import { withIonLifeCycle } from '@ionic/react';
 import AxiosAutenticacion from '../../services/AxiosAutenticacion';
 import Autenticacion from './Autenticacion';
-//import AxiosNotificacion from '../../services/AxiosNotificacion';
+import AxiosNotificacion from '../../services/AxiosNotificacion';
 import { trash } from 'ionicons/icons'
-//import { Plugins, PushNotification, PushNotificationToken, PushNotificationActionPerformed } from '@capacitor/core';
-//const { PushNotifications } = Plugins;
+import { Plugins, PushNotification, PushNotificationToken, PushNotificationActionPerformed } from '@capacitor/core';
+const { PushNotifications } = Plugins;
 
 
 
@@ -96,7 +95,7 @@ class IniciarSesion extends Component<any, any> {
      * Más información en: https://medium.com/@brankofuenzalida/entendiendo-el-plugin-push-notifications-de-capacitor-8ca84cdd8d38
      * @param usuario, recibe el username del usuario que para almacenar el token 
      */
- /* configurar_notificaciones(usuario: any) {
+ configurar_notificaciones(usuario: any) {
 
     PushNotifications.register();
 
@@ -129,7 +128,7 @@ class IniciarSesion extends Component<any, any> {
       }
     );
 
-  }*/
+  }
 
 
 
@@ -178,10 +177,9 @@ class IniciarSesion extends Component<any, any> {
         if ((res + '').length > 0 && !(res + '').includes('400') && !(res + '').includes('Network Error') && res.data.user.estado!== undefined){
           Autenticacion.authenticate(res.data);
           this.props.history.push(`/Home`)  
+          this.configurar_notificaciones(this.state.username)
         }
 
-        
-        //this.configurar_notificaciones(this.state.username)
       }else if ((res + '').includes('401')){
         this.setState({
           cargado:false,
