@@ -19,7 +19,7 @@
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-signature-canvas": "^1.0.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cordova-plugin-splashscreen": "^5.0.4",
     "date-fns": "^2.15.0",
     "ionicons": "^4.6.3",
